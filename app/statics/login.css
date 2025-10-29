@@ -1,3 +1,8 @@
+:root{
+    --blanco: rgb(235, 235, 235);
+    --rojo: #99181F;
+}
+
 * {
     margin: 0; 
     padding: 0;
@@ -26,7 +31,7 @@ main {
     max-height: 90vh;
     max-width: 380px;
     text-align: center;
-    color: rgb(235, 235, 235);
+    color: var(--blanco);
 
 }
     
@@ -66,7 +71,6 @@ figure img{
 }
 
 .cont_campos svg{
-    background: var(--gris-dark);
     border-radius:5px 0 0 5px ;
     left: 0;
     height: 2.5rem;
@@ -80,12 +84,10 @@ figure img{
 
 .cont_campos input{
     width: 100%;
-    border: none;
     border-radius: 20px;
     padding: 12px 40px;
     background: #3c3b3b;
-    outline: none;
-    color: rgb(235, 235, 235);
+    color: var(--blanco);
 }
 
 .cont_campos input:focus{
@@ -94,15 +96,16 @@ figure img{
 }
 
 .cont_campos input::placeholder{
-    color: rgb(235, 235, 235);
+    color: var(--blanco);
 }
 
 button{
-    background: linear-gradient(to bottom, #ff4b4b, #b30000);
-    color: rgb(235, 235, 235);
+    background: var(--blanco);
+    color: var(--rojo);
     border: none;
     border-radius: 20px;
-    width: 100%;
+    margin-top: 1rem;
+    width: 80%;
     padding: 12px 40px;
 
 }
