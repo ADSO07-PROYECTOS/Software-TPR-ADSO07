@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Crear Reserva</title>
+    <link rel="stylesheet" href="/statics/reserva.css">
+</head>
+
+<body>
+
+    <main class="cont_main">
+        <header class="cont_header">
+            <button class="btn_back">←</button>
+            <h1>CREAR RESERVA</h1>
+            <nav class="cont_nav">
+                <div class="icon_step active">👤</div>
+                <div class="icon_step">📅</div>
+                <div class="icon_step">🅿️</div>
+            </nav>
+        </header>
+
+        <!-- PASO 1 -->
+        <section class="cont_section active" id="infoPersonal">
+            <h2>INFORMACIÓN PERSONAL</h2>
+            <form class="cont_form">
+                <input type="text" placeholder="Nombre y Apellido">
+                <input type="text" placeholder="Número de Identificación">
+                <input type="tel" placeholder="Número de Teléfono">
+                <input type="email" placeholder="Correo">
+            </form>
+            <!-- 👇 aquí le agregamos el onclick -->
+            <button class="btn_continuar" onclick="mostrarPaso(2)">CONTINUAR</button>
+        </section>
+
+        <!-- PASO 2 -->
+        <section class="cont_section" id="detallesReserva">
+            <h2>DETALLES DE LA RESERVA</h2>
+            <form class="cont_form">
+                <div class="row">
+                    <select>
+                        <option>Fecha y hora</option>
+                    </select>
+                    <select>
+                        <option>Piso</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <select>
+                        <option>Temática (opcional)</option>
+                    </select>
+                    <select>
+                        <option>N° de personas</option>
+                    </select>
+                </div>
+                <div class="row">
+                    <select>
+                        <option>Pedido (opcional)</option>
+                    </select>
+                    <input type="text" placeholder='Descripción mesa ("Una mesa al lado del balcón")'>
+                </div>
+            </form>
+            <div class="cont_total">
+                <span>TOTAL: $0.00</span>
+                <a href="#" class="link_pedido">VER PEDIDO (0 PRODUCTOS)</a>
+            </div>
+            <button class="btn_continuar" onclick="mostrarPaso(3)">CONTINUAR AL PAGO</button>
+        </section>
+
+        <!-- PASO 3 -->
+        <section class="cont_section" id="resumenReserva">
+            <h2>RESUMEN DE TU RESERVA</h2>
+            <div class="cont_resumen">
+                <p><strong>Nombre:</strong></p>
+                <p><strong>N° de Identidad:</strong></p>
+                <p><strong>Fecha y Hora:</strong></p>
+                <p><strong>N° de Personas:</strong></p>
+                <p><strong>Correo:</strong></p>
+                <p><strong>Piso:</strong></p>
+            </div>
+            <hr>
+            <div class="cont_pedido">
+                <p><strong>Tu pedido anticipado</strong></p>
+                <p>Pizza Napolitana (Extragande x12) <span>$70.000</span></p>
+                <p>Temática: Romántica <span>$20.000</span></p>
+                <p class="total"><strong>Total a pagar:</strong> $90.000</p>
+            </div>
+            <button class="btn_pagar">PAGAR $90.000</button>
+        </section>
+    </main>
+
+    <!-- 👇 AQUÍ va el script, justo antes de cerrar el body -->
+    <!-- <script>
+    function mostrarPaso(numeroPaso) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.cont_section').forEach(sec => sec.classList.remove('active'));
+
+      // Mostrar la sección según el número de paso
+      if (numeroPaso === 1) {
+        document.getElementById('infoPersonal').classList.add('active');
+      } else if (numeroPaso === 2) {
+        document.getElementById('detallesReserva').classList.add('active');
+      } else if (numeroPaso === 3) {
+        document.getElementById('resumenReserva').classList.add('active');
+      }
+
+      // Cambiar el ícono activo arriba
+      document.querySelectorAll('.icon_step').forEach((icon, index) => {
+        icon.classList.toggle('active', index + 1 === numeroPaso);
+      });
+    }
+  </script> -->
+
+</body>
+
+</html>

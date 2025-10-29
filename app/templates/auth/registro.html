@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro - Tres Pasos</title>
+    <link rel="stylesheet" href="/statics/registro.css">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+</head>
+
+<body>
+    <div id="container">
+        <div id="form-container">
+
+
+            <img src="/app/componentes/registro/logo_trespasos-removebg-preview.png" alt="Logo Tres Pasos" id="logo">
+
+
+            <h2 id="titulo">REGISTRO</h2>
+
+
+            <form id="registroForm" action="#" method="post">
+
+
+                <div class="input-group">
+                    <label for="nombre" class="sr-only">Nombre(s)</label>
+                    <input type="text" id="nombre" name="nombre" placeholder="Digite su(s) nombre(s)"
+                        pattern="[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]{}" title="Ingrese solo letras" required>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="apellido" class="sr-only">Apellidos</label>
+                    <input type="text" id="apellido" name="apellido" placeholder="Digite sus apellidos"
+                        pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\\s]+" title="Ingrese solo letras" required>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="telefono" class="sr-only">Número telefónico</label>
+                    <input type="tel" id="telefono" name="telefono" placeholder="Número telefónico"
+                        pattern="[0-9]{10,10}" title="Ingrese un número válido de 10 dígitos" required>
+                </div>
+
+
+                <div class="input-group">
+                    <label for="identidad" class="sr-only">Número de identidad</label>
+                    <input type="text" id="identidad" name="identidad" placeholder="Número de identidad"
+                        pattern="[0-9]{8,10}" title="Ingrese solo números." required>
+                </div>
+
+
+                <button type="submit" id="btn-registrar">REGISTRAR</button>
+            </form>
+        </div>
+    </div>
+
+    <!-- Script simple para validación visual -->
+    <script>
+        document.getElementById('registroForm').addEventListener('submit', (e) => {
+            e.preventDefault();
+            alert('✅ Registro exitoso. Los datos han sido enviados correctamente.');
+        });
+    </script>
+</body>
+
+</html>
