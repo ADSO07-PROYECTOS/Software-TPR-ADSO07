@@ -8,7 +8,7 @@
 
 
 body {
-  background: url("fondo.jpg") no-repeat center center/cover;
+  background: url("/app/componentes/fondo-madera.jpg") no-repeat center center/cover;
   height: 100vh;
   display: flex;
   justify-content: center;
