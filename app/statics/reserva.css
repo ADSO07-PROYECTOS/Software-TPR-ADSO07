@@ -1,7 +1,7 @@
 /* Fondo general */
 body {
   font-family: 'Arial', sans-serif;
-  background: url('fondo.jpg') center/cover no-repeat;
+  background: url('/app/componentes/fondo-madera.jpg') center/cover no-repeat;
   color: white;
   margin: 0;
   height: 100vh;
