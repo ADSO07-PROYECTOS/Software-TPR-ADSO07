@@ -4,19 +4,19 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesion</title>
-    <link rel="stylesheet" href="/app/statics/login.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
 </head>
 <body>
     <main>
         <section id="cont_logo">
             <figure id="marca">
-                <img src="/app/componentes/logo-trespasos.png" alt="">
+                <img src="{{ url_for('static', filename='img/logo-trespasos.png') }}" alt="">
             </figure>
             <h2>BIENVENIDO A TRES PASOS</h2>
             <h3>INICIA SESIÓN</h3>
         </section>
         <section>
-            <form action="">
+            <form action="GET">
                 <div class="cont_campos">
                     <label for="usuario">Usuario</label>
                         <svg 
