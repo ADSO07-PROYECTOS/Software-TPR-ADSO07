@@ -16,9 +16,6 @@ DB_CONFIG = {
     "database": "db_tpr"
 }
 
-
-
-
 def obtener_conexion():
     """Crea y retorna una nueva conexión a la base de datos."""
     try:
@@ -42,7 +39,7 @@ def verificar_conexion():
     return False
 
 
-def crear_app():
+def crear_conexion():
     """Crea y configura la aplicación Flask."""
     app = Flask(__name__)
     app.secret_key = os.getenv("SECRET_KEY", str(randint(100000, 999999)))
