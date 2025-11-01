@@ -1,6 +1,7 @@
 :root{
     --blanco: rgb(235, 235, 235);
     --rojo: #99181F;
+    --gris: rgba(0, 0, 0, 0.45);
 }
 
 * {
@@ -23,7 +24,7 @@ body {
 
 
 main {
-    background: rgba(0, 0, 0, 0.45);
+    background: var(--gris);
     border: none;
     border-radius: 20px;
     padding: 2rem;
