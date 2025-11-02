@@ -10,8 +10,8 @@ from mysql.connector import Error
 DB_CONFIG = {
     "host": "64.23.140.136",  # IP de tu VPS
     "port": 3306,
-    "user": "admin",
-    "password": "sEnaAdso07s",
+    "user": "usuario",
+    "password": "Rest@uranteTPR?",
     "database": "db_tpr"
 }
 
