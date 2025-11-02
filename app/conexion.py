@@ -2,6 +2,7 @@
 from flask import Flask, g
 import os
 from random import randint
+from routes import *
 from datetime import timedelta
 import mysql.connector
 from mysql.connector import Error
@@ -65,4 +66,3 @@ def crear_conexion():
             db.close()
 
     return app
-
