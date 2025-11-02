@@ -83,6 +83,7 @@ figure img{
 
 .cont_campos input{
     width: 100%;
+    border: 1px solid var(--blanco);
     border-radius: 20px;
     padding: 12px 40px;
     background: #3c3b3b;
