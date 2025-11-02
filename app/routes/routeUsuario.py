@@ -9,14 +9,22 @@ def index():
 
 @appbp.route("/login", methods=['POST'])
 def login():
-    contrasena = request.form.get('usuario')
+    nUsuario = request.form.get('usuario')
     cc_usuario = request.form.get('palabra_clave')
-    try:
-        consulta = mi_usuario.login(cc_usuario, contrasena)
-    except Exception as e:
-        return render_template("auth/login.html", msg="Error en el servidor, intente más tarde.")
-    if consulta:
-        session['id_usuario'] = consulta.get('cc_usuario') if isinstance(consulta, dict) else consulta[0]
-        return render_template("admin/panel.html")
-    else:
+    consulta = mi_usuario.login(cc_usuario, nUsuario)
+    if not consulta:
         return render_template("auth/login.html", msg="Usuario o clave incorrectos")
+    if isinstance(consulta, (tuple, list)):
+        resultado, rol = consulta
+    else:
+        resultado = consulta
+        rol = resultado.get('rol')
+    if resultado.get('estado') != '1':
+        return render_template("auth/login.html", msg="Usuario inactivo")
+    session['id_usuario'] = resultado.get('cc_usuario')
+    session['rol'] = rol
+    if rol == '1':
+        return render_template("auth/principal.html")
+    if rol == '2':
+        return render_template("admin/panel.html")
+    return render_template("auth/login.html", msg="Usuario o clave incorrectos")

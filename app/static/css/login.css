@@ -21,15 +21,13 @@ body {
     
 }
 
-
-
 main {
     background: var(--gris);
     border: none;
     border-radius: 20px;
     padding: 2rem;
     width: 80%;
-    max-height: 90vh;
+    max-height: 100vh;
     max-width: 380px;
     text-align: center;
     color: var(--blanco);
@@ -41,7 +39,7 @@ figure img{
 }
 
 #cont_logo h2{
-    margin: 1rem;
+    margin: 0.5rem;
 }
 
 #cont_logo h3{
