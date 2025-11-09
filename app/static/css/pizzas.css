@@ -1,0 +1,189 @@
+/* ======== CORRECCIÓN DE ESTRUCTURA Y ALTURA ======== */
+/* Importamos la fuente */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+* {
+    color: white;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Bebas Neue', sans-serif;
+}
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
+}
+
+main {
+    min-height: 100vh; /* Ocupa toda la pantalla */
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    align-items: center;
+    background: url('/app/static/img/fondo-madera.jpg') center/cover no-repeat;
+    padding-top: 70px; /* espacio para barra superior */
+    padding-bottom: 90px; /* espacio para la barra inferior */
+}
+
+/* Asegura que el contenido principal (tarjeta) no se corte */
+.plato-detalle {
+    width: 90%;
+    max-width: 600px;
+    padding: 20px;
+    background-color: rgba(127, 126, 129, 0.6);
+    backdrop-filter: blur(6px);
+    border-radius: 20px;
+    border: 1px solid #fff;
+    text-align: center;
+    margin: 0 auto; /* centra horizontalmente */
+    flex-shrink: 0;
+}
+h3{ 
+    text-align: center;
+    color: var(--blanco);
+    font-size: 40px;
+   
+}
+#adicion{
+    text-align: center;
+    color: var(--blanco);
+    font-size: 20px;
+    margin-top: 20px;
+}
+.atras-btn, .menu-btn, .nav-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    padding: 5px;
+}
+.cont-superior{
+    position: fixed;
+    top: 0;
+    width: 100%;
+    max-width: 420px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px;
+}
+
+/* Imagen dentro de la pizza */
+.plato-detalle img {
+    width: 200px;
+    height: auto;
+    border-radius: 10px;
+    margin: 15px 0;
+}
+
+/* Ajusta el texto dentro del detalle */
+.info-detalle p {
+    font-size: 18px;
+    margin-bottom: 15px;
+}
+
+/* Corrige los select y botón precio */
+.seleccion-tamano {
+    display: flex;
+    gap: 10px;
+    justify-content: center;
+    align-items: center;
+    margin: 10px 0 20px 0;
+}
+
+.tamano-pizza {
+    background-color: #99181F;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 10px;
+    font-size: 18px;
+}
+
+.precio-btn {
+    background-color: #fff;
+    color: #99181F;
+    border: none;
+    padding: 8px 20px;
+    border-radius: 10px;
+    font-size: 18px;
+    cursor: pointer;
+}
+
+/* Línea divisora más adaptable */
+.division svg {
+    width: 100%;
+    height: 1px;
+}
+
+/* Centra la sección de adiciones */
+.cont-adiciones {
+    margin-top: 15px;
+    text-align: center;
+    
+}
+.adiciones-lista {
+    margin-top: 10px;
+    background-color: #fff;
+    padding: 10px;
+    border-radius: 10px;
+    border: 2px solid #99181F;
+}
+.adicion-item {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    color:#99181F;
+}
+label {
+    font-size: 14px;
+    color:#99181F;
+    margin-right: 10px;
+}
+/* Menú inferior fijo sin tapar contenido */
+.cont-inferior {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 8px 0;
+    background: rgb(255, 255, 255);
+}
+/* Line 4 */
+.division{
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 0px;
+    left: 31px;
+    top: 347px;
+    border: 1px solid #FFFFFF;
+}
+.contador{
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin:auto;
+
+}
+.btn-menos, .btn-mas{
+    background: #FFFFFF;
+    box-sizing: border-box;
+    width: 16px;
+    height: 16px;
+    left: 125px;
+    top: 403px;
+    border: 1px solid #99181F;
+    border-radius: 20px;
+}
+.seleccionar-btn{
+    width:80px;
+    margin: 2px;
+    background: #99181F;
+    border-radius: 20px;
+    border:none;
+    padding: 4px;
+}
+
