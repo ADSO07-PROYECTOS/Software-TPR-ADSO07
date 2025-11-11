@@ -12,8 +12,11 @@ DB_CONFIG = {
     "port": 3306,
     "user": "usuario",
     "password": "Rest@uranteTPR?",
-    "database": "db_tpr"
+    "database": "db_tpr",
+    "auth_plugin": "mysql_native_password"  # Solución para caching_sha2_password
 }
+
+
 
 def obtener_conexion():
     """Crea y retorna una nueva conexión a la base de datos."""
@@ -65,4 +68,3 @@ def crear_conexion():
             db.close()
 
     return app
-
