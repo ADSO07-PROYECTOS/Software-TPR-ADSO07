@@ -21,7 +21,7 @@ main {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background: url('/app/static/img/fondo-madera.jpg') center/cover no-repeat;
+    background: url('../images/fondo.jpg') center/cover no-repeat;
     padding-top: 70px; /* espacio para barra superior */
     padding-bottom: 90px; /* espacio para la barra inferior */
 }
@@ -85,11 +85,12 @@ h3{
 
 /* Corrige los select y botón precio */
 .seleccion-tamano {
+    border:none;
     display: flex;
     gap: 10px;
     justify-content: center;
     align-items: center;
-    margin: 10px 0 20px 0;
+    margin: 20px;
 }
 
 .tamano-pizza {
@@ -99,6 +100,13 @@ h3{
     padding: 8px 15px;
     border-radius: 10px;
     font-size: 18px;
+    outline:none;
+}
+option{
+    padding:10px;
+    border:none;
+
+
 }
 
 .precio-btn {
@@ -127,14 +135,29 @@ h3{
     margin-top: 10px;
     background-color: #fff;
     padding: 10px;
+    box-sizing: border-box;
     border-radius: 10px;
     border: 2px solid #99181F;
 }
+
 .adicion-item {
+    display: grid;
+    grid-template-columns: 1fr auto auto; 
+    align-items: center;
+    gap: 15px;
+}
+
+.contador{
+    box-sizing: border-box;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    color:#99181F;
+    gap:19px;
+}
+
+.cantidad{
+    font-size:20px;
+    color:#99181F
 }
 label {
     font-size: 14px;
@@ -164,10 +187,12 @@ label {
 .contador{
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    margin:auto;
+    justify-content: center;
+    gap: 15px;
+    width: fit-content;
 
 }
+
 .btn-menos, .btn-mas{
     background: #FFFFFF;
     box-sizing: border-box;
@@ -178,6 +203,7 @@ label {
     border: 1px solid #99181F;
     border-radius: 20px;
 }
+
 .seleccionar-btn{
     width:80px;
     margin: 2px;
@@ -185,5 +211,104 @@ label {
     border-radius: 20px;
     border:none;
     padding: 4px;
+} 
+.lista-pizzas {
+    border: 2px solid #99181F;
+    display: flex;
+    flex-direction: column;
+    background-color: white;
+    border-radius: 10px;
+    padding: 10px;
 }
 
+.pizza-item {
+  display: grid;
+  grid-template-columns: 1fr auto auto; 
+  align-items: center;
+  gap: 30px;
+}
+
+label {
+  font-size: 18px;
+  color: #99181F;
+}
+
+.precio {
+    width: 80px;
+    background: #99181F;
+    margin:2px;
+    color: #FFFFFF;
+    border-radius: 20px;
+    padding: 4px;
+}
+
+.check {
+  appearance: none; /* quita el estilo por defecto */
+  width: 20px;
+  height: 20px;
+  border: 2px solid #99181F;
+  border-radius: 4px; /* cambia a 50% si lo quieres redondo */
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.check:checked {
+  background-color: #99181F;
+  border-color: #99181F;
+  box-shadow: 0 0 0 3px rgba(153, 24, 31, 0.2);
+}
+
+.check:checked::after {
+  content: "✓";
+  color: white;
+  font-size: 14px;
+  font-weight: bold;
+}
+
+
+.cont_btn-mas{
+    background: #FFFFFF;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    left: 125px;
+    top: 403px;
+    border: 1px solid #99181F;
+    border-radius: 20px;
+}
+.cont_btn-menos{
+    background: #FFFFFF;
+    box-sizing: border-box;
+    width: 30px;
+    color:#858383;
+    height: 30px;
+    left: 125px;
+    top: 403px;
+    border: 1px solid #858383;
+    border-radius: 20px;
+
+}
+.añadir{
+    width: 100px;
+    height: 40px;
+    background: #99181F;
+    border-radius: 20px;
+    border: none;
+    color: white;
+    font-size: 20px;
+}
+
+.precio-fn{
+    margin-top:3px;
+    font-size:24px;
+    color: #99181F;
+}
+
+.cantidad-total{
+    font-size:24px;
+    color:#99181F;
+    
+}
