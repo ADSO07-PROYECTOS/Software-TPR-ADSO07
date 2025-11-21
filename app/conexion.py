@@ -1,16 +1,22 @@
 import mysql.connector
-
+from mysql.connector import Error
 
 def conectar():
-    connection = mysql.connector.connect(
-        host='64.23.140.136',
-        user='usuario',
-        password='Rest@uranteTPR?',
-        database= 'db_tpr'
+    conexion = None
+    try:
+        conexion = mysql.connector.connect(
+            host='64.23.140.136',
+            user='usuario',
+            password='Rest@uranteTPR?',
+            database= 'db_tpr'
     )
+        
+        if conexion.is_connected():
+            print("Conexion exitosa a la base de datos")
+        return conexion
     
-    if connection != None:
-        return connection
-    else:
-        print("La conexion no fue exitosa")
+    except Error as e:
+        print("Error al conectar")
+        return None
 
+ 
