@@ -3,11 +3,10 @@ from datetime import timedelta
 from conexion import *
 from routes.routeUsuario import appbp
 
+
+
 app = Flask(__name__)
-app.secret_key = "replace-with-a-secure-random-key"
-app.permanent_session_lifetime = timedelta(minutes=30)
-app = crear_conexion()  
-app.register_blueprint(appbp) 
+
 
 
 if __name__ == "__main__":
