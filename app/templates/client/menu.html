@@ -30,68 +30,30 @@
     <section class="menu-contenedor">
 
         <section class="menu-categorias">
-           
+            {% for item in lista_categorias %}
         <div class="category">
             <button>
+                <img src="{{ url_for('static', filename='img/' + item.imagen) }}" alt="{{ item.nombre }}">
                 
-                <img src="/app/static/img/plato1.png" alt="Pizzas">
-                <a href="../client/menu_pizzas.html">PIZZAS</a>
-                
-            </button>
-            
-        </div>
-        <div class="category">
-            <button>
-                <img src="/app/static/img/plato1.png" alt="Lasagna">
-                <a href="../client/menu_entradas.html">ENTRADA</a>
+                <a href="{{ url_for('ver_productos_por_categoria', id_categoria=item.id) }}">
+                    {{ item.nombre }}
+                </a>
             </button>
         </div>
-
-        <div class="category">
-            <button>
-            <img src="/app/static/img/plato1.png" alt="Asados">
-            <a href="../client/menu_asados.html">ASADOS</a>
-            </button>
-            
-        </div>
-
-        <div class="category">
-        <button>
-            <img src="/app/static/img/plato1.png" alt="Hamburguesas">
-            <a href="../client/menu_hamburguesas.html">HAMBURGUESAS</a>
-         </button>
-            
-        </div>
-
-        <div class="category">
-            <button>
-            <img src="/app/static/img/plato1.png" alt="Picadas">
-            <a href="../client/menu_picadas.html">PICADAS</a>
-            </button>
-            
-        </div>
-
-        <div class="category">
-            <button>
-                <img src="/app/static/img/plato1.png" alt="Pancerotti">
-                <a href="../client/menu_pancerotti.html">PANCEROTTI</a> 
-            </button>   
-        </div>
-
-        <div class="category">
-            <button>
-                <img src="/app/static/img/plato1.png" alt="Lasagna">
-                <a href="../client/menu_lasagna.html">LASAGNA</a>
-            </button>
-        </div>
-
-        <div class="category">
-            <button>            
-                <img src="/app/static/img/plato1.png" alt="Lasagna">
-                <a href="../client/menu_lasagna.html">COMBOS</a>
-            </button>
-        </div>
+        {% else %}
+            <p>No se encontraron categorías cargadas.</p>
+        {% endfor %}
         </section>
+
+
+
+
+
+
+
+
+           
+        
     </section>
     <button class="reservar-btn">RESERVAR</button>
 

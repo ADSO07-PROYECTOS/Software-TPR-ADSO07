@@ -1,6 +1,6 @@
-from flask import Flask, render_template, request, redirect, url_for, session
-from datetime import timedelta
+from flask import Flask, render_template
 from conexion import conectar
+from app.models.modelos import Categoria
 
 
 app = Flask(__name__)
@@ -9,6 +9,12 @@ app = Flask(__name__)
 @app.route('/')
 def inicio():
     return "El servidor esta funcionando!"
+
+@app.route('/menu')
+def ver_menu():
+    mis_categorias = Categoria.obtener_todas()
+
+    return render_template('client/menu.html', lista_categorias=mis_categorias)
 
 
 if __name__ == "__main__":
