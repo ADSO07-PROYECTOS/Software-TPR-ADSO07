@@ -1,27 +1,31 @@
 from flask import Flask, render_template
 from conexion import conectar
-from models.modelos import Categoria
-
+import requests 
 
 app = Flask(__name__)
 
-
 @app.route('/')
 def inicio():
-    return "El servidor esta funcionando!"
+    return "El servidor principal funciona"
 
 @app.route('/menu')
 def ver_menu():
-    mis_categorias = Categoria.obtener_todas()
+    # EN LUGAR DE CONECTAR A LA BASE DE DATOS AQUÍ...
+    # ...Llamamos al microservicio (al panadero)
+    
+    try:
+        # Hacemos una petición al otro programa que corre en el puerto 5001
+        respuesta = requests.get('http://localhost:5001/api/categorias')
+        
+        # Convertimos la respuesta de texto a una lista de Python
+        mis_categorias = respuesta.json()
+        
+    except:
+        mis_categorias = [] # Si el microservicio está apagado, lista vacía
 
+    # Le pasamos los datos al HTML igual que antes
     return render_template('client/menu.html', lista_categorias=mis_categorias)
 
-
 if __name__ == "__main__":
-    print("--- Iniciando Verificacion de Base de Datos ---")
-    app.run(debug=True, host="0.0.0.0", port=5000)
-    miconexion = conectar()
-    
-    
-    
-    
+    print("--- Iniciando APP PRINCIPAL en puerto 5000 ---")
+    app.run(debug=True, port=5000)
