@@ -1,4 +1,4 @@
-from app.conexion import conectar
+from conexion import conectar
 
 class Categoria:
     # 1. Agregamos id, nombre e imagen dentro de los paréntesis para recibirlos

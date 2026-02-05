@@ -1,6 +1,6 @@
 from flask import Flask, render_template
 from conexion import conectar
-from app.models.modelos import Categoria
+from models.modelos import Categoria
 
 
 app = Flask(__name__)
