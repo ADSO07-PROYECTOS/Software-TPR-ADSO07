@@ -10,20 +10,16 @@ def inicio():
 
 @app.route('/menu')
 def ver_menu():
-    # EN LUGAR DE CONECTAR A LA BASE DE DATOS AQUÍ...
-    # ...Llamamos al microservicio (al panadero)
-    
     try:
-        # Hacemos una petición al otro programa que corre en el puerto 5001
-        respuesta = requests.get('http://localhost:5001/api/categorias')
-        
-        # Convertimos la respuesta de texto a una lista de Python
+        respuesta = requests.get('http://localhost:5001/api/categorias', timeout=10)
+        respuesta.raise_for_status()
         mis_categorias = respuesta.json()
+        print(f"Categorías recibidas: {mis_categorias}")
         
-    except:
-        mis_categorias = [] # Si el microservicio está apagado, lista vacía
-
-    # Le pasamos los datos al HTML igual que antes
+    except Exception as e:
+        print(f"Error al obtener categorías: {e}")
+        mis_categorias = [] 
+ 
     return render_template('client/menu.html', lista_categorias=mis_categorias)
 
 if __name__ == "__main__":
