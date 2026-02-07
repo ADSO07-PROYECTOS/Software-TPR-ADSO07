@@ -30,7 +30,6 @@ def ver_platos(id_categoria):
     nombre_categoria = "Platos" # Valor por defecto
     
     try:
-        # 1. Llamamos al microservicio pasándole el ID de la categoría
         url_microservicio = f'http://localhost:5001/api/platos/{id_categoria}'
         respuesta = requests.get(url_microservicio, timeout=10)
         respuesta.raise_for_status()
@@ -43,8 +42,6 @@ def ver_platos(id_categoria):
     except Exception as e:
         print(f"Error general: {e}")
 
-    # Renderizamos la plantilla 'ver_platos.html' enviando la lista
-    # Nota: Asegúrate de que la ruta del template sea correcta según tu estructura
     return render_template('client/ver_platos.html', lista_platos=mis_platos)
 
 
@@ -52,7 +49,6 @@ def ver_platos(id_categoria):
 def detalle_plato(id_plato):
     info_plato = {}
     try:
-        # Llamamos al microservicio pidiendo el plato especifico
         url_microservicio = f'http://localhost:5001/api/plato/{id_plato}'
         respuesta = requests.get(url_microservicio, timeout=10)
         
@@ -64,7 +60,6 @@ def detalle_plato(id_plato):
     except Exception as e:
         print(f"Error conectando microservicio: {e}")
 
-    # Renderizamos la plantilla (asegúrate de guardar tu HTML con este nombre)
     return render_template('client/detalle_plato.html', plato=info_plato)
 
 
