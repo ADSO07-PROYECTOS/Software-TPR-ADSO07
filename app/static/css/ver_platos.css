@@ -11,7 +11,7 @@
 }
 
 body {
-    background: url('/app/static/img/fondo-madera.jpg');
+    background: url('../img/fondo-madera.jpg');
     background-size: cover;
     
 }
@@ -179,5 +179,19 @@ button {
     font-size: 26px;
     background: none;
     border: none;
+    cursor: pointer;
+}
+
+
+.plato-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Asegura que el enlace envuelva bien a la tarjeta */
+}
+
+/* Efecto opcional: aumenta ligeramente el tamaño al pasar el mouse */
+.plato-link:hover .plato {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
     cursor: pointer;
 }

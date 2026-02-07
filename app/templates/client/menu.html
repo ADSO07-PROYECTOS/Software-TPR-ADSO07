@@ -35,9 +35,11 @@
             <button>
                 <img src="{{ url_for('static', filename='img/' + item.imagen) }}" alt="{{ item.nombre }}">
                 
-                <a href="#">
+                <a href="{{ url_for('ver_platos', id_categoria=item.id) }}">
                     {{ item.nombre }}
                 </a>
+               
+                
             </button>
         </div>
         {% else %}
@@ -46,7 +48,6 @@
         </section>
 
            
-        
     </section>
     <button class="reservar-btn">RESERVAR</button>
 
