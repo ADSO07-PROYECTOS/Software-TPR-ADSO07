@@ -21,7 +21,8 @@ def enviar_mail(datos_cliente, datos_reserva, qr_buf):
     <html>
         <body style="font-family: Arial, sans-serif; text-align: center;">
             <h2 style="color: #e67e22;">¡Reserva Confirmada en Tres Pasos!</h2>
-            <p>Hola <b>{datos_cliente['nom']}</b>, hemos agendado tu mesa con éxito.</p>
+            <p>Hola <b>{datos_cliente['nom']}</b>, hemos agendado tu mesa con éxito.
+            </p>
             <div style="background: #f4f4f4; padding: 15px; border-radius: 10px; display: inline-block; margin: 10px 0;">
                 <p><b>Fecha:</b> {datos_reserva['fec']}</p>
                 <p><b>Hora:</b> {datos_reserva['hor']}</p>

@@ -27,17 +27,117 @@ body {
     border: 1px solid rgba(255,255,255,0.3);
 }
 
-header { text-align: center; margin-bottom: 25px; }
-h1 { color: var(--blanco); margin: 0; font-size: 1.6rem; }
-
-.grupo-entrada { margin-bottom: 20px; display: flex; flex-direction: column;}
-.grupo-entrada label { font-weight: 600; color: var(--blanco); margin-bottom: 8px; font-size: 0.85rem; }
-.grupo-entrada input { padding: 14px; color: var(--blanco); border: 1px solid #ddd; border-radius: 15px; outline: none; background: var(--gris);}
-
-button {
-    width: 100%; padding: 16px; background: var(); color: var(--rojo);
-    border: none; border-radius: 50px; font-weight: bold; cursor: pointer; transition: 0.3s;
+header { 
+    text-align: center; 
+    margin-bottom: 25px; 
 }
 
-.resumen-caja { background: rgba(255,255,255,0.6); padding: 20px; border-radius: 20px; margin-bottom: 20px; }
-#qr-resultado { width: 100%; max-width: 250px; display: block; margin: 0 auto 20px; border-radius: 15px; }
+#qr-resultado { width: 100%; 
+    max-width: 250px; 
+    display: block; 
+    margin: 0 auto 20px; 
+    border-radius: 15px; 
+}
+
+#btn-atras {
+    width: 100%; 
+    padding: 16px; 
+    background: var(); 
+    color: var(--rojo);
+    border: none; 
+    border-radius: 50px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+    flex: 1;
+}
+
+#btn-descargar {
+    width: 100%; 
+    padding: 16px; 
+    background: var(--rojo); 
+    color: var(--blanco);
+    border: none; 
+    margin-bottom: 10px;
+    border-radius: 50px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.btn-grande2 {
+    width: 100%; 
+    padding: 16px; 
+    background: var(--rojo); 
+    color: var(--blanco);
+    border: none; 
+    border-radius: 50px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.btn-grande {
+    width: 100%; 
+    padding: 16px; 
+    background: var(--blanco); 
+    color: var(--rojo);
+    border: none; 
+    border-radius: 50px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+h1 { 
+    color: var(--blanco); 
+    margin: 0; 
+    font-size: 1.6rem; }
+
+.grupo-entrada { 
+    margin-bottom: 20px; 
+    display: flex; 
+    flex-direction: column;}
+
+.grupo-entrada label { 
+    font-weight: 600; 
+    color: var(--blanco); 
+    margin-bottom: 8px; 
+    font-size: 0.85rem; }
+
+.grupo-entrada input { 
+    padding: 14px; 
+    color: var(--blanco); 
+    border: 1px solid #ddd; 
+    border-radius: 15px; 
+    outline: none; 
+    background: var(--gris);
+}
+
+.grupo-entrada select {
+    padding: 14px; 
+    color: var(--blanco); 
+    border: 1px solid #ddd; 
+    border-radius: 15px; 
+    outline: none; 
+    background: var(--gris);
+}
+
+button {
+    width: 100%; 
+    padding: 16px; 
+    background: var(); 
+    color: var(--rojo);
+    border: none; 
+    border-radius: 50px; 
+    font-weight: bold; 
+    cursor: pointer; 
+    transition: 0.3s;
+}
+
+.resumen-caja { 
+    background: rgba(255,255,255,0.6); 
+    padding: 20px; 
+    border-radius: 20px; 
+    margin-bottom: 20px; 
+}

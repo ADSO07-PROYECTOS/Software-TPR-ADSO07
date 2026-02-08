@@ -8,14 +8,15 @@ def conectar():
             host='64.23.140.136',
             user='usuario',
             password='Rest@uranteTPR?',
-            database='db_tpr',
-            auth_plugin='mysql_native_password'
-        )
+            database= 'db_tpr'
+    )
         
         if conexion.is_connected():
             print("Conexion exitosa a la base de datos")
         return conexion
     
     except Error as e:
-        print(f"Error al conectar a la base de datos: {e}")
+        print("Error al conectar")
         return None
+
+ 
