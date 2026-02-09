@@ -1,4 +1,4 @@
-from flask import Flask, render_template
+from flask import Flask, render_template, request, redirect
 from conexion import conectar
 import requests 
 
@@ -72,9 +72,44 @@ def resumen_pedido():
 
 
 
-@app.route('/hacer_reserva')
+@app.route('/hacer_reserva', methods=['GET', 'POST'])
 def hacer_reserva():
-    return render_template('client/hacer_reserva.html')
+    if request.method == 'POST':
+        try:
+            # Recopilar datos del formulario
+            datos_cliente = {
+                "nom": request.form['nombre'],
+                "correo": request.form['email']
+            }
+            datos_reserva = {
+                "fec": request.form['fecha'],
+                "hor": request.form['hora']
+            }
+            
+            # Estructura de datos para el microservicio
+            payload = {
+                "cliente": datos_cliente,
+                "reserva": datos_reserva
+            }
+
+            # Llamada al microservicio de reservas
+            url_microservicio = 'http://localhost:5005/api/reservas'
+            respuesta = requests.post(url_microservicio, json=payload, timeout=10)
+            respuesta.raise_for_status()
+            
+            # Si todo va bien, redirigir a una página de éxito o inicio
+            return redirect('/')
+
+        except requests.exceptions.RequestException as e:
+            print(f"Error de conexión con el microservicio de reservas: {e}")
+            # Aquí podrías renderizar una página de error
+            return "Error al procesar la reserva.", 500
+        except Exception as e:
+            print(f"Error general: {e}")
+            return "Ocurrió un error inesperado.", 500
+
+    # Si es GET, simplemente muestra el formulario
+    return render_template('client/v2/reserva_base.html')
 
 
 

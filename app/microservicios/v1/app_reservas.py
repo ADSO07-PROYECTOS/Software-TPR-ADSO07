@@ -5,7 +5,7 @@ from email.mime.image import MIMEImage
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
 from conexion import conectar
 
 app = Flask(__name__)
@@ -126,4 +126,4 @@ def crear_reserva():
         conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5005)
