@@ -66,6 +66,17 @@ def detalle_plato(id_plato):
 
     return render_template('client/detalle_plato.html', plato=info_plato)
 
+@app.route('/resumen_pedido')
+def resumen_pedido():
+    return render_template('client/resumen_pedido.html')
+
+
+
+@app.route('/hacer_reserva')
+def hacer_reserva():
+    return render_template('client/hacer_reserva.html')
+
+
 
 if __name__ == "__main__":
     try:

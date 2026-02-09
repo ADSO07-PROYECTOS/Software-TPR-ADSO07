@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de tu Pedido</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
+    <style>
+        /* Estilos específicos para esta página */
+        body { background-color: #1a1a1a; color: white; font-family: sans-serif; }
+        .contenedor-resumen {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #99181F;
+        }
+        .info-pedido {
+            text-align: left;
+            background: white;
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info-pedido p { margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .precio-final { font-size: 24px; color: #99181F; font-weight: bold; text-align: right; margin-top: 15px; }
+        .btn-reservar {
+            background-color: #99181F;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-reservar:hover { background-color: #7a1319; }
+        .btn-volver { color: #ccc; margin-top: 15px; display: block; text-decoration: underline; }
+    </style>
+</head>
+<body>
+
+    <div class="contenedor-resumen">
+        <h1 style="color: #99181F;">RESUMEN DE TU PEDIDO</h1>
+        <p>Verifica que todo esté correcto antes de reservar.</p>
+
+        <div id="detalle-pedido" class="info-pedido">
+            <p>Cargando pedido...</p>
+        </div>
+
+        <a href="{{ url_for('hacer_reserva') }}" class="btn-reservar">HACER RESERVA</a>
+        
+        <a href="javascript:history.back()" class="btn-volver">Volver y modificar</a>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const detalleDiv = document.getElementById('detalle-pedido');
+            const data = localStorage.getItem('pedido_cliente');
+
+            if (data) {
+                const pedido = JSON.parse(data);
+                
+                let html = `
+                    <p><strong>Producto:</strong> ${pedido.producto}</p>
+                    <p><strong>Cantidad:</strong> ${pedido.cantidad}</p>
+                    <p><strong>Tamaño:</strong> ${pedido.tamano.toUpperCase()}</p>
+                `;
+
+                if (pedido.sabores && pedido.sabores.length > 0) {
+                    html += `<p><strong>Sabores:</strong> ${pedido.sabores.join(', ')}</p>`;
+                }
+
+                if (pedido.adicionales && pedido.adicionales.length > 0) {
+                    html += `<p><strong>Adicionales:</strong> ${pedido.adicionales.join(', ')}</p>`;
+                }
+
+                html += `<div class="precio-final">Total: ${pedido.precio}</div>`;
+                
+                detalleDiv.innerHTML = html;
+            } else {
+                detalleDiv.innerHTML = "<p>No hay pedido seleccionado.</p>";
+            }
+        });
+    </script>
+</body>
+</html>
