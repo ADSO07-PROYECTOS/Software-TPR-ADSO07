@@ -102,5 +102,8 @@ def ver_detalle_plato(id_plato):
 
 
 if __name__ == '__main__':
-    print("--INICIANDO MICROSERVICIO DE MENU EN EL PUERTO 5001 --")
-    app.run(debug=True, port=5001, host='0.0.0.0')
+    try:
+        print("--INICIANDO MICROSERVICIO DE MENU EN EL PUERTO 5001 --")
+        app.run(debug=True, port=5001, host='0.0.0.0')
+    except Exception as e:
+        print(f"ERROR AL INICIAR EL MICROSERVICIO: {e}")

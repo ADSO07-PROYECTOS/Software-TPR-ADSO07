@@ -64,5 +64,8 @@ def detalle_plato(id_plato):
 
 
 if __name__ == "__main__":
-    print("--- Iniciando APP PRINCIPAL en puerto 5000 ---")
-    app.run(debug=True, port=5000)
+    try:
+        print("--- Iniciando APP PRINCIPAL en puerto 5000 ---")
+        app.run(debug=True, port=5000)
+    except Exception as e:
+        print(f"ERROR AL INICIAR EL SERVIDOR: {e}")
