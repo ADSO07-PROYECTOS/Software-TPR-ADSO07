@@ -1,0 +1,200 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% if plato %}{{ plato.nombre }}{% else %}Plato no encontrado{% endif %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
+</head>
+<body>
+    {% if plato %}
+    <main>
+        <header class="cont-superior">
+            <button class="atras-btn">
+                {% if plato and plato.categoria_id %}
+                <a href="{{ url_for('ver_platos', id_categoria=plato.categoria_id) }}">
+                    <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                {% else %}
+                <a href="{{ url_for('ver_menu') }}">
+                     <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </a>
+                {% endif %}
+            </button>
+            <button class="menu-btn">
+                <svg width="23" height="14" viewBox="0 0 23 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 7H21.25M1 1H21.25M1 13H21.25" stroke="#F5F5F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+            <div class="menu-desplegable-cont">
+                <a href="#">Perfil</a>
+                <a href="#">Mis reservas</a>
+                <a href="{{ url_for('inicio') }}">Cerrar sesión</a>
+            </div>
+        </header>
+
+        <h3>Menú</h3>
+        <section class="plato-detalle">
+            <h2>{{ plato.nombre }}</h2>
+            
+            <img src="{{ url_for('static', filename='img/' + (plato.imagen if plato.imagen else 'default.png')) }}" alt="{{ plato.nombre }}">
+
+            <div class="info-detalle">
+                <p>{{ plato.descripcion }}</p>
+            </div>
+            
+            <div class="seleccion-tamano">
+                <select class="tamano-pizza">
+                    <option value="pequeña">Pequeña</option>
+                    <option value="mediana">Mediana</option>
+                    <option value="grande">Grande</option>
+                    <option value="extragande">Extragrande</option>
+                </select>
+                <button class="precio-btn">$ {{ plato.precio }}</button>
+            </div>
+            
+            <div class="division">
+                <hr>
+            </div>
+        
+            <section class="cont-adiciones">
+                <div class="adicion">
+                    <h2 id="adicion">¿DESEAS ADICIONAR ALGO A TU COMIDA?</h2>
+                    <p>Los adicionales son de 50g la porción seleccionada</p>
+                </div>
+            </section>
+
+            <section class="adiciones-lista">
+                <div class="adicion-item">
+                    <label for="adicion1">Extra Queso</label>
+                    <div class="contador">
+                        <button class="btn-menos">
+                            <svg width="4" height="9" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
+                            </svg>
+                        </button>
+                        <span class="cantidad">0</span>
+                        <button class="btn-mas">
+                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="seleccionar-btn">$8000</div>
+                </div>
+
+                <div class="adicion-item">
+                    <label for="adicion2">Piña</label>
+                    <div class="contador">
+                        <button class="btn-menos">
+                            <svg width="4" height="9" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
+                            </svg>
+                        </button>
+                        <span class="cantidad">0</span>
+                        <button class="btn-mas">
+                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="seleccionar-btn">$8000</div>
+                </div>
+
+                <div class="adicion-item">
+                    <label for="adicion3">Champiñones</label>
+                    <div class="contador">
+                        <button class="btn-menos">
+                            <svg width="4" height="9" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
+                            </svg>
+                        </button>
+                        <span class="cantidad">0</span>
+                        <button class="btn-mas">
+                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="seleccionar-btn">$8000</div>
+                </div>
+
+                <div class="adicion-item">
+                    <label for="adicion4">Pimientos</label>
+                    <div class="contador">
+                        <button class="btn-menos">
+                            <svg width="4" height="9" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
+                            </svg>
+                        </button>
+                        <span class="cantidad">0</span>
+                        <button class="btn-mas">
+                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+                            </svg>
+                        </button>
+                    </div>
+                    <div class="seleccionar-btn">$8000</div>
+                </div>
+            </section>
+
+            <section class="combinar">
+                <div class="combinar-pizza">
+                    <h2 id="adicion">¿DESEAS ADICIONAR OTRO SABOR A TU PIZZA?</h2>
+                    <p>solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
+                </div>
+                <div class="lista-pizzas">
+                    <div class="pizza-item">
+                        <label>PIZZA PEPPERONI</label>
+                        <input type="checkbox" class="check">
+                        <div class="precio">$17500</div>
+                    </div>
+
+                    <div class="pizza-item">
+                        <label>PIZZA HAWAIANA</label>
+                        <input type="checkbox" class="check">
+                        <div class="precio">$8000</div>
+                    </div>
+
+                    <div class="pizza-item">
+                        <label>PIZZA POLLO</label>
+                        <input type="checkbox" class="check">
+                        <div class="precio">$8000</div>
+                    </div>
+                </div>
+            </section>
+    </main>
+    
+    <footer class="cont-inferior">
+        <button class="cont_btn-menos"> 
+            <svg width="7" height="6" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
+            </svg>
+        </button>
+        
+        <span class="cantidad-total"> 1 </span>
+        
+        <button class="cont_btn-mas"> 
+            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+            </svg>
+        </button>
+        
+        <button class="añadir"> AÑADIR </button>
+        
+        <span class="precio-fn">$ {{ plato.precio }}</span>
+    </footer>
+
+    <script src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
+    {% else %}
+    <main style="justify-content: center; text-align: center;">
+        <h2 style="color: white;">Plato no encontrado o Error de conexión</h2>
+        <a href="{{ url_for('ver_menu') }}" style="color: grey; text-decoration: underline; margin-top: 20px;">Volver al menú</a>
+    </main>
+    {% endif %}
+</body>
+</html>

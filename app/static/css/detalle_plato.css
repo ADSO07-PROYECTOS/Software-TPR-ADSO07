@@ -21,7 +21,7 @@ main {
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    background: url('../images/fondo.jpg') center/cover no-repeat;
+    background: url('../img/fondo-madera.jpg') center/cover no-repeat;
     padding-top: 70px; /* espacio para barra superior */
     padding-bottom: 90px; /* espacio para la barra inferior */
 }

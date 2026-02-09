@@ -11,7 +11,7 @@
 }
 
 body {
-    background: url('/app/static/img/fondo-madera.jpg');
+    background: url('../img/fondo-madera.jpg');
     background-size: cover;
     
 }
