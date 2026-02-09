@@ -67,7 +67,7 @@ def ver_platos_por_categoria(id_categoria):
         return jsonify({"error": str(e)}), 500
     
 
-# --- NUEVA RUTA: Obtener un solo plato por su ID ---
+# -- Obtener un solo plato por su ID ---
 @app.route('/api/plato/<int:id_plato>', methods=['GET'])
 def ver_detalle_plato(id_plato):
     try:

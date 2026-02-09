@@ -4,9 +4,13 @@ import requests
 
 app = Flask(__name__)
 
+#-- Ruta Principal --
+
 @app.route('/')
 def inicio():
     return "El servidor principal funciona"
+
+# -- Ruta del microservicio de menu --
 
 @app.route('/menu')
 def ver_menu():
@@ -22,7 +26,7 @@ def ver_menu():
  
     return render_template('client/menu.html', lista_categorias=mis_categorias)
 
-
+#-- Ruta de ver el detalle de los platos
 
 @app.route('/menu/<int:id_categoria>')
 def ver_platos(id_categoria):
@@ -44,7 +48,7 @@ def ver_platos(id_categoria):
 
     return render_template('client/ver_platos.html', lista_platos=mis_platos)
 
-
+#-- Detalle Plato -- 
 @app.route('/detalle/<int:id_plato>')
 def detalle_plato(id_plato):
     info_plato = {}
