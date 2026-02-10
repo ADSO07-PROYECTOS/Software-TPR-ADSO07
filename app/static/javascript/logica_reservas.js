@@ -59,7 +59,7 @@ function irAPaso3() {
 async function enviarBackend() {
     const body = { cliente: JSON.parse(localStorage.getItem('temp_cliente')), reserva: JSON.parse(localStorage.getItem('temp_reserva')) };
     try {
-        const res = await fetch('http://localhost:5000/api/reservas', {
+        const res = await fetch('http://localhost:5005/api/reservas', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(body)
