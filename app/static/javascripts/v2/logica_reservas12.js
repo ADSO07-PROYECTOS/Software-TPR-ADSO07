@@ -63,6 +63,10 @@ function mostrarPasoReserva() {
         <div class="grupo-entrada"><label>Fecha</label><input type="date" id="v_fec"></div>
         <div class="grupo-entrada"><label>Hora</label><input type="time" id="v_hor"></div>
         <div class="grupo-entrada">
+            <label>N° Personas</label>
+            <input type="number" id="v_personas" min="1" value="2">
+        </div>
+        <div class="grupo-entrada">
             <label>Piso</label>
             <select id="v_piso"><option value="1">Piso 1</option><option value="2">Piso 2</option></select>
         </div>
@@ -124,8 +128,10 @@ async function enviarFinal(tipo) {
         const tematica = document.getElementById('v_tematica').value;
         const pago = document.getElementById('v_pago').value;
         const desc = document.getElementById('v_desc').value;
+        const personas = document.getElementById('v_personas').value;
 
         if (!fec || !hor) return alert("Selecciona fecha y hora");
+        if (!personas || personas < 1) return alert("Indica el número de personas");
 
         payload.reserva = {
             fec: fec,
@@ -133,7 +139,8 @@ async function enviarFinal(tipo) {
             piso: piso,
             tematica: tematica,
             metodo_pago: pago, 
-            desc: desc || "Sin observaciones"
+            desc: desc || "Sin observaciones",
+            personas: personas
         };
     } else {
         const dir = document.getElementById('v_dir').value;

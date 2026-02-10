@@ -5,7 +5,7 @@ from email.mime.image import MIMEImage
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 from conexion import conectar
 
 app = Flask(__name__)
@@ -43,75 +43,120 @@ def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
             server.sendmail(MI_CORREO, datos_cliente['correo'], msg.as_string())
     except Exception as e: print(f"Error mail: {e}")
 
+@app.route('/api/tematicas', methods=['GET'])
+def obtener_tematicas():
+    conn = conectar()
+    if not conn: 
+        return jsonify([])
+    
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SELECT tematica_id, nombre_tematica, precio_tematica FROM tematica")
+        filas = cursor.fetchall()
+        
+        tematicas = []
+        for f in filas:
+            tematicas.append({
+                "id": f[0],
+                "nombre": f[1],
+                "precio": f[2]
+            })
+        return jsonify(tematicas)
+    except Exception as e:
+        print(f"Error al obtener temáticas: {e}")
+        return jsonify([])
+    finally:
+        conn.close()
+
 @app.route('/api/reservas', methods=['POST'])
 def crear_reserva():
     datos = request.json
     cli = datos.get('cliente')
-    res = datos.get('reserva')
+    res_data = datos.get('reserva')
     
     conn = conectar()
-    if not conn: return jsonify({"status": "error", "msg": "Sin conexión a DB"}), 500
+    if not conn: 
+        return jsonify({"status": "error", "msg": "Error de conexión a la base de datos"}), 500
     
     cursor = conn.cursor()
     try:
+        # --- 1. DEFINICIÓN DE VARIABLES ---
+        piso_solicitado = int(res_data['piso'])
+        fecha_hora_solicitada = f"{res_data['fec']} {res_data['hor']}:00"
         cedula = int(cli['doc'])
+
+        # --- 2. VALIDACIÓN DE DISPONIBILIDAD (EL CORAZÓN DE TU LÓGICA) ---
+        
+        # A. Contamos cuántas mesas habilitó el admin para este piso
+        cursor.execute("""
+            SELECT COUNT(*) FROM mesa 
+            WHERE piso = %s AND disponibilidad = 1
+        """, (piso_solicitado,))
+        max_capacidad_piso = cursor.fetchone()[0]
+
+        # B. Contamos cuántas reservas activas ya existen para ese mismo piso, fecha y hora
+        cursor.execute("""
+            SELECT COUNT(*) FROM reserva 
+            WHERE piso = %s 
+            AND fechayhora_reserva = %s 
+            AND estado != 'cancelada'
+        """, (piso_solicitado, fecha_hora_solicitada))
+        reservas_actuales = cursor.fetchone()[0]
+
+        # C. Comparación: ¿Hay espacio?
+        if reservas_actuales >= max_capacidad_piso:
+            return jsonify({
+                "status": "error", 
+                "msg": f"Capacidad agotada. El Piso {piso_solicitado} solo permite {max_capacidad_piso} reservas simultáneas y ya están ocupadas."
+            }), 400 
+
+        # --- 3. PROCESO DE REGISTRO (SI PASÓ LA VALIDACIÓN) ---
+
+        # Registrar/Actualizar Cliente
         cursor.execute("""
             INSERT INTO clientes (cc_cliente, nombre, email, telefono) 
             VALUES (%s, %s, %s, %s) 
             ON DUPLICATE KEY UPDATE nombre=%s, telefono=%s, email=%s
         """, (cedula, cli['nom'], cli['correo'], cli['tel'], cli['nom'], cli['tel'], cli['correo']))
-        
-        fec_hora = f"{res['fec']} {res['hor']}:00"
-        
-        p_trans = 1 if res.get('metodo_pago') == 'transferencia' else 0
 
+        # Insertar Reserva (mesa_id queda NULL para asignación manual posterior)
+        p_trans = 1 if res_data.get('metodo_pago') == 'transferencia' else 0
         query_res = """
             INSERT INTO reserva (
-                cc_cliente, fechayhora_reserva, mesa_id, descripcion_mesa, 
+                cc_cliente, cantidad_personas, fechayhora_reserva, mesa_id, 
                 piso, tematica_id, estado, estado_pedido, subtotal, pago_transferencia
             ) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
+            VALUES (%s, %s, %s, NULL, %s, %s, '1', '1', 0, %s)
         """
-        
-        valores_res = (
-            cedula, 
-            fec_hora, 
-            1,                 
-            res.get('desc', ''), 
-            int(res['piso']), 
-            int(res['tematica']), 
-            '1',               
-            '1',                
-            0,                  
-            p_trans
-        )
+        valores_res = (cedula, int(res_data['personas']), fecha_hora_solicitada, 
+                       piso_solicitado, int(res_data['tematica']), p_trans)
         
         cursor.execute(query_res, valores_res)
         res_id = cursor.lastrowid
+
+        # Obtener nombre temática para el QR
+        cursor.execute("SELECT nombre_tematica FROM tematica WHERE tematica_id = %s", (int(res_data['tematica']),))
+        fila_t = cursor.fetchone()
+        nombre_t = fila_t[0] if fila_t else "General"
+
         conn.commit()
-        
-        #QR
+
+        # --- 4. GENERACIÓN DE RESPUESTA (QR) ---
         detalles_qr = (
-            f"--- TRES PASOS RESTAURANTE ---\n"
             f"RESERVA: #{res_id}\n"
             f"CLIENTE: {cli['nom']}\n"
-            f"DOCUMENTO: {cli['doc']}\n"
-            f"FECHA: {res['fec']}\n"
-            f"HORA: {res['hor']}\n"
-            f"PISO: {res['piso']}\n"
-            f"TEMATICA: {res['tematica']}\n"
-            f"METODO PAGO: {res.get('metodo_pago', 'Efectivo').upper()}\n"
-            f"MESA: {res.get('desc', 'Ninguna')}\n"
-            f"------------------------------"
+            f"PERSONAS: {res_data['personas']}\n"
+            f"PISO: {piso_solicitado}\n"
+            f"HORA: {fecha_hora_solicitada}\n"
+            f"TEMATICA: {nombre_t}\n"
+            f"ESTADO: PENDIENTE ASIGNAR MESA"
         )
-
+        
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()
         qr.save(buf, format="PNG")
         
-        enviar_mail_reserva(cli, res, buf)
-        
-        enviar_mail_reserva(cli, res, buf)
+        enviar_mail_reserva(cli, res_data, buf) # Tu función de correo
 
         return jsonify({
             "status": "success", 
@@ -120,10 +165,11 @@ def crear_reserva():
         })
 
     except Exception as e:
-        print(f"DEBUG ERROR: {e}")
+        if conn: conn.rollback()
         return jsonify({"status": "error", "msg": str(e)}), 500
     finally:
-        conn.close()
+        if conn: conn.close()
+            
 
 if __name__ == '__main__':
     app.run(debug=True, port=5005)
