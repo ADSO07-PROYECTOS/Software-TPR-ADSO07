@@ -48,23 +48,6 @@ def ver_platos(id_categoria):
 
     return render_template('client/ver_platos.html', lista_platos=mis_platos)
 
-#-- Detalle Plato -- 
-@app.route('/detalle/<int:id_plato>')
-def detalle_plato(id_plato):
-    info_plato = {}
-    try:
-        url_microservicio = f'http://localhost:5001/api/plato/{id_plato}'
-        respuesta = requests.get(url_microservicio, timeout=10)
-        
-        if respuesta.status_code == 200:
-            info_plato = respuesta.json()
-        else:
-            print("Error: Plato no encontrado en microservicio")
-
-    except Exception as e:
-        print(f"Error conectando microservicio: {e}")
-
-    return render_template('client/detalle_plato.html', plato=info_plato)
 
 
 @app.route('/detalle/<int:id_plato>')
