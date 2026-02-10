@@ -87,8 +87,9 @@ def crear_reserva():
 
         query_res = """
             INSERT INTO reserva (
-                cc_cliente, fechayhora_reserva, mesa_id, descripcion_mesa, 
-                piso, tematica_id, estado, estado_pedido, subtotal, pago_transferencia
+                cc_cliente, fechayhora_reserva, mesa_id, 
+                piso, tematica_id, estado, estado_pedido, subtotal, pago_transferencia,
+                cantidad_personas
             ) 
             VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
         """
@@ -97,13 +98,13 @@ def crear_reserva():
             cedula, 
             fec_hora, 
             1,  # ID de mesa por defecto               
-            res.get('desc', 'Sin observaciones'), 
             int(res['piso']), 
             int(res['tematica']), 
             '1', # Estado activo              
             '1', # Estado pedido               
             0,   # Subtotal inicial               
-            p_trans
+            p_trans,
+            int(res.get('personas', 1)) 
         )
         
         cursor.execute(query_res, valores_res)
