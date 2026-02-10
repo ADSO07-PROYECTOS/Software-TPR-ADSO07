@@ -98,6 +98,41 @@ def ver_detalle_plato(id_plato):
         print(f"Error buscando plato: {e}")
         return jsonify({"error": str(e)}), 500
 
+        # ... importaciones y rutas anteriores ...
+
+@app.route('/api/extras', methods=['GET'])
+def obtener_extras_configuracion():
+    datos = {
+        "tamanos": [],
+        "adiciones": [],
+        "sabores": []
+    }
+    try:
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor(dictionary=True)
+            
+            # 1. Obtener Tamaños
+            cursor.execute("SELECT * FROM tamanos_pizza ORDER BY precio ASC")
+            datos["tamanos"] = cursor.fetchall()
+
+            # 2. Obtener Adiciones
+            cursor.execute("SELECT * FROM adiciones")
+            datos["adiciones"] = cursor.fetchall()
+
+            # 3. Obtener Sabores
+            cursor.execute("SELECT * FROM sabores")
+            datos["sabores"] = cursor.fetchall()
+            
+            cursor.close()
+            conn.close()
+            
+        return jsonify(datos)
+
+    except Exception as e:
+        print(f"Error obteniendo extras: {e}")
+        return jsonify({"error": str(e)}), 500
+
 
 
 

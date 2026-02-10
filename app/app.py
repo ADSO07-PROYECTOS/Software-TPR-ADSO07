@@ -66,6 +66,38 @@ def detalle_plato(id_plato):
 
     return render_template('client/detalle_plato.html', plato=info_plato)
 
+
+@app.route('/detalle/<int:id_plato>')
+def detalle_plato(id_plato):
+    info_plato = {}
+    datos_extras = {"tamanos": [], "adiciones": [], "sabores": []} # Valores por defecto
+
+    try:
+        # 1. Pedir info del plato
+        url_plato = f'http://localhost:5001/api/plato/{id_plato}'
+        res_plato = requests.get(url_plato, timeout=5)
+        
+        if res_plato.status_code == 200:
+            info_plato = res_plato.json()
+
+        # 2. Pedir info de extras (Tamaños, adiciones, sabores)
+        url_extras = 'http://localhost:5001/api/extras'
+        res_extras = requests.get(url_extras, timeout=5)
+
+        if res_extras.status_code == 200:
+            datos_extras = res_extras.json()
+
+    except Exception as e:
+        print(f"Error conectando microservicios: {e}")
+
+    
+    return render_template('client/detalle_plato.html', 
+                           plato=info_plato,
+                           tamanos=datos_extras.get('tamanos', []),
+                           adiciones=datos_extras.get('adiciones', []),
+                           sabores=datos_extras.get('sabores', []))
+
+
 @app.route('/resumen_pedido')
 def resumen_pedido():
     return render_template('client/resumen_pedido.html')
