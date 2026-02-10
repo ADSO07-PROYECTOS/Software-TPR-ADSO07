@@ -113,7 +113,7 @@ function mostrarPasoDomicilio() {
 
 async function enviarFinal(tipo) {
     let payload = { cliente: datosUsuario.cliente };
-    let puerto = tipo === 'reserva' ? 5000 : 5001;
+    let puerto = tipo === 'reserva' ? 5005 : 5001;
     let endpoint = tipo === 'reserva' ? '/api/reservas' : '/api/domicilios';
 
     if (tipo === 'reserva') {
