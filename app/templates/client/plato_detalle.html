@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle del Producto</title>
+    <link rel="stylesheet" href="../static/css/pizzas.css"> </head>
+<body>
+    <main>
+        <header class="cont-superior">
+            <a href="javascript:history.back()" class="atras-btn">
+                <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+            
+        </header>
+        <h3>Menú</h3>
+
+        <section class="plato-detalle">
+            <h2 id="nombre-producto">Producto</h2>
+            <img src="../static/images/plato1.png" alt="" id="imagen-producto">
+
+            <div class="info-detalle">
+                <p id="descripcion-producto">Descripción del producto deliciosa.</p>
+            </div>
+
+            <div class="seleccion-tamano">
+                <button class="precio-btn" id="precio-unitario">$0</button>
+            </div>
+
+            <div class="division"><hr></div>
+
+            <section class="cont-adiciones">
+                <div class="adicion">
+                    <h2>¿DESEAS ADICIONAR ALGO?</h2>
+                    <p>Los adicionales aumentan el sabor de tu pedido</p>
+                </div>
+            </section>
+
+            <section class="adiciones-lista" id="lista-adicionales">
+                <div class="adicion-item">
+                    <label>Tocineta</label>
+                    <div class="contador">
+                        <button class="btn-menos"><svg width="5" height="7.5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
+                    </svg></button>
+                        <span class="cantidad">0</span>
+                        <button class="btn-mas">
+                            <svg width="5" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+                    </svg></button>
+                    </div>
+                    <div class="seleccionar-btn">$3000</div>
+                </div>
+                </section>
+        </section>
+    </main>
+
+    <footer class="cont-inferior">
+        <button class="cont_btn-menos">-</button>
+        <span class="cantidad-total">1</span>
+        <button class="cont_btn-mas"><svg width="5" height="9" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
+                    </svg></button>
+        <button class="añadir">Añadir</button>
+        <span class="precio-fn" id="total-final">$0</span>
+    </footer>
+
+    <script src="../static/js/producto-general.js"></script>
+</body>
+</html>

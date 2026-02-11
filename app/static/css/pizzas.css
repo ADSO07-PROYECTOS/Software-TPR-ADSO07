@@ -14,6 +14,30 @@ html, body {
     margin: 0;
     padding: 0;
 }
+.menu-desplegable {
+  display: none;
+}
+.menu-btn.activate{
+    opacity: 0;
+}
+.menu-desplegable.activo {
+    display: flex;
+    font-size: 24px;
+    backdrop-filter: blur(10px);
+    position: fixed;
+    flex-direction: column;
+    border-radius: 20px;
+    top:50px;
+    left: 70%;
+    transform: translateX(-50%);
+    justify-content: center;
+    z-index: 60;
+    gap: 40px;;
+    background-color: rgba(0, 0, 0, 0.7);
+    height: 30vh;
+    width: 30vh;
+    text-align: center;
+}
 
 main {
     min-height: 100vh; /* Ocupa toda la pantalla */
@@ -32,7 +56,6 @@ main {
     max-width: 600px;
     padding: 20px;
     background-color: rgba(127, 126, 129, 0.6);
-    backdrop-filter: blur(6px);
     border-radius: 20px;
     border: 1px solid #fff;
     text-align: center;
@@ -44,6 +67,10 @@ h3{
     color: var(--blanco);
     font-size: 40px;
    
+}
+a{
+    text-decoration: none;
+    ;
 }
 #adicion{
     text-align: center;
@@ -61,12 +88,14 @@ h3{
 .cont-superior{
     position: fixed;
     top: 0;
-    width: 100%;
-    max-width: 420px;
+    width: 95%;
+    max-width: 400px;
     display: flex;
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    z-index: 100;
+    backdrop-filter: blur(3px);
 }
 
 /* Imagen dentro de la pizza */
@@ -99,14 +128,12 @@ h3{
     border: none;
     padding: 8px 15px;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 20px;
     outline:none;
 }
 option{
     padding:10px;
     border:none;
-
-
 }
 
 .precio-btn {
@@ -115,7 +142,7 @@ option{
     border: none;
     padding: 8px 20px;
     border-radius: 10px;
-    font-size: 18px;
+    font-size: 20px;
     cursor: pointer;
 }
 
@@ -199,6 +226,7 @@ label {
     width: 16px;
     height: 16px;
     left: 125px;
+    align-items: center;
     top: 403px;
     border: 1px solid #99181F;
     border-radius: 20px;
@@ -207,9 +235,11 @@ label {
 .seleccionar-btn{
     width:80px;
     margin: 2px;
-    background: #99181F;
+    font-size:20px ;
+    /* background: #99181F; */
     border-radius: 20px;
-    border:none;
+    color:#99181F;
+    /* border:#99181F solid 1px; */
     padding: 4px;
 } 
 .lista-pizzas {
@@ -235,9 +265,10 @@ label {
 
 .precio {
     width: 80px;
-    background: #99181F;
+    background: #FFFFFF;
     margin:2px;
-    color: #FFFFFF;
+    font-size: 20px;
+    color: #99181F;
     border-radius: 20px;
     padding: 4px;
 }

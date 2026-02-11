@@ -9,11 +9,26 @@
     box-sizing: border-box;
     font-family: 'Bebas Neue', sans-serif;
 }
+a{
+        text-decoration: none;
+        
+    }
 
 body {
-    background: url('/app/static/img/fondo-madera.jpg');
+    background: url('../images/fondo.jpg');
     background-size: cover;
     
+}
+.barra-superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: space-between;
+    /*backdrop-filter: blur(10px);*/
+    z-index: 50;
 }
 #menu{ 
     text-align: center;
@@ -21,6 +36,30 @@ body {
     font-size: 40px;
     margin-top: 80px;
    
+}
+.menu-desplegable {
+  display: none;
+}
+.menu-btn.activate{
+    opacity: 0;
+}
+.menu-desplegable.activo {
+    display: flex;
+    font-size: 24px;
+    backdrop-filter: blur(10px);
+    position: fixed;
+    flex-direction: column;
+    border-radius: 20px;
+    top:50px;
+    left: 70%;
+    transform: translateX(-50%);
+    justify-content: center;
+    z-index: 60;
+    gap: 40px;;
+    background-color: rgba(0, 0, 0, 0.6);
+    height: 30vh;
+    width: 30vh;
+    text-align: center;
 }
 h3{ 
     text-align: center;
@@ -35,20 +74,21 @@ button {
     cursor: pointer;
 }
 
-.menu-cont {
+.menu-contenedor {
+    position: relative;
     width: 100%;
     max-width: 420px;
+    backdrop-filter: blur(11px);
+    margin: 20px auto;
     padding: 20px;
-    box-sizing: border-box;
-    /*transform: translateX(45%);*/
-    /*margin: 60px 0 60px 0;*/
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: rgb(82, 80, 85, 0.6);
-    backdrop-filter: blur(10px);
     border-radius: 20px;
+    padding-bottom: 130px;
+
 }
 
 /* Barra superior */
@@ -60,6 +100,8 @@ button {
     justify-content: space-between;
     align-items: center;
     padding: 10px;
+    backdrop-filter: blur(2px);
+    z-index:30;
 
 }
 
@@ -135,8 +177,8 @@ button {
     border-radius: 20px;
     font-size: 18px;
     letter-spacing: 1px;
-    transition: background 0.3s;
-}
+    cursor: pointer;
+    text-align: center;}
 
 .info .seleccionar-btn:hover {
     background-color: #b9232c;
@@ -144,19 +186,29 @@ button {
 
 /* Botón Reservar */
 .reservar-btn {
-    width: 60%;
-    display: flex;
+    width: 48%;
     position: fixed;
     bottom: 0;
-    transform: translateX(35%);
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;    
+    left:1%;
     padding: 10px;
-    font-size: 44px;
+    font-size: 30px;
     border: none;
     background-color: #99181F;
     color: white;
+    margin-bottom: 70px;
+    cursor: pointer;
+    border-radius: 30px;
+} 
+.domicilio-btn {
+    position: fixed;
+    width: 49%;
+    bottom: 0;
+    left: 50%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    background-color: #ffffff;
+    color: #99181F;
     margin-bottom: 70px;
     cursor: pointer;
     border-radius: 30px;

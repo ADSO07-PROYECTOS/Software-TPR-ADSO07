@@ -1,0 +1,53 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Bebas Neue', sans-serif;
+    color: white;
+}
+
+html, body {
+    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh; 
+    overflow-y: auto;  
+    overflow-x: hidden;
+}
+  /* Estilos específicos para esta página */
+        body { background-color: #1a1a1a; color: white; font-family: sans-serif; }
+        .contenedor-resumen {
+            max-width: 600px;
+            margin: 50px auto;
+            background: rgba(255, 255, 255, 0.1);
+            padding: 30px;
+            border-radius: 15px;
+            text-align: center;
+            border: 1px solid #99181F;
+        }
+        .info-pedido {
+            text-align: left;
+            background: rgb(129, 126, 126);
+            color: black;
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+        }
+        .info-pedido p { margin: 10px 0; border-bottom: 1px solid #eee; padding-bottom: 5px; }
+        .precio-final { font-size: 24px; color: #99181F; font-weight: bold; text-align: right; margin-top: 15px; }
+        .btn-reservar {
+            background-color: #99181F;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 18px;
+            border-radius: 8px;
+            cursor: pointer;
+            width: 100%;
+            margin-top: 10px;
+            text-decoration: none;
+            display: inline-block;
+        }
+        .btn-reservar:hover { background-color: #7a1319; }
+        .btn-volver { color: #ccc; margin-top: 15px; display: block; text-decoration: underline; }
