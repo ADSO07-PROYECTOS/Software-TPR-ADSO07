@@ -3,3 +3,4 @@ mysql-connector-python>=8.2.0
 Pillow
 qrcode
 requests
+Flask-Cors

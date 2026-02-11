@@ -2,17 +2,21 @@ from flask import Flask, render_template, jsonify
 from conexion import conectar 
 
 app = Flask(__name__)
+# Creacion de rutas
 
 @app.route('/api/categorias', methods=['GET'])
 def ver_menu():
+    #Array
     lista_categorias = []
+    #Metodo de conexion
     try:
         conn = conectar()
         if conn:
             cursor = conn.cursor(dictionary=True)
-
+            #Get base de datos
             cursor.execute("SELECT categoria_id, nombre_categoria, imagen FROM categoria")
             result = cursor.fetchall()
+            
             
             for row in result:
                 categoria = {
