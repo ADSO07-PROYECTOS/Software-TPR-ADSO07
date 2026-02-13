@@ -45,5 +45,4 @@ Este proyecto está siendo desarrollado por el siguiente equipo:
 Juan David Gonzalez Bedoya 
 Santiago Alexander Mejía Leyton 
 Juan Camilo Perez 
-Juan Felipe Silva 
 Monica Dueñas

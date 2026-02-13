@@ -233,3 +233,17 @@ button {
     border: none;
     cursor: pointer;
 }
+
+
+.plato-link {
+    text-decoration: none;
+    color: inherit;
+    display: block; /* Asegura que el enlace envuelva bien a la tarjeta */
+}
+
+/* Efecto opcional: aumenta ligeramente el tamaño al pasar el mouse */
+.plato-link:hover .plato {
+    transform: scale(1.02);
+    transition: transform 0.2s ease;
+    cursor: pointer;
+}
