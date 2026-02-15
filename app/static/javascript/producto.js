@@ -20,6 +20,7 @@ document.addEventListener('DOMContentLoaded', () => {
     function validarCombinaciones(event) {
         // Obtenemos el límite desde el atributo data-limite que pusimos con Jinja2
         const opcion = selectTamano.options[selectTamano.selectedIndex];
+        if (!opcion) return true; // Si no hay opción, no validar aún
         const limite = parseInt(opcion.getAttribute('data-limite'));
         const nombreTamano = opcion.value;
 

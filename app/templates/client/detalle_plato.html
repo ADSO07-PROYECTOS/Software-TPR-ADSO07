@@ -48,14 +48,17 @@
             </div>
             
             <div class="seleccion-tamano">
-                <select class="tamano-pizza">
-                    <option value="pequeña">Pequeña</option>
-                    <option value="mediana">Mediana</option>
-                    <option value="grande">Grande</option>
-                    <option value="extragande">Extragrande</option>
-                </select>
-                <button class="precio-btn">$ {{ plato.precio }}</button>
-            </div>
+            <select class="tamano-pizza" id="select-tamano">
+                {% for tam in tamanos %}
+                <option value="{{ tam.nombre }}" 
+                        data-precio="{{ tam.precio }}" 
+                        data-limite="{{ tam.limite_sabores }}">
+                    {{ tam.nombre }} - ${{ "{:,.0f}".format(tam.precio|float) }}
+                </option>
+                {% endfor %}
+            </select>
+            <button class="precio-btn">$ 0</button>
+        </div>
             
             <div class="division">
                 <hr>
@@ -68,83 +71,25 @@
                 </div>
             </section>
 
-            <section class="adiciones-lista">
-                <div class="adicion-item">
-                    <label for="adicion1">Extra Queso</label>
-                    <input type="hidden" id="adicion1">
-                    <div class="contador">
-                        <button class="btn-menos">
-                            <svg width="4" height="9" viewBox="0 0 8 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
-                            </svg>
-                        </button>
-                        <span class="cantidad">0</span>
-                        <button class="btn-mas">
-                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="seleccionar-btn">$8000</div>
+                    <section class="adiciones-lista">
+            {% for adicion in adiciones %}
+            <div class="adicion-item" data-precio="{{ adicion.precio }}">
+                <label>{{ adicion.nombre }}</label>
+                <div class="contador">
+                    <button class="btn-menos">
+                        <svg width="10" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H7L3.5 5L0 0Z" fill="black" fill-opacity="0.5"/></svg>
+                    </button>
+                    <span class="cantidad">0</span>
+                    <button class="btn-mas">
+                        <svg width="10" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H0V4H4V0H6V4H10V6H6V10H4V6Z" fill="#99181F"/></svg>
+                    </button>
                 </div>
-
-                <div class="adicion-item">
-                    <label for="adicion2">Piña</label>
-                    <input type="hidden" id="adicion2">
-                    <div class="contador">
-                        <button class="btn-menos">
-                            <svg width="4" height="9" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
-                            </svg>
-                        </button>
-                        <span class="cantidad">0</span>
-                        <button class="btn-mas">
-                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="seleccionar-btn">$8000</div>
-                </div>
-
-                <div class="adicion-item">
-                    <label for="adicion3">Champiñones</label>
-                    <input type="hidden" id="adicion3">
-                    <div class="contador">
-                        <button class="btn-menos">
-                            <svg width="4" height="9" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
-                            </svg>
-                        </button>
-                        <span class="cantidad">0</span>
-                        <button class="btn-mas">
-                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="seleccionar-btn">$8000</div>
-                </div>
-
-                <div class="adicion-item">
-                    <label for="adicion4">Pimientos</label>
-                    <input type="hidden" id="adicion4">
-                    <div class="contador">
-                        <button class="btn-menos">
-                            <svg width="4" height="9" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
-                            </svg>
-                        </button>
-                        <span class="cantidad">0</span>
-                        <button class="btn-mas">
-                            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
-                            </svg>
-                        </button>
-                    </div>
-                    <div class="seleccionar-btn">$8000</div>
-                </div>
-            </section>
+                <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
+            </div>
+            {% endfor %}
+        </section>
+                
+            
 
             <section class="combinar">
                 <div class="combinar-pizza">
@@ -152,24 +97,16 @@
                     <p>solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
                 </div>
                 <div class="lista-pizzas">
-                    <div class="pizza-item">
-                        <label>PIZZA PEPPERONI</label>
-                        <input type="checkbox" class="check">
-                        <div class="precio">$17500</div>
-                    </div>
-
-                    <div class="pizza-item">
-                        <label>PIZZA HAWAIANA</label>
-                        <input type="checkbox" class="check">
-                        <div class="precio">$8000</div>
-                    </div>
-
-                    <div class="pizza-item">
-                        <label>PIZZA POLLO</label>
-                        <input type="checkbox" class="check">
-                        <div class="precio">$8000</div>
-                    </div>
+                {% for sabor in sabores %}
+                <div class="pizza-item">
+                    <label>{{ sabor.nombre }}</label>
+                    <input type="checkbox" class="check" data-precio="{{ sabor.precio }}">
+                    <div class="precio">$ {{ "{:,.0f}".format(sabor.precio|float) }}</div>
                 </div>
+                {% endfor %}
+            </div>
+
+         
             </section>
     </main>
     
@@ -192,6 +129,8 @@
         
         <span class="precio-fn">$ {{ plato.precio }}</span>
     </footer>
+
+    
 
     <script src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
     {% else %}
