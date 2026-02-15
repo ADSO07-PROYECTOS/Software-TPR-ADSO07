@@ -16,6 +16,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let cantidadDePizzas = 1;
 
+    const seccionCombinar = document.querySelector('.combinar');
+
     // === 2. FUNCIÓN DE VALIDACIÓN (Lee límites de la BD) ===
     function validarCombinaciones(event) {
         // Obtenemos el límite desde el atributo data-limite que pusimos con Jinja2
@@ -118,6 +120,7 @@ document.addEventListener('DOMContentLoaded', () => {
     selectTamano.addEventListener('change', (e) => {
         // Reiniciar sabores al cambiar tamaño para evitar conflictos
         checkboxesSabores.forEach(c => {c.checked = false; c.disabled = false;});
+        gestionarVisibilidadCombinar();
         calcularTotal(e);
     });
     
@@ -168,6 +171,23 @@ document.addEventListener('DOMContentLoaded', () => {
         window.location.href = "/resumen_pedido"; 
     });
 
+    function gestionarVisibilidadCombinar() {
+        const opcion = selectTamano.options[selectTamano.selectedIndex];
+        if (!opcion) {
+            seccionCombinar.style.display = 'none';
+            return;
+        }
+        const limite = parseInt(opcion.getAttribute('data-limite'));
+        if (limite > 1) {
+            seccionCombinar.style.display = 'block';
+        } else {
+            seccionCombinar.style.display = 'none';
+            // Desmarcar sabores si se cambia a un tamaño que no permite combinar
+            checkboxesSabores.forEach(c => { c.checked = false; });
+        }
+    }
+
     // Inicializar
+    gestionarVisibilidadCombinar();
     calcularTotal();
 });

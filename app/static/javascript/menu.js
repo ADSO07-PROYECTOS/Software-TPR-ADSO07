@@ -1,6 +1,6 @@
 document.addEventListener('DOMContentLoaded', () => {
   const menuBtn = document.querySelector('.menu-btn');
-  const menu = document.querySelector('.menu-desplegable');
+  const menu = document.querySelector('.menu-desplegable-cont');
 
   if (!menuBtn || !menu) return;
 

@@ -53,7 +53,7 @@
                 <option value="{{ tam.nombre }}" 
                         data-precio="{{ tam.precio }}" 
                         data-limite="{{ tam.limite_sabores }}">
-                    {{ tam.nombre }} - ${{ "{:,.0f}".format(tam.precio|float) }}
+                    {{ tam.nombre }} 
                 </option>
                 {% endfor %}
             </select>
@@ -91,7 +91,7 @@
                 
             
 
-            <section class="combinar">
+            <section class="combinar" style="display: none;">
                 <div class="combinar-pizza">
                     <h2 id="adicion">¿DESEAS ADICIONAR OTRO SABOR A TU PIZZA?</h2>
                     <p>solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
@@ -132,6 +132,7 @@
 
     
 
+    <script src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
     <script src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
     {% else %}
     <main style="justify-content: center; text-align: center;">
