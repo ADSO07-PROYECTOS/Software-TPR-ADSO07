@@ -5,30 +5,21 @@ const componentes = {
         <header><h1>TUS DATOS</h1></header>
         <div class="grupo-entrada">
             <label>Nombre</label>
-            <input type="text" id="v_nom" maxlength="60" minlength="2" pattern="[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]{2, 60}" title="Por favor ingrese caracteres validos" tabindex="1" required>
+            <input type="text" id="v_nom">
         </div>
         <div class="grupo-entrada">
             <label>Correo Electrónico</label>
-            <input type="email" id="v_mail" inputmode="email" pattern="[a-z0-9._%+-]+@[a-z0-9.-]+\.[a-z]{2,4}$" tabindex="2" required>
+            <input type="email" id="v_mail">
         </div>
         <div class="grupo-entrada">
             <label>Identificación</label>
-            <input type="text" id="v_doc" inputmode="numeric" maxlength="10" minlength="7" pattern="[0-9]{7, 10}" tabindex="3" required>
-        </div>
+            <input type="text" id="v_doc"></div>
         <button onclick="irAPaso2()">CONTINUAR</button>
     `,
     paso2: `
         <header><h1>DATOS RESERVA</h1></header>
-        <div class="grupo-entrada">
-            <label>Fecha</label>
-            <input type="date" id="v_fec">
-        </div>
-        <div class="grupo-entrada">
-            <label>Hora</label>
-            <input type="time" id="v_hor">
-        </div>
-       
-
+        <div class="grupo-entrada"><label>Fecha</label><input type="date" id="v_fec"></div>
+        <div class="grupo-entrada"><label>Hora</label><input type="time" id="v_hor"></div>
         <button onclick="irAPaso3()">VER RESUMEN</button>
     `,
     paso3: `
@@ -57,12 +48,7 @@ function irAPaso2() {
 }
 
 function irAPaso3() {
-    const reserva = { 
-        fec: document.getElementById('v_fec').value, 
-        hor: document.getElementById('v_hor').value,
-        // cant: document.getElementById('v_cant').value,
-        // piso: document.getElementById('v_piso').value,
-    };
+    const reserva = { fec: document.getElementById('v_fec').value, hor: document.getElementById('v_hor').value };
     if(!reserva.fec || !reserva.hor) return alert("Completa fecha y hora");
     localStorage.setItem('temp_reserva', JSON.stringify(reserva));
     navegar('paso3');
@@ -73,7 +59,7 @@ function irAPaso3() {
 async function enviarBackend() {
     const body = { cliente: JSON.parse(localStorage.getItem('temp_cliente')), reserva: JSON.parse(localStorage.getItem('temp_reserva')) };
     try {
-        const res = await fetch('http://localhost:5000/api/reservas', {
+        const res = await fetch('http://localhost:5005/api/reservas', {
             method: 'POST',
             headers: {'Content-Type': 'application/json'},
             body: JSON.stringify(body)
