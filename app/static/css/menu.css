@@ -143,3 +143,34 @@ button {
     border: none;
     cursor: pointer;
 }
+
+/* Dropdown menu */
+.menu-desplegable-cont {
+    display: none; /* Oculto por defecto */
+    position: absolute;
+    top: 50px; /* Ajusta según sea necesario */
+    right: 10px; /* Ajusta según sea necesario */
+    background-color: rgba(40, 40, 40, 0.9);
+    backdrop-filter: blur(5px);
+    border-radius: 8px;
+    padding: 10px;
+    flex-direction: column;
+    gap: 10px;
+    z-index: 1000;
+}
+
+.menu-desplegable-cont.activo {
+    display: flex; /* Mostrar cuando tiene la clase 'activo' */
+}
+
+.menu-desplegable-cont a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 12px;
+    border-radius: 5px;
+    transition: background-color 0.2s;
+}
+
+.menu-desplegable-cont a:hover {
+    background-color: rgba(255, 255, 255, 0.2);
+}
