@@ -8,7 +8,7 @@ app = Flask(__name__)
 
 @app.route('/')
 def inicio():
-    return "El servidor principal funciona"
+    return render_template('client/inicio.html')
 
 # -- Ruta del microservicio de menu --
 
