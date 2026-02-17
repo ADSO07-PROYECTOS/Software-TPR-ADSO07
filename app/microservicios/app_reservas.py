@@ -14,116 +14,122 @@ CORS(app)
 MI_CORREO = "e5toesparapruebas12@gmail.com" 
 MI_PASSWORD = "nmus gbvy uxtl ycte"
 
-def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
+def enviar_mail_reserva(cli, res_data, qr_buf, res_id, nombre_t):
     msg = MIMEMultipart()
-    msg["From"] = MI_CORREO
-    msg["To"] = datos_cliente['correo']
-    msg["Subject"] = "Confirmación de Reserva - Tres Pasos"
+    msg["From"] = f"Restaurante Tres Pasos <{MI_CORREO}>"
+    msg["To"] = cli['correo']
+    msg["Subject"] = f"Confirmación de Reserva #{res_id}"
     
-    cuerpo = f"""
+    html = f"""
     <html>
         <body style="font-family: Arial; text-align: center;">
-            <h2 style="color: #99181F;">¡Reserva Confirmada!</h2>
-            <p>Hola <b>{datos_cliente['nom']}</b>, tu mesa ha sido reservada con éxito.</p>
-            <p><b>Fecha:</b> {datos_reserva['fec']} | <b>Hora:</b> {datos_reserva['hor']}</p>
-            <img src="cid:qr_img" style="width: 200px; border: 2px solid #99181F;">
-            <p>Por favor, presenta este QR al llegar al restaurante.</p>
+            <h2 style="color: #99181F;">¡RESERVA CONFIRMADA!</h2>
+            <p>Hola <b>{cli['nom']}</b>, tu mesa ha sido apartada.</p>
+            <p><b>Fecha:</b> {res_data['fec']} | <b>Bloque:</b> {res_data['hor_label']}</p>
+            <p><b>Temática:</b> {nombre_t} | <b>Piso:</b> {res_data['piso']}</p>
+            <img src="cid:qr_img" style="width: 200px;">
         </body>
     </html>
     """
-    msg.attach(MIMEText(cuerpo, "html"))
+    msg.attach(MIMEText(html, "html"))
     qr_buf.seek(0)
     img = MIMEImage(qr_buf.read())
     img.add_header('Content-ID', '<qr_img>')
     msg.attach(img)
+
     try:
         context = ssl.create_default_context()
         with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
             server.login(MI_CORREO, MI_PASSWORD)
-            server.sendmail(MI_CORREO, datos_cliente['correo'], msg.as_string())
-    except Exception as e: print(f"Error mail: {e}")
+            server.sendmail(MI_CORREO, cli['correo'], msg.as_string())
+    except Exception as e: print(f"Error Mail: {e}")
+
+@app.route('/api/tematicas', methods=['GET'])
+def obtener_tematicas():
+    conn = conectar()
+    if not conn: return jsonify([])
+    cursor = conn.cursor(dictionary=True)
+    try:
+        cursor.execute("SELECT tematica_id, nombre_tematica, valor_tematica FROM tematicas")
+        return jsonify(cursor.fetchall())
+    except: return jsonify([])
+    finally: conn.close()
 
 @app.route('/api/reservas', methods=['POST'])
 def crear_reserva():
     datos = request.json
     cli = datos.get('cliente')
-    res = datos.get('reserva')
+    res_data = datos.get('reserva')
+    pedido = datos.get('pedido', [])
     
     conn = conectar()
-    if not conn: return jsonify({"status": "error", "msg": "Sin conexión a DB"}), 500
-    
     cursor = conn.cursor()
     try:
-        cedula = int(cli['doc'])
+        fecha_hora_sql = f"{res_data['fec']} {res_data['hor']}:00"
+        cursor.execute("""
+            SELECT reserva_id FROM reservas 
+            WHERE fecha_hora = %s AND mesa_id = 4 AND estado != 'Cancelada'
+        """, (fecha_hora_sql,))
+        
+        if cursor.fetchone():
+            return jsonify({"status": "error", "msg": "Este horario ya está ocupado."}), 400
+
         cursor.execute("""
             INSERT INTO clientes (cc_cliente, nombre, email, telefono) 
-            VALUES (%s, %s, %s, %s) 
-            ON DUPLICATE KEY UPDATE nombre=%s, telefono=%s, email=%s
-        """, (cedula, cli['nom'], cli['correo'], cli['tel'], cli['nom'], cli['tel'], cli['correo']))
-        
-        fec_hora = f"{res['fec']} {res['hor']}:00"
-        
-        p_trans = 1 if res.get('metodo_pago') == 'transferencia' else 0
+            VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE nombre=%s
+        """, (cli['doc'], cli['nom'], cli['correo'], cli['tel'], cli['nom']))
+        cursor.execute("SELECT cliente_id FROM clientes WHERE cc_cliente = %s", (cli['doc'],))
+        cliente_id = cursor.fetchone()[0]
 
-        query_res = """
-            INSERT INTO reserva (
-                cc_cliente, fechayhora_reserva, mesa_id, descripcion_mesa, 
-                piso, tematica_id, estado, estado_pedido, subtotal, pago_transferencia
-            ) 
-            VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s)
-        """
-        
-        valores_res = (
-            cedula, 
-            fec_hora, 
-            1,                 
-            res.get('desc', ''), 
-            int(res['piso']), 
-            int(res['tematica']), 
-            '1',               
-            '1',                
-            0,                  
-            p_trans
-        )
-        
-        cursor.execute(query_res, valores_res)
+        cursor.execute("""
+            INSERT INTO reservas (cliente_id, mesa_id, tematica_id, fecha_hora, estado) 
+            VALUES (%s, 4, %s, %s, 'Confirmada')
+        """, (cliente_id, int(res_data['tematica']), fecha_hora_sql))
         res_id = cursor.lastrowid
+
+        for item in pedido:
+            cursor.execute("""
+                INSERT INTO detalles_reservas (reserva_id, producto_id, cantidad, valor_unitario)
+                VALUES (%s, %s, %s, %s)
+            """, (res_id, item['id'], item['cantidad'], item['precio']))
+
+        cursor.execute("SELECT nombre_tematica FROM tematicas WHERE tematica_id = %s", (int(res_data['tematica']),))
+        fila_t = cursor.fetchone()
+        nombre_t = fila_t[0] if fila_t else "General"
+        
         conn.commit()
-        
-        #QR
+
         detalles_qr = (
-            f"--- TRES PASOS RESTAURANTE ---\n"
-            f"RESERVA: #{res_id}\n"
-            f"CLIENTE: {cli['nom']}\n"
-            f"DOCUMENTO: {cli['doc']}\n"
-            f"FECHA: {res['fec']}\n"
-            f"HORA: {res['hor']}\n"
-            f"PISO: {res['piso']}\n"
-            f"TEMATICA: {res['tematica']}\n"
-            f"METODO PAGO: {res.get('metodo_pago', 'Efectivo').upper()}\n"
-            f"MESA: {res.get('desc', 'Ninguna')}\n"
-            f"------------------------------"
+            f"--- TRES PASOS RESERVA ---\n"
+            f"CLIENTE: {cli['nom'].upper()}\n"
+            f"BLOQUE: {res_data['hor_label']}\n"
+            f"FECHA: {res_data['fec']}\n"
+            f"PERSONAS: {res_data['personas']}\n"
+            f"PISO: {res_data['piso']}\n"
+            f"TEMATICA: {nombre_t}\n"
+            f"--------------------------"
         )
+        qr = qrcode.QRCode(
+        version=1,
+        error_correction=qrcode.constants.ERROR_CORRECT_L,
+        box_size=10,
+        border=4,
+    )
 
-        qr = qrcode.make(detalles_qr)
+        qr.add_data(detalles_qr.encode('utf-8')) 
+        qr.make(fit=True)
+
+        img = qr.make_image(fill_color="black", back_color="white")
         buf = io.BytesIO()
-        qr.save(buf, format="PNG")
+        img.save(buf, format="PNG")
         
-        enviar_mail_reserva(cli, res, buf)
-        
-        enviar_mail_reserva(cli, res, buf)
-
-        return jsonify({
-            "status": "success", 
-            "qr": base64.b64encode(buf.getvalue()).decode(), 
-            "id": res_id
-        })
+        enviar_mail_reserva(cli, res_data, buf, res_id, nombre_t)
+        return jsonify({"status": "success", "id": res_id, "qr": base64.b64encode(buf.getvalue()).decode()})
 
     except Exception as e:
-        print(f"DEBUG ERROR: {e}")
+        conn.rollback()
         return jsonify({"status": "error", "msg": str(e)}), 500
-    finally:
-        conn.close()
+    finally: conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+    app.run(debug=True, port=5003)
