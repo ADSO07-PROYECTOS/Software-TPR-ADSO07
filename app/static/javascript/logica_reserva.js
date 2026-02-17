@@ -1,78 +1,166 @@
 const pantalla = document.getElementById('pantalla-dinamica');
+let datosUsuario = { cliente: {}, tipo: '', pedido: [] };
 
-const componentes = {
-    paso1: `
-        <header><h1>TUS DATOS</h1></header>
-        <div class="grupo-entrada">
-            <label>Nombre</label>
-            <input type="text" id="v_nom">
-        </div>
-        <div class="grupo-entrada">
-            <label>Correo Electrónico</label>
-            <input type="email" id="v_mail">
-        </div>
-        <div class="grupo-entrada">
-            <label>Identificación</label>
-            <input type="text" id="v_doc"></div>
-        <button onclick="irAPaso2()">CONTINUAR</button>
-    `,
-    paso2: `
-        <header><h1>DATOS RESERVA</h1></header>
-        <div class="grupo-entrada"><label>Fecha</label><input type="date" id="v_fec"></div>
-        <div class="grupo-entrada"><label>Hora</label><input type="time" id="v_hor"></div>
-        <button onclick="irAPaso3()">VER RESUMEN</button>
-    `,
-    paso3: `
-        <header><h1>CONFIRMAR</h1></header>
-        <div class="resumen-caja" id="caja-resumen"></div>
-        <button onclick="enviarBackend()">CONFIRMAR Y RECIBIR CORREO</button>
-    `,
-    final: `
-        <header><h1>TU CÓDIGO QR</h1></header>
-        <img id="qr-resultado">
-        <button id="btn-descarga">GUARDAR QR</button>
-    `
-};
+function render(templateId) {
+    const tpl = document.getElementById(templateId);
+    const clon = tpl.content.cloneNode(true);
+    pantalla.innerHTML = ''; 
+    pantalla.appendChild(clon);
+}
 
-function navegar(vista) { pantalla.innerHTML = componentes[vista]; }
+function mostrarInicio() {
+    datosUsuario = { cliente: {}, tipo: '', pedido: [] };
+    render('tpl-inicio');
+}
 
-function irAPaso2() {
-    const cliente = { 
-        nom: document.getElementById('v_nom').value, 
-        correo: document.getElementById('v_mail').value,
-        doc: document.getElementById('v_doc').value 
+function seleccionarServicio(tipo) {
+    datosUsuario.tipo = tipo;
+    mostrarPaso1();
+}
+
+function mostrarPaso1() {
+    render('tpl-paso1');
+    const form = document.getElementById('form-paso1');
+    
+    if(datosUsuario.cliente.nom) {
+        form.nom.value = datosUsuario.cliente.nom;
+        form.doc.value = datosUsuario.cliente.doc;
+        form.correo.value = datosUsuario.cliente.correo;
+        form.tel.value = datosUsuario.cliente.tel;
+    }
+
+    form.onsubmit = (e) => {
+        e.preventDefault();
+        datosUsuario.cliente = Object.fromEntries(new FormData(form));
+        if (datosUsuario.tipo === 'reserva') {
+            mostrarDetalles();
+        } else {
+            mostrarPaso2();
+        }
     };
-    if(!cliente.nom || !cliente.correo.includes('@')) return alert("Ingresa un correo válido");
-    localStorage.setItem('temp_cliente', JSON.stringify(cliente));
-    navegar('paso2');
 }
 
-function irAPaso3() {
-    const reserva = { fec: document.getElementById('v_fec').value, hor: document.getElementById('v_hor').value };
-    if(!reserva.fec || !reserva.hor) return alert("Completa fecha y hora");
-    localStorage.setItem('temp_reserva', JSON.stringify(reserva));
-    navegar('paso3');
-    const cli = JSON.parse(localStorage.getItem('temp_cliente'));
-    document.getElementById('caja-resumen').innerHTML = `<p><b>Para:</b> ${cli.nom}</p><p><b>Día:</b> ${reserva.fec} - ${reserva.hor}</p>`;
+function mostrarDetalles() {
+    render('tpl-detalles');
+    const contenedor = document.getElementById('contenedor-platos');
+    
+    const platos = [
+        { id: 13, nombre: 'Pizza Mediana', precio: 32000 },
+        { id: 14, nombre: 'Pizza Extragrande', precio: 58000 }
+    ];
+
+    platos.forEach(plato => {
+        const div = document.createElement('div');
+        div.className = 'tarjeta-plato';
+        if (datosUsuario.pedido.some(p => p.id === plato.id)) div.classList.add('seleccionado');
+
+        div.innerHTML = `<h3>${plato.nombre}</h3><p>$${plato.precio}</p>`;
+        div.onclick = () => {
+            div.classList.toggle('seleccionado');
+            const idx = datosUsuario.pedido.findIndex(p => p.id === plato.id);
+            if (idx > -1) datosUsuario.pedido.splice(idx, 1);
+            else datosUsuario.pedido.push({ ...plato, cantidad: 1 });
+        };
+        contenedor.appendChild(div);
+    });
 }
 
-async function enviarBackend() {
-    const body = { cliente: JSON.parse(localStorage.getItem('temp_cliente')), reserva: JSON.parse(localStorage.getItem('temp_reserva')) };
+async function mostrarPaso2() {
+    render(datosUsuario.tipo === 'reserva' ? 'tpl-reserva' : 'tpl-domicilio');
+    
+    if (datosUsuario.tipo === 'reserva') {
+        document.getElementById('v_fec').min = new Date().toISOString().split('T')[0];
+        inyectarHoras();
+        await inyectarTematicas();
+    }
+
+    const formFinal = document.getElementById('form-final');
+    formFinal.onsubmit = (e) => {
+        e.preventDefault();
+        const datosForm = Object.fromEntries(new FormData(formFinal));
+        if (datosUsuario.tipo === 'reserva') {
+            const combo = document.getElementById('v_hor');
+            datosForm.hor_label = combo.options[combo.selectedIndex].text;
+        }
+        procesarFinal(datosForm);
+    };
+}
+
+
+function inyectarHoras() {
+    const select = document.getElementById('v_hor');
+    if (!select) return; 
+    const apertura = 17, cierre = 25, duracion = 90; 
+    let html = "";
+    
+    for (let min = apertura * 60; min + duracion <= cierre * 60; min += duracion) {
+        const h = Math.floor(min / 60) % 24;
+        const h_fin = Math.floor((min + duracion) / 60) % 24;
+        
+        const ampm = h >= 12 ? 'PM' : 'AM';
+        const h12 = h % 12 || 12;
+        
+        const label = `${h12}:00 ${ampm}`;
+        const valor24 = `${h.toString().padStart(2, '0')}:00`;
+        
+        html += `<option value="${valor24}">${label}</option>`;
+    }
+    select.innerHTML = html;
+}
+
+async function inyectarTematicas() {
+    const select = document.getElementById('v_tematica');
+    if (!select) return;
+
     try {
-        const res = await fetch('http://localhost:5005/api/reservas', {
+        const res = await fetch('http://localhost:5004/api/tematicas');
+        const data = await res.json();
+        
+        if (data.length > 0) {
+            select.innerHTML = data.map(t => 
+                `<option value="${t.tematica_id}">${t.nombre_tematica} (+$${t.valor_tematica})</option>`
+            ).join('');
+        } else {
+            throw new Error("Sin datos");
+        }
+    } catch (e) {
+        select.innerHTML = `
+            <option value="6">Ninguna</option>
+            <option value="4">Cumpleaños</option>
+            <option value="5">Aniversario</option>
+        `;
+    }
+}
+async function procesarFinal(datosForm) {
+    const btn = document.getElementById('btn-submit');
+    btn.disabled = true;
+    btn.innerText = "PROCESANDO...";
+
+    const payload = { 
+        cliente: datosUsuario.cliente, 
+        tipo: datosUsuario.tipo,
+        pedido: datosUsuario.pedido,
+        reserva: datosUsuario.tipo === 'reserva' ? datosForm : null,
+        direccion: datosUsuario.tipo === 'domicilio' ? datosForm.direccion : null
+    };
+
+    try {
+        const port = datosUsuario.tipo === 'reserva' ? '5004' : '5001';
+        const res = await fetch(`http://localhost:${port}/api/${datosUsuario.tipo}s`, {
             method: 'POST',
-            headers: {'Content-Type': 'application/json'},
-            body: JSON.stringify(body)
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify(payload)
         });
         const data = await res.json();
-        navegar('final');
-        const img = document.getElementById('qr-resultado');
-        img.src = `data:image/png;base64,${data.qr}`;
-        document.getElementById('btn-descarga').onclick = () => {
-            const link = document.createElement('a');
-            link.href = img.src; link.download = "Mi_Reserva.png"; link.click();
-        };
-    } catch (e) { alert("Error al conectar con el servidor"); }
+        if (data.status === 'success') {
+            render('tpl-exito');
+            document.getElementById('qr-img').src = `data:image/png;base64,${data.qr}`;
+        } else { alert(data.msg); btn.disabled = false; }
+    } catch (e) { alert("Error de conexión"); btn.disabled = false; }
 }
 
-document.addEventListener('DOMContentLoaded', () => navegar('paso1'));
+
+
+mostrarInicio();
+
+document.addEventListener('DOMContentLoaded', mostrarInicio);
