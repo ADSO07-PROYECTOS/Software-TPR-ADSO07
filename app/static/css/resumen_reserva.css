@@ -9,7 +9,7 @@
 }
 
 html{
-    background: url('/app/static/img/fondo-madera.jpg') no-repeat center center fixed;
+    background: url('../img/registro/fondo-madera.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh; 
     overflow-y: auto;  
