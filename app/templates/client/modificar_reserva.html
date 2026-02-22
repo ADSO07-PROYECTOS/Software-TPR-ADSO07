@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="../static/css/modificar_reserva.css">
+    <title>Modificar Reserva</title>
+</head>
+<body>
+    <main class="fondo">
+        <section class="cont-superior">
+            <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+        </section>
+        <h3> MODIFICAR RESERVA</h3>
+        <svg width="33" height="29" viewBox="0 0 33 29" fill="none" xmlns="http://www.w3.org/2000/svg">
+        <path d="M12.375 19.9376C11.4125 19.9376 10.599 19.6456 9.93437 19.0615C9.26979 18.4775 8.9375 17.7626 8.9375 16.9167C8.9375 16.0709 9.26979 15.356 9.93437 14.772C10.599 14.1879 11.4125 13.8959 12.375 13.8959C13.3375 13.8959 14.151 14.1879 14.8156 14.772C15.4802 15.356 15.8125 16.0709 15.8125 16.9167C15.8125 17.7626 15.4802 18.4775 14.8156 19.0615C14.151 19.6456 13.3375 19.9376 12.375 19.9376ZM6.875 26.5834C6.11875 26.5834 5.47135 26.3468 4.93281 25.8735C4.39427 25.4003 4.125 24.8313 4.125 24.1667V7.25008C4.125 6.5855 4.39427 6.01657 4.93281 5.54331C5.47135 5.07005 6.11875 4.83341 6.875 4.83341H8.25V2.41675H11V4.83341H22V2.41675H24.75V4.83341H26.125C26.8813 4.83341 27.5286 5.07005 28.0672 5.54331C28.6057 6.01657 28.875 6.5855 28.875 7.25008V24.1667C28.875 24.8313 28.6057 25.4003 28.0672 25.8735C27.5286 26.3468 26.8813 26.5834 26.125 26.5834H6.875ZM6.875 24.1667H26.125V12.0834H6.875V24.1667Z" fill="#FFFFFF"/>
+        </svg>
+        <section class="cont-form">
+            <h3>DETALLES DE LA RESERVA</h3>
+            <form class="form">
+                <div class="division">
+                    <input type="text" placeholder="Nombre completo">
+                </div>
+                <div class="division">
+                     <input type="text" placeholder="Numero de identificación">
+                </div>
+                <div class="division">
+                    <input type="text" placeholder="Correo electrónico">
+                </div> 
+                <div class="division">                   
+                    <input type="text" placeholder="Número de teléfono">
+                </div>
+                <div class="calendario">
+                    <input type="datetime-local" placeholder="Fecha de la reserva"
+            >
+            
+                </div>
+                <section class="cont-secundario">
+                    
+                    <div class="division1">  
+
+                        <select type="text" placeholder="Temática">
+                            <option value="" disabled selected>Temática</option>
+                            <option value="cumpleaños">Cumpleaños</option>
+                            <option value="aniversario">Aniversario</option>
+                            <option value="negocios">Romántica</option>
+                        </select>
+                        
+                        <input type="number" placeholder="Número de personas">
+
+                        </div>
+                    
+                    <div class="division2">
+
+                        <button class="platos-btn" type="text">Platos seleccionados
+                        </button>
+                    
+                        <input type="text" placeholder="Descripción de la mesa">
+
+                    </div>
+                </section>
+          
+            </form>
+        </section>
+        <button class="guardar-btn">Actualizar reserva</button>
+
+    </main>
+</body>
+</html>

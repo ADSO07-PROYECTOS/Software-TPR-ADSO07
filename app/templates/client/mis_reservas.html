@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Mis Reservas</title>
+    <link rel="stylesheet" href="../static/css/mis_reservas.css">
+    <script src="../static/js/modal.js"></script>
+</head>
+<body>
+    <main id="padre_ppal">
+        <header id="barra_superior">
+            <a href="../templates/menu.html">
+                <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </a>
+
+        </header>
+            <h2 id="titulo">Mis Reservas</h2>
+            <section id="contenedor_reservas">
+                {% for reserva in reservas %}
+                    <div class="reserva">
+                        <h2>{{ reserva.nombre }}</h3>
+                        <p>Fecha: {{ reserva.fecha }}</p>
+                        <p>Hora: {{ reserva.hora }}</p>
+                        <p>Número de personas: {{ reserva.numero_personas }}</p>
+                        <h2>{{reserva.pedido}}</h2>
+                        <p></p>
+                        <h2 id="mi_qr">CODIGO QR RESERVA</h2>
+                        <img src="{{ url_for('static', filename='images/' + reserva.qr_code) }}" alt="Código QR de la reserva">
+                    </div>
+                
+            </section>
+            <div id="botones">
+                
+            <button class="editar-btn" onclick="abrirModal('EDITAR', '{{ reserva.id }}')">
+                <svg width="30" height="30" viewBox="0 0 28 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.8333 4.49977H4.66665C4.04781 4.49977 3.45432 4.73682 3.01673 5.15878C2.57915 5.58073 2.33331 6.15303 2.33331 6.74977V22.4998C2.33331 23.0965 2.57915 23.6688 3.01673 24.0908C3.45432 24.5127 4.04781 24.7498 4.66665 24.7498H21C21.6188 24.7498 22.2123 24.5127 22.6499 24.0908C23.0875 23.6688 23.3333 23.0965 23.3333 22.4998V14.6248M21.5833 2.81227C22.0474 2.36471 22.6769 2.11328 23.3333 2.11328C23.9897 2.11328 24.6192 2.36471 25.0833 2.81227C25.5474 3.25982 25.8082 3.86683 25.8082 4.49977C25.8082 5.1327 25.5474 5.73971 25.0833 6.18727L14 16.8748L9.33331 17.9998L10.5 13.4998L21.5833 2.81227Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+
+            </button>
+            <button class="eliminar-btn" onclick="abrirModal('ELIMINAR', '{{ reserva.id }}')">
+                <svg width="30" height="30" viewBox="0 0 38 42" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 9H5M5 9H37M5 9V37C5 38.0609 5.42143 39.0783 6.17157 39.8284C6.92172 40.5786 7.93913 41 9 41H29C30.0609 41 31.0783 40.5786 31.8284 39.8284C32.5786 39.0783 33 38.0609 33 37V9M11 9V5C11 3.93913 11.4214 2.92172 12.1716 2.17157C12.9217 1.42143 13.9391 1 15 1H23C24.0609 1 25.0783 1.42143 25.8284 2.17157C26.5786 2.92172 27 3.93913 27 5V9M15 19V31M23 19V31" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+               
+            </button>
+
+            </div>
+             {% endfor %}
+             <div id="cubrir_modal" class="oculto">
+                <div class="carta_modal">
+                    <h3 id="ttlo_modal">TÍTULO DINÁMICO</h3>
+                    <p id="descripcion_modal">Descripción de la acción...</p>
+                    <p class="pregunta_modal">¿DESEAS CONTINUAR?</p>
+                    
+                <div class="accion_modal">
+                    <button id="modal_confirmar" class="btn-modal btn-confirmar">
+                        <span class="icon">✓</span>
+                    </button>
+                    <button id="modal_eliminar" class="btn-modal btn-cerrar">
+                        <span class="icon">✕</span>
+                    </button>
+                    </div>
+                </div>
+            </div>
+            
+
+
+        
+
+        <footer class="menu_inferior">
+                <button class="nav-btn">
+                    <svg width="23" height="24" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M14 42V22H26V42M2 16L20 2L38 16V38C38 39.0609 37.5786 40.0783 36.8284 40.8284C36.0783 41.5786 35.0609 42 34 42H6C4.93913 42 3.92172 41.5786 3.17157 40.8284C2.42143 40.0783 2 39.0609 2 38V16Z" stroke="#99181F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="nav-btn">
+                    <svg width="29" height="27" viewBox="0 0 29 27" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M1 1H5.83333L9.07167 16.6217C9.18216 17.1588 9.48481 17.6413 9.92662 17.9847C10.3684 18.3281 10.9213 18.5105 11.4883 18.5H23.2333C23.8004 18.5105 24.3532 18.3281 24.795 17.9847C25.2369 17.6413 25.5395 17.1588 25.65 16.6217L27.5833 6.83333H7.04167M11.875 24.3333C11.875 24.9777 11.334 25.5 10.6667 25.5C9.99932 25.5 9.45833 24.9777 9.45833 24.3333C9.45833 23.689 9.99932 23.1667 10.6667 23.1667C11.334 23.1667 11.875 23.689 11.875 24.3333ZM25.1667 24.3333C25.1667 24.9777 24.6257 25.5 23.9583 25.5C23.291 25.5 22.75 24.9777 22.75 24.3333C22.75 23.689 23.291 23.1667 23.9583 23.1667C24.6257 23.1667 25.1667 23.689 25.1667 24.3333Z" stroke="#99181F" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                    </svg>
+                </button>
+                <button class="nav-btn">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24">
+                    <path fill="#921B1E" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM15.03 13.03l-1.41-1.41-4.24 4.25-2.12-2.12-1.41 1.41 3.53 3.54 5.65-5.67z"/>
+                    </svg>
+                </button>
+        </footer>
+    </main>
+
+    
+</body>
+</html>
