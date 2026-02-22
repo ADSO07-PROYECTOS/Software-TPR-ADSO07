@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Menú Restaurante</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='menu.css') }}">
+</head>
+<body>
+
+    <main id="fondo">
+        <section class="top-bar">
+            <button type="button" class="back-btn" aria-label="Volver">
+                <svg width="40" height="38" viewBox="0 0 40 38" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M20 12.6666L13.3333 19M13.3333 19L20 25.3333M13.3333 19H26.6667M36.6667 19C36.6667 27.7445 29.2048 34.8333 20 34.8333C10.7953 34.8333 3.33334 27.7445 3.33334 19C3.33334 10.2555 10.7953 3.16663 20 3.16663C29.2048 3.16663 36.6667 10.2555 36.6667 19Z" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        
+        
+            <button type="button" class="menu-btn" aria-label="Menú">
+                <svg width="27" height="24" viewBox="0 0 27 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M3.375 12H23.625M3.375 6H23.625M3.375 18H23.625" stroke="#F5F5F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+            </button>
+        </section>
+
+        <h3>MENÚ</h3>
+
+    
+        <section id="contenedor-categorias">
+
+        
+        <div class="categoria">
+            <img src="imagenes/plato1.png" alt="Pizzas">
+            <p>PIZZAS</p>
+        </div>
+
+        <div class="categoria">
+            <img src="imagenes/asados.jpg" alt="Asados">
+            <p>ASADOS</p>
+        </div>
+
+        <div class="categoria">
+            <img src="imagenes/hamburguesa.jpg" alt="Hamburguesas">
+            <p>HAMBURGUESAS</p>
+        </div>
+
+        <div class="categoria">
+            <img src="imagenes/picadas.jpg" alt="Picadas">
+            <p>PICADAS</p>
+        </div>
+
+        <div class="categoria">
+            <img src="imagenes/pancerrati.jpg" alt="Pancerotti">
+            <p>PANCEROTTI</p>
+        </div>
+
+        <div class="categoria">
+            <img src="imagenes/lasagna.jpg" alt="Lasagna">
+            <p>LASAGNA</p>
+        </div>
+        <div class="categoria">
+            <img src="imagenes/lasagna.jpg" alt="Lasagna">
+            <p>COMBOS</p>
+        </div>
+        <div class="categoria">
+            <img src="imagenes/lasagna.jpg" alt="Lasagna">
+            <p>ENTRADAS</p>
+        </div>
+        </section>
+
+        <button class="reservar-btn">RESERVAR</button>
+
+    </main>
+
+    <section class="bottom-nav">
+        <button class="nav-btn">🏠</button>
+        <button class="nav-btn">🛒</button>
+        <button class="nav-btn">noti</button>
+    </section>
+</body>
+</html>

@@ -1,0 +1,67 @@
+:root {
+    --rojo: #99181F;
+    --blanco: #fff;
+}
+
+*{
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    transition: all 0.7s;
+    font-family:"Bebas Neue", sans-serif;
+}
+
+::placeholder, :-moz-placeholder, ::-webkit-input-placeholder{
+    color: inherit;
+    
+}
+
+figure {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    margin: 0;
+    padding-top: 100px;
+}
+    figure img {
+    width: 40%;
+    margin:0;
+    padding: 0;
+    }
+
+section{
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    flex-direction: column;
+}
+main#fondo{
+    background: url('/static/imagenes/fondo.jpg');
+    min-height: 100vh;
+    background-size: cover;
+}
+#reserva{
+    width: 270px;
+    height: 60px;
+    margin-top: 70px;
+    font-size: 40px;
+    border: none;
+    border-radius: 30px;
+    background: var(--rojo);
+    color: var(--blanco);
+}
+    
+#domicilio{
+    width: 240px;
+    height:60px;
+    margin-top: 70px;
+    font-size: 40px;
+    border: none;
+    border-radius: 30px;
+    color: var(--rojo);
+    background: var(--blanco);
+}
+    
+
+
+
