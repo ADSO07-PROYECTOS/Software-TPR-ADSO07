@@ -12,14 +12,14 @@ document.addEventListener('DOMContentLoaded', () => {
                 `;
 
                 if (pedido.sabores && pedido.sabores.length > 0) {
-                    html += <p><strong>Sabores:</strong> ${pedido.sabores.join(', ')}</p>;
+                    html += `<p><strong>Sabores:</strong> ${pedido.sabores.join(', ')}</p>`;
                 }
 
                 if (pedido.adicionales && pedido.adicionales.length > 0) {
-                    html += <p><strong>Adicionales:</strong> ${pedido.adicionales.join(', ')}</p>;
+                    html += `<p><strong>Adicionales:</strong> ${pedido.adicionales.join(', ')}</p>`;
                 }
 
-                html += <div class="precio-final">Total: ${pedido.precio}</div>;
+                html += `<div class="precio-final">Total: ${pedido.precio}</div>`;
                 
                 detalleDiv.innerHTML = html;
             } else {

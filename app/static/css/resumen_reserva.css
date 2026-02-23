@@ -9,7 +9,7 @@
 }
 
 html{
-    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background: url('../img/registro/fondo.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh; 
     overflow-y: auto;  

@@ -89,6 +89,28 @@
         </section>
     </main>
 
+    <!-- 👇 AQUÍ va el script, justo antes de cerrar el body -->
+    <!-- <script>
+    function mostrarPaso(numeroPaso) {
+      // Ocultar todas las secciones
+      document.querySelectorAll('.cont_section').forEach(sec => sec.classList.remove('active'));
+
+      // Mostrar la sección según el número de paso
+      if (numeroPaso === 1) {
+        document.getElementById('infoPersonal').classList.add('active');
+      } else if (numeroPaso === 2) {
+        document.getElementById('detallesReserva').classList.add('active');
+      } else if (numeroPaso === 3) {
+        document.getElementById('resumenReserva').classList.add('active');
+      }
+
+      // Cambiar el ícono activo arriba
+      document.querySelectorAll('.icon_step').forEach((icon, index) => {
+        icon.classList.toggle('active', index + 1 === numeroPaso);
+      });
+    }
+  </script> -->
+
 </body>
 
 </html>
