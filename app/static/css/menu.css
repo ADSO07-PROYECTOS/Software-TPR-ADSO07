@@ -108,21 +108,34 @@ button {
 
 /* Botón Reservar */
 .reservar-btn {
-    width: 100%;
-    display: flex;
     position: fixed;
+    width: 48%;
     bottom: 0;
-    justify-content: center;
-    align-items: center;    
+    left: 1%;
     padding: 10px;
-    font-size: 44px;
+    font-size: 30px;
     border: none;
     background-color: #99181F;
-    color: white;
     margin-bottom: 60px;
     cursor: pointer;
     border-radius: 30px;
 }
+.domicilio-btn {
+    position: fixed;
+    width: 49%;
+    background-color: #f0f0f0;
+    bottom: 0;
+    left: 50%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    color: #99181F;
+    margin-bottom: 60px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+
 
 /* Menú Inferior */
 .bottom-nav {
@@ -174,3 +187,4 @@ button {
 .menu-desplegable-cont a:hover {
     background-color: rgba(255, 255, 255, 0.2);
 }
+

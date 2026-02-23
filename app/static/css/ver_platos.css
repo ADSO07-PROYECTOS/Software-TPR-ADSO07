@@ -9,23 +9,87 @@
     box-sizing: border-box;
     font-family: 'Bebas Neue', sans-serif;
 }
+a{
+        text-decoration: none;
+        
+    }
+
+/* Importamos la fuente */
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+/* Reinicio básico */
+* {
+    color: white;
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Bebas Neue', sans-serif;
+}
+a{
+        text-decoration: none;
+        
+    }
 
 body {
-    background: url('../img/fondo-madera.jpg');
+    background: url('../img/registro/fondo.jpg');
     background-size: cover;
     
 }
-#menu{ 
-    text-align: center;
-    color: var(--blanco);
-    font-size: 40px;
-    margin-top: 80px;
-   
+.barra-superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: space-between;
+    /*backdrop-filter: blur(10px);*/
+    z-index: 50;
 }
-h3{ 
+/* BOTÓN MENÚ */
+#menu_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.activo {
+    display: flex;
+}
+.oculto{
+    display: none;
+}
+
+#menu_desplegable{
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(13px);
+    backdrop-filter: blur(13px);
+    border-radius: 20px;
+    font-size: 24px;
+    padding: 20px;
+    top: 40px;
+    text-align: center;
+    z-index: 60;
+    flex-direction: column;
+    transform: translateZ(0);
+    right: 0;
+    margin-right:10px;
+}
+#menu_desplegable a{
+    text-decoration: none;
+    color: white;
+    padding: 10px 0;
+
+}
+#menu_desplegable a:not(:last-child) {
+    margin-bottom: 30px;
+}
+#tlo{ 
     text-align: center;
     color: var(--blanco);
     font-size: 40px;
+    margin-top: 100px;
    
 } 
 button {
@@ -35,33 +99,23 @@ button {
     cursor: pointer;
 }
 
-.menu-cont {
+.menu-contenedor {
+    position: relative;
     width: 100%;
     max-width: 420px;
+    backdrop-filter: blur(11px);
+    margin: 20px auto;
     padding: 20px;
-    box-sizing: border-box;
-    /*transform: translateX(45%);*/
-    /*margin: 60px 0 60px 0;*/
     display: flex;
     flex-direction: column;
     align-items: center;
     justify-content: center;
     background-color: rgb(82, 80, 85, 0.6);
-    backdrop-filter: blur(10px);
     border-radius: 20px;
-}
-
-/* Barra superior */
-.cont-superior{
-    position: fixed;
-    top: 0;
-    width: 100%;
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    padding: 10px;
+    padding-bottom: 130px;
 
 }
+
 
 /* Botones superiores */
 .atras-btn, .menu-btn {
@@ -135,8 +189,8 @@ button {
     border-radius: 20px;
     font-size: 18px;
     letter-spacing: 1px;
-    transition: background 0.3s;
-}
+    cursor: pointer;
+    text-align: center;}
 
 .info .seleccionar-btn:hover {
     background-color: #b9232c;
@@ -144,19 +198,239 @@ button {
 
 /* Botón Reservar */
 .reservar-btn {
-    width: 60%;
-    display: flex;
+    width: 48%;
     position: fixed;
     bottom: 0;
-    transform: translateX(35%);
-    box-sizing: border-box;
-    justify-content: center;
-    align-items: center;    
+    left:1%;
     padding: 10px;
-    font-size: 44px;
+    font-size: 30px;
     border: none;
     background-color: #99181F;
     color: white;
+    margin-bottom: 70px;
+    cursor: pointer;
+    border-radius: 30px;
+} 
+.domicilio-btn {
+    position: fixed;
+    width: 49%;
+    bottom: 0;
+    left: 50%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    background-color: #ffffff;
+    color: #99181F;
+    margin-bottom: 70px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+/* Menú Inferior */
+.cont-inferior {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 11px;
+    border:0;
+    background: rgb(255, 255, 255);
+    
+}
+
+.nav-btn {
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+.barra-superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: space-between;
+    /*backdrop-filter: blur(10px);*/
+    z-index: 50;
+}
+/* BOTÓN MENÚ */
+#menu_btn {
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+
+.activo {
+    display: flex;
+}
+.oculto{
+    display: none;
+}
+
+#menu_desplegable{
+    position: absolute;
+    background: rgba(0, 0, 0, 0.6);
+    -webkit-backdrop-filter: blur(13px);
+    backdrop-filter: blur(13px);
+    border-radius: 20px;
+    font-size: 24px;
+    padding: 20px;
+    top: 40px;
+    text-align: center;
+    z-index: 60;
+    flex-direction: column;
+    transform: translateZ(0);
+    right: 0;
+    margin-right:10px;
+}
+#menu_desplegable a{
+    text-decoration: none;
+    color: white;
+    padding: 10px 0;
+
+}
+#menu_desplegable a:not(:last-child) {
+    margin-bottom: 30px;
+}
+#tlo{ 
+    text-align: center;
+    color: var(--blanco);
+    font-size: 40px;
+    margin-top: 100px;
+   
+} 
+button {
+    font-family: 'Bebas Neue', sans-serif;
+    border: none;
+    background: none;
+    cursor: pointer;
+}
+
+.menu-contenedor {
+    position: relative;
+    width: 100%;
+    max-width: 420px;
+    backdrop-filter: blur(11px);
+    margin: 20px auto;
+    padding: 20px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    background-color: rgb(82, 80, 85, 0.6);
+    border-radius: 20px;
+    padding-bottom: 130px;
+
+}
+
+
+/* Botones superiores */
+.atras-btn, .menu-btn {
+    background: none;
+    border: none;
+    font-size: 26px;
+    cursor: pointer;
+    padding: 5px;
+}
+
+/* Platos*/
+
+.plato-cont {
+    margin: 10px 0;
+    display: flex;
+    flex-direction: row;
+    width: 100%;
+    border-radius: 15px;
+    background: rgba(255, 255, 255, 0.2);
+    cursor: pointer;
+    border: none;
+    transition: transform 0.2s;
+    padding: 10px;
+}
+
+.plato-cont:hover {
+    transform: scale(1.03);
+}
+
+/* Imagen pequeña a la izquierda */
+.plato-cont img {
+    display: flex;
+    align-items: left;
+    justify-content: center;
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 6px;
+}
+
+/* Contenedor del texto */
+.info {
+    margin: 0 0 0 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
+}
+
+/* Título y descripción */
+.info h3 {
+    font-size: 26px;
+    margin: 0;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.info p {
+    font-size: 16px;
+    color: #f1f1f1;
+    margin: 8px 0 15px 0;
+    line-height: 1.2;
+}
+
+/* Botón Seleccionar */
+.info .seleccionar-btn {
+    background-color: #99181F;
+    color: white;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 20px;
+    font-size: 18px;
+    letter-spacing: 1px;
+    cursor: pointer;
+    text-align: center;}
+
+.info .seleccionar-btn:hover {
+    background-color: #b9232c;
+}
+
+/* Botón Reservar */
+.reservar-btn {
+    width: 48%;
+    position: fixed;
+    bottom: 0;
+    left:1%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    background-color: #99181F;
+    color: white;
+    margin-bottom: 70px;
+    cursor: pointer;
+    border-radius: 30px;
+} 
+.domicilio-btn {
+    position: fixed;
+    width: 49%;
+    bottom: 0;
+    left: 50%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    background-color: #ffffff;
+    color: #99181F;
     margin-bottom: 70px;
     cursor: pointer;
     border-radius: 30px;
@@ -182,16 +456,59 @@ button {
     cursor: pointer;
 }
 
-
-.plato-link {
-    text-decoration: none;
-    color: inherit;
-    display: block; /* Asegura que el enlace envuelva bien a la tarjeta */
+/* Aseguramos que la información se apile verticalmente */
+.info {
+    margin: 0 0 0 15px;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    flex: 1;
 }
 
-/* Efecto opcional: aumenta ligeramente el tamaño al pasar el mouse */
-.plato-link:hover .plato {
-    transform: scale(1.02);
-    transition: transform 0.2s ease;
+/* Título y descripción */
+.info h3 {
+    font-size: 26px;
+    margin: 0;
+    color: #fff;
+    letter-spacing: 1px;
+}
+
+.info p {
+    font-size: 16px;
+    color: #f1f1f1;
+    margin: 8px 0 10px 0;
+    line-height: 1.2;
+}
+
+/* NUEVO: Estilo del precio ubicado arriba del botón */
+.precio-plato {
+    color: white;
+    font-size: 22px;
+    margin-bottom: 12px; /* Espacio para separar el precio del botón */
+    font-weight: bold;
+}
+
+/* NUEVO: Botón Seleccionar con efecto base */
+.info .seleccionar-btn {
+    background-color: #99181F;
+    color: white;
+    border: none;
+    padding: 8px 25px;
+    border-radius: 20px;
+    font-size: 18px;
+    letter-spacing: 1px;
     cursor: pointer;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    width: max-content; /* Evita que el botón se estire a todo el ancho */
+    transition: all 0.3s ease; /* Esta línea es la magia que hace que la iluminación sea suave */
+}
+
+/* NUEVO: El efecto de iluminación (Glow) al pasar el mouse */
+.info .seleccionar-btn:hover {
+    background-color: #b9232c; /* Un rojo un poco más claro */
+    /* Aquí creamos el efecto de luz difuminada alrededor del botón */
+    box-shadow: 0 0 15px 5px rgba(153, 24, 31, 0.6); 
+    transform: scale(1.05); /* Hace que el botón crezca un poquito, haciéndolo muy interactivo */
 }
