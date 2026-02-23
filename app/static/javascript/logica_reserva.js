@@ -113,12 +113,12 @@ async function inyectarTematicas() {
     if (!select) return;
 
     try {
-        const res = await fetch('http://localhost:5004/api/tematicas');
+        const res = await fetch('http://localhost:5005/api/tematicas');
         const data = await res.json();
         
         if (data.length > 0) {
             select.innerHTML = data.map(t => 
-                `<option value="${t.tematica_id}">${t.nombre_tematica} (+$${t.valor_tematica})</option>`
+                `<option value="${t.id}">${t.nombre} (+$${t.precio})</option>`
             ).join('');
         } else {
             throw new Error("Sin datos");
@@ -145,7 +145,7 @@ async function procesarFinal(datosForm) {
     };
 
     try {
-        const port = datosUsuario.tipo === 'reserva' ? '5004' : '5001';
+        const port = datosUsuario.tipo === 'reserva' ? '5005' : '5001';
         const res = await fetch(`http://localhost:${port}/api/${datosUsuario.tipo}s`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
