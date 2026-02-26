@@ -141,7 +141,7 @@ def crear_reserva():
             conn.commit()
     
             # --- 4. GENERACIÓN DE RESPUESTA (QR) ---
-            ip_servidor = "http://10.6.126.94:5005"
+            ip_servidor = "http://147.182.238.195:5005"
             url_reserva = f"{ip_servidor}/reserva/{res_id}"
             
             qr = qrcode.make(url_reserva)
