@@ -126,6 +126,22 @@ def hacer_reserva():
     # Si es GET, simplemente muestra el formulario
     return render_template('client/reserva_base.html')
 
+@app.route('/reserva/<int:id_reserva>')
+def ver_reserva(id_reserva):
+    try:
+        url_microservicio = f'http://localhost:5005/reserva/{id_reserva}'
+        respuesta = requests.get(url_microservicio, timeout=10)
+        respuesta.raise_for_status()
+        
+        datos_reserva = respuesta.json()
+        print(f"Datos de reserva recibidos: {datos_reserva}")
+
+    except requests.exceptions.RequestException as e:
+        print(f"Error de conexión con microservicio de reserva: {e}")
+        datos_reserva = {"status": "error", "msg": "Error al obtener los datos de la reserva"}
+
+    return render_template('client/detalle_reserva_qr.html', reserva=datos_reserva)
+
 
 
 if __name__ == "__main__":

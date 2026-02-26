@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalle de tu Reserva</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+</head>
+<body>
+    <div style="text-align: center; margin-top: 50px; font-family: Arial;">
+        <h1 style="color: #99181F;">¡Hola, {{ reserva.nombre }}!</h1>
+        <h2>Estos son los detalles de tu reserva</h2>
+        
+        <div style="border: 1px solid #ccc; padding: 20px; display: inline-block; text-align: left;">
+            <p><strong>N° de Reserva:</strong> {{ reserva.id_reserva }}</p>
+            <p><strong>Fecha y Hora:</strong> {{ reserva.fechayhora_reserva }}</p>
+            <p><strong>Personas:</strong> {{ reserva.cantidad_personas }}</p>
+            <p><strong>Piso:</strong> {{ reserva.piso }}</p>
+            <p><strong>Estado:</strong> 
+                {% if reserva.estado == '1' %} Pendiente {% else %} Confirmada {% endif %}
+            </p>
+        </div>
+    </div>
+</body>
+</html>
