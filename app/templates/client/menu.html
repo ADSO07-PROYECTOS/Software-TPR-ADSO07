@@ -14,32 +14,26 @@
             <h3 id="tlo">MENÚ</h3>
 
     <section class="menu-contenedor">
-        
-    <div class="categoria">
-            <a href="{{ url_for('static', filename='img/' + item.imagen) }}" class="card-pizza">
-                <img src="{{ url_for('static', filename='img/plato1.png') }}" 
-                sizes="(max-width: 600px) 400px, 800px" 
-                alt="Pizzas">
-                PIZZAS
-            </a>
-    </div>
     
-    for i in categorias:
-        <div class="categoria">
-            <a href="../client/menu_especiifico.html" class="card-pizza"></a>
-                <img src="{{ url_for('static', filename='img/' + item.imagen) }}" 
-                sizes="(max-width: 600px) 400px, 800px" 
-                alt="{{ item.nombre }}">
-                {{ item.nombre }}
-            </a>
-        </div>
+
+        {% for i in lista_categorias%}
+            <div class="categoria">
+                <a href="../client/menu_especiifico.html" class="card-pizza">
+                    <img src="{{ url_for('static', filename='img/' + i.imagen) }}" 
+                         alt="{{ i.nombre }}">
+                    {{ i.nombre }}
+                </a>
+            </div>
+            {% else %}
+                <p>No se encontraron categorías cargadas.</p>
+            {% endfor %}
 
 
         
     </section>
     <div id="botones">
-        <button class="reservar-btn">RESERVAR</button>
-        <button class="domicilio-btn">DOMICILIO</button>
+        <button id="reservar-btn">RESERVAR</button>
+        <button id="domicilio-btn">DOMICILIO</button>
     </div>
 
 </main>

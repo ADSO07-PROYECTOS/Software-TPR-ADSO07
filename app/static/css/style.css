@@ -131,7 +131,7 @@ html, body {
     font-size: 30px;
 }
 /* Botón Reservar */
-.reservar-btn {
+#reservar-btn {
     position: fixed;
     width: 48%;
     bottom: 0;
@@ -144,7 +144,7 @@ html, body {
     cursor: pointer;
     border-radius: 30px;
 }
-.domicilio-btn {
+#domicilio-btn {
     position: fixed;
     width: 49%;
     bottom: 0;

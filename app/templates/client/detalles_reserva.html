@@ -4,7 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles Reserva</title>
-    <link rel="stylesheet" href="../../static/css/estilos_reservas.css">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_reservas.css') }}">
+    <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
 </head>
 <body>
     <main id="contenedor-reserva">
@@ -52,12 +53,11 @@
                     </select>
                 </div>
                 <div class="contenedor-botones">
-                    <button type="button" id="btn-atras" onclick="detalles_cliente()">VOLVER</button>
+                    <button type="button" class="btn-atras" id="btn_atras">VOLVER</button>
                     <button type="submit" class="btn-grande2" id="btn-submit">RESERVAR</button>
                 </div>
             </form>
         </div>
     </main>
-        <script src="../../static/javascript/reservas.js"></script>
 </body>
 </html>

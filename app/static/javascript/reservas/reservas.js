@@ -1,4 +1,5 @@
-const API_RESERVAS = 'http://127.0.0.1:5005/api/reservas';
+const API_RESERVAS = 'http://127.0.0.1:5005/api/';
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const path = window.location.pathname;
@@ -13,12 +14,16 @@ document.addEventListener('DOMContentLoaded', () => {
     }
 });
 
+export async function inicio() {
+    window.location.href = '/menu';
+};
+    
 
 export async function cargarTematicas() {
     const select = document.getElementById('v_tematica');
     if (!select) return;
     try {
-        const res = await fetch(API_RESERVAS);
+        const res = await fetch(API_RESERVAS + 'tematicas');
         if (!res.ok) throw new Error("Error en la respuesta del servidor");
         
         const data = await res.json(); 
@@ -82,7 +87,7 @@ export function prepararPaso2() {
         };
 
         try {
-            const res = await fetch(API_RESERVAS, {
+            const res = await fetch(API_RESERVAS + 'reservas', {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify(payload)

@@ -68,7 +68,7 @@ header h1 {
     margin-top: 25px;
 }
 
-#btn-atras {
+.btn-atras {
     background: var(--blanco);
     color: var(--rojo);
     border: none;
