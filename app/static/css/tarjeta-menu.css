@@ -1,0 +1,42 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+*{ 
+    color: rgb(182, 171, 171);
+    margin:0;
+    padding:0;
+    box-sizing: border-box;
+    font-family: 'Bebas Neue', sans-serif;
+    background: rgb(203, 109, 109);
+}
+
+.category {
+    border-radius: 15px;
+    overflow: hidden;
+    text-align: center;
+    cursor: pointer;
+    transition: transform 0.2s;
+    display: flex;
+    flex-direction: column;
+}
+
+.category:hover {
+    transform: scale(1.05);
+}
+
+/* IMAGEN */
+.category img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+    border-radius: 15px 15px 0 0px;
+}
+
+/* TEXTO TARJETA (NO SE CORTA) */
+.category a {
+    text-decoration: none;
+    padding: 8px 4px;
+    font-size: 28px;
+    line-height: 1.1;
+    white-space: normal;
+    word-break: break-word;
+    border-radius: 0 0 15px 15px;
+}
