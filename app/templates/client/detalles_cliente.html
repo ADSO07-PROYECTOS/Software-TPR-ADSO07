@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles cliente</title>
+    <link rel="stylesheet" href="../../static/css/estilos_reservas.css">
+</head>
+<body>
+    <main id="contenedor-reserva">   
+        <div id="tpl-paso1">
+            <header><h1>TUS DATOS</h1></header>
+            <form id="form-paso1">
+                <div class="grupo-entrada">
+                    <label>Nombre</label>
+                    <input type="text" name="nom" maxlength="60" minlength="2" placeholder="Juan Posada" pattern="[A-Za-z0-9ÁÉÍÓÚáéíóúÑñ\s]{2, 60}" tabindex="1" required>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Cédula</label>
+                    <input type="number" name="doc" maxlength="10" minlength="8" placeholder="1112000000" pattern="[0-9]{8, 10}" tabindex="2" required>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Correo</label>
+                    <input type="email" name="correo" inputmode="email" maxlength="60" minlength="8" placeholder="ejemplo@gmail.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" tabindex="3" required>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Teléfono</label>
+                    <input type="tel" name="tel" inputmode="tel" maxlength="10" minlength="10" placeholder="3154444444" pattern="[0-9]{10, 10}" tabindex="4" required>
+                </div>
+                
+                <div class="contenedor-botones">
+                    <button type="button" id="btn-atras" onclick="irAMenu()">VOLVER</button>
+                    <button type="submit" class="btn-grande2" tabindex="5" onclick="document.getElementById('form-paso1').requestSubmit();">CONTINUAR</button>
+                </div>
+            </form>
+        </div>
+    </main>
+
+        <script src="../../static/javascript/reservas.js"></script>
+</body>
+</html>

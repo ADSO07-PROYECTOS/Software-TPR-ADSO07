@@ -1,0 +1,145 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+:root {
+    --primary-red: #99181F;
+    --glass-bg: rgba(255, 255, 255, 0.15);
+    --text-white: #ffffff;
+}
+* {
+    box-sizing: border-box;
+    margin:0;
+    padding: 0;
+    font-family: 'Bebas Neue', sans-serif;
+    color: var(--text-white);
+}
+body {
+    margin: 0;
+    font-family: 'Arial Narrow', sans-serif;
+    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background-size: cover;
+    min-height: 100vh; 
+}
+
+.ttlo{
+    text-align: center;
+    font-size: 40px;
+    margin-top: 100px;
+    margin-bottom: 30px;
+}
+
+
+.barra-superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px;
+    display: flex;
+    background: rgba(0, 0, 0, 0.4);
+    justify-content: space-between;
+    backdrop-filter: blur(10px);
+    z-index: 50;
+}
+
+.padre_ppal {
+    background-color: rgba(82, 80, 85, 0.6);
+    backdrop-filter: blur(15px);
+    border-radius: 30px;
+    padding: 20px;
+    margin:10px;
+    padding-bottom: 140px;
+    position: relative;
+}
+
+.producto_detalles{
+    padding: 10px;
+    margin-bottom: 15px;
+    display: flex;
+    border-radius: 20px;
+    flex-direction: column;
+    border: 3px solid rgb(255, 255, 255);
+}
+
+
+.seleccionar_cantidad {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-bottom: 10px;
+}
+.seleccionar_cantidad button {
+    background: none;
+    border: 1px solid white;
+    color: white;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+}
+.acciones{
+    display: flex;
+    background: none;
+    align-items: center;
+    justify-content: flex-end;
+}
+.accion {
+    background: none;
+    border:none;
+    font-size: 18px;
+    color: rgba(159, 6, 6, 0.541);;
+    cursor: pointer;
+    
+}
+
+.precio_seccion { 
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    align-items: center;
+}
+.precio {
+    font-size: 22px;
+    margin-left: 125px;
+
+}
+.ttlo_producto {
+    font-size: 26px;
+    margin-bottom: 10px;
+}
+.total_valor{
+    font-size: 30px;
+    font-weight: bold;
+    text-align: right;
+    margin-top: 20px;
+}
+.total_btn {
+    position: fixed;
+    width: 95%;
+    bottom: 0;
+    left: 2.5%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    background-color: #99181F;
+    margin-bottom: 60px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+/* Menú Inferior */
+.menu_inferior {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 11px;
+    border:0;
+    background: rgb(255, 255, 255);
+    
+}
+
+.nav-btn {
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}

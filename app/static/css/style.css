@@ -17,7 +17,7 @@
 
 /* BODY */
 html, body {
-    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background: url('../img/fondo-madera.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh; 
     overflow-y: auto;
@@ -45,7 +45,7 @@ html, body {
     display: flex;
     background: rgba(0, 0, 0, 0.4);
     justify-content: flex-end;
-    /*backdrop-filter: blur(10px);*/
+    backdrop-filter: blur(10px);
     z-index: 50;
 }
 
@@ -66,8 +66,8 @@ html, body {
 #menu_desplegable{
     position: absolute;
     background: rgba(0, 0, 0, 0.6);
-    -webkit-backdrop-filter: blur(13px) !important;
-    backdrop-filter: blur(13px) !important;
+    -webkit-backdrop-filter: blur(13px);
+    backdrop-filter: blur(13px);
     border-radius: 20px;
     font-size: 24px;
     padding: 20px;
@@ -91,9 +91,7 @@ html, body {
 /* CONTENEDOR DEL MENÚ */
 .menu-contenedor {
     position: relative;        
-    width: 100%;
     margin: 20px auto;
-    max-width: 420px;
     padding: 20px;
     padding-bottom: 110px;
     display: grid;
@@ -178,4 +176,45 @@ html, body {
     background: none;
     border: none;
     cursor: pointer;
+}
+
+/*<------- MEDIA QUERY -------->*/
+@media (min-width: 1000px) {
+    .menu-contenedor {
+        padding: 80px;
+        margin: 50px;
+        background-color:rgba(46, 43, 48, 0.459);
+
+
+    } 
+    .categoria img {
+        height: 400px;
+        width: 700px;
+        object-fit: cover;
+        image-rendering: -webkit-optimize-contrast;
+    }
+    .categoria{
+        margin:15px;
+
+    }
+    .categoria a {
+        font-size: 50px;
+    }   
+    #tlo {
+        font-size: 70px;
+    }
+
+    .domicilio-btn {
+        font-size: 60px;
+        width: 45%;
+        left: 52%;
+
+    }
+    .reservar-btn {
+        font-size: 60px;
+        width: 45%;
+        left: 3%;
+
+    }
+    
 }

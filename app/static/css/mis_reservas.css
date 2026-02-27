@@ -1,0 +1,186 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
+
+*{
+    padding:0;
+    margin:0;
+    box-sizing:border-box;
+    font-family:'Bebas Neue', sans-serif;
+    color:white;
+}
+
+html, body{
+    height:100vh;
+    background: url('../images/fondo.jpg');
+    background-size: cover;
+}
+#padre_ppal{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    padding-top:70px; 
+    padding-bottom:100px;
+
+}
+#barra_superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px;
+    backdrop-filter: blur(10px);
+}
+#titulo{
+    font-size: 42px;
+    text-align: center;
+    margin-top: 30px;
+}
+#contenedor_reservas{
+    display:flex;
+    flex-direction:column;
+    justify-content:flex-start;
+    align-items:center;
+    border: 1px solid white;
+    background-color:rgba(46, 43, 48, 0.459);
+    margin-top:20px;
+    border-radius: 20px;
+    font-size: 24px;
+    padding: 20px;
+}
+
+
+
+
+
+
+
+
+
+/* Botón Reservar */
+.editar-btn {
+    width: 48%;
+    position: fixed;
+    bottom: 0;
+    left:1%;
+    padding: 10px;
+    font-size: 30px;
+    border: none;
+    background-color: #99181F;
+    color: white;
+    margin-bottom: 70px;
+    cursor: pointer;
+    border-radius: 30px;
+} 
+.eliminar-btn {
+    position: fixed;
+    width: 49%;
+    bottom: 0;
+    left: 50%;
+    padding: 10px;
+    font-size: 30px;
+    border: 1px solid white;
+    background-color:rgba(46, 43, 48, 0.459);
+    color: #99181F;
+    margin-bottom: 70px;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+/* Menú Inferior */
+.menu_inferior {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 11px;
+    border:0;
+    background: rgb(255, 255, 255);
+    
+}
+
+.nav-btn {
+    font-size: 26px;
+    background: none;
+    border: none;
+    cursor: pointer;
+}
+/* Contenedor principal que oscurece el fondo */
+#cubrir_modal {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.7); 
+  backdrop-filter: blur(4px);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.pregunta_modal {
+    font-weight: bold;
+    margin-top: 10px;
+}
+/* La tarjeta blanca */
+.carta_modal {
+  background: white;
+  border:3px solid #99181F;
+  width: 85%;
+  max-width: 400px;
+  border-radius: 15px;
+  padding: 25px;
+  text-align: center;
+  box-shadow: 0 10px 25px rgba(0,0,0,0.2);
+}
+
+/* Estilos de texto */
+#ttlo_modal {
+  color: #99181F;
+  font-weight: bold;
+  font-size: 25px;
+  margin-bottom: 10px;
+  text-transform: uppercase;
+}
+
+#descripcion_modal {
+
+  font-size: 0.9rem;
+  color: #333;
+  font-size: 20px;
+  margin-bottom: 20px;
+  line-height: 1.4;
+}
+
+/* Contenedor de botones */
+.accion_modal{
+  display: flex;
+  justify-content: space-around;
+  margin-top: 20px;
+}
+
+.btn-modal {
+  width: 90px;
+  height: 50px;
+  border: none;
+  border-radius: 30px;
+  cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: transform 0.2s;
+}
+
+.btn-confirmar { 
+    background-color: #c0c0c0; 
+    color: white; 
+} 
+    
+#modal_eliminar { 
+    background-color: #99181F;; 
+    color: white; 
+} 
+
+.oculto { 
+    display: none !important; 
+}

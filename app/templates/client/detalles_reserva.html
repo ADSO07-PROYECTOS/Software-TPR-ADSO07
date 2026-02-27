@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalles Reserva</title>
+    <link rel="stylesheet" href="../../static/css/estilos_reservas.css">
+</head>
+<body>
+    <main id="contenedor-reserva">
+
+        <div id="tpl-reserva">
+            <header><h1>RESERVA</h1></header>
+            <form id="form-final">
+                <div class="grupo-entrada">
+                    <label>Fecha</label>
+                    <input type="date" name="fec" id="v_fec" required>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Bloque Horario</label>
+                    <select name="hor" id="v_hor">
+                        <option value="6">6</option>
+                        <option value="7">7</option>
+                        <option value="8">8</option>
+                        <option value="9">9</option>
+                        <option value="10">10</option>
+                    </select>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Temática</label>
+                    <select name="tematica" id="v_tematica" required>
+                        <option value="" disabled selected>Cargando temáticas...</option>
+                        </select>
+                </div>
+                <div class="grupo-entrada">
+                     
+                    <label>Personas</label>
+                    <input type="number" name="personas" value="1" min="1">
+                </div>
+                <div class="grupo-entrada">
+                    <label>Piso</label>
+                    <select name="piso">
+                        <option value="1">Piso 1</option>
+                        <option value="2">Piso 2</option>
+                    </select>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Metodo de pago</label>
+                    <select name="metodo_pago" id="v_metodo_pago">
+                        <option value="efectivo">Efectivo</option>
+                        <option value="tarjeta">Tarjeta</option>
+                    </select>
+                </div>
+                <div class="contenedor-botones">
+                    <button type="button" id="btn-atras" onclick="detalles_cliente()">VOLVER</button>
+                    <button type="submit" class="btn-grande2" id="btn-submit">RESERVAR</button>
+                </div>
+            </form>
+        </div>
+    </main>
+        <script src="../../static/javascript/reservas.js"></script>
+</body>
+</html>

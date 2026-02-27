@@ -1,7 +1,9 @@
 from flask import Flask, render_template, jsonify
+from flask_cors import CORS
 from conexion import conectar 
 
 app = Flask(__name__)
+CORS(app)
 
 @app.route('/api/categorias', methods=['GET'])
 def ver_menu():
@@ -11,14 +13,14 @@ def ver_menu():
         if conn:
             cursor = conn.cursor(dictionary=True)
 
-            cursor.execute("SELECT categoria_id, nombre_categoria, imagen FROM categoria")
+            cursor.execute("SELECT categoria_id, nombre_categoria, imagen_categoria FROM categorias")
             result = cursor.fetchall()
             
             for row in result:
                 categoria = {
                     'id': row['categoria_id'],
                     'nombre': row['nombre_categoria'],
-                    'imagen': row['imagen'] # El nombre del archivo ej: "pizza.jpg"
+                    'imagen': row['imagen_categoria'] 
                 }
                 lista_categorias.append(categoria)
             
@@ -31,7 +33,6 @@ def ver_menu():
         return jsonify({"error": str(e)}), 500
     
 
-    #Platos
 
 @app.route('/api/platos/<int:id_categoria>', methods=['GET'])
 def ver_platos_por_categoria(id_categoria):
