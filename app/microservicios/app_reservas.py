@@ -2,13 +2,14 @@ import sys, os, qrcode, io, base64, smtplib, ssl
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 from conexion import conectar
 
-app = Flask(__name__)
+BASE_DIR = os.path.abspath(os.path.join(os.path.dirname(__file__), '..'))
+app = Flask(__name__, template_folder=os.path.join(BASE_DIR, 'templates'), static_folder=os.path.join(BASE_DIR, 'static'))
 CORS(app)
 
 MI_CORREO = "e5toesparapruebas12@gmail.com" 
@@ -141,7 +142,7 @@ def crear_reserva():
             conn.commit()
     
             # --- 4. GENERACIÓN DE RESPUESTA (QR) ---
-            ip_servidor = "http://147.182.238.195:5005"
+            ip_servidor = "http://localhost:5005"
             url_reserva = f"{ip_servidor}/reserva/{res_id}"
             
             qr = qrcode.make(url_reserva)
@@ -165,13 +166,14 @@ def crear_reserva():
 @app.route('/reserva/<int:id_reserva>')
 def obtener_reserva(id_reserva):
         conn = conectar()
-        if not conn: 
-            return jsonify({"status": "error", "msg": "Error de conexión a la base de datos"}), 500
+        if not conn:
+            return "Error de conexión a la base de datos", 500
         
         cursor = conn.cursor(dictionary=True)
         try:
             cursor.execute("""
-                SELECT r.reserva_id, r.fechayhora_reserva, r.cantidad_personas, r.piso, t.nombre_tematica, c.nombre AS nombre_cliente
+                SELECT r.reserva_id, r.fechayhora_reserva, r.cantidad_personas, r.piso,
+                       r.estado, t.nombre_tematica, c.nombre AS nombre
                 FROM reserva r
                 JOIN tematica t ON r.tematica_id = t.tematica_id
                 JOIN clientes c ON r.cc_cliente = c.cc_cliente
@@ -179,11 +181,15 @@ def obtener_reserva(id_reserva):
             """, (id_reserva,))
             reserva = cursor.fetchone()
             if not reserva:
-                return jsonify({"status": "error", "msg": "Reserva no encontrada"}), 404
-    
-            return jsonify({"status": "success", "reserva": reserva})
+                return "Reserva no encontrada", 404
+
+            reserva['id_reserva'] = reserva.pop('reserva_id')
+            dt = reserva['fechayhora_reserva']
+            if hasattr(dt, 'strftime'):
+                reserva['fechayhora_reserva'] = dt.strftime('%d/%m/%Y %I:%M %p')
+            return render_template('client/detalle_reserva_qr.html', reserva=reserva)
         except Exception as e:
-            return jsonify({"status": "error", "msg": str(e)}), 500
+            return str(e), 500
         finally:
             if conn: conn.close()
             

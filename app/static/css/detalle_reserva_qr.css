@@ -1,0 +1,70 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: Arial, sans-serif;
+    background-color: #f5f5f5;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+}
+
+.contenedor {
+    text-align: center;
+    padding: 40px 20px;
+}
+
+.contenedor h1 {
+    color: #99181F;
+    font-size: 2rem;
+    margin-bottom: 8px;
+}
+
+.contenedor h2 {
+    color: #444;
+    font-size: 1.1rem;
+    font-weight: normal;
+    margin-bottom: 30px;
+}
+
+.tarjeta {
+    background-color: #fff;
+    border: 1px solid #888686;
+    border-radius: 8px;
+    padding: 30px 40px;
+    display: inline-block;
+    text-align: left;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    min-width: 300px;
+}
+
+.tarjeta p {
+    font-size: 1rem;
+    color: #333;
+    margin-bottom: 12px;
+    border-bottom: 1px solid #eee;
+    padding-bottom: 10px;
+}
+
+.tarjeta p:last-child {
+    border-bottom: none;
+    margin-bottom: 0;
+}
+
+.tarjeta strong {
+    color: #99181F;
+}
+
+.estado-pendiente {
+    color: #e67e00;
+    font-weight: bold;
+}
+
+.estado-confirmada {
+    color: #27ae60;
+    font-weight: bold;
+}
