@@ -1,0 +1,36 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Dirección de Envío</title>
+    <link rel="stylesheet" href="../../static/css/estilos_reservas.css">
+</head>
+<body>
+    <main id="contenedor-reserva">
+        <div id="tpl-domicilio">
+            <header><h1>ENVÍO</h1></header>
+            <form id="form-domicilio">
+                <div class="grupo-entrada">
+                    <label>Dirección completa</label>
+                    <input type="text" name="direccion" placeholder="Calle 10 # 12-34" required>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Barrio / Referencia</label>
+                    <input type="text" name="referencia" placeholder="Edificio Torres del Parque, Apto 502" required>
+                </div>
+                <div class="grupo-entrada">
+                    <label>Método de pago</label>
+                    <select name="metodo_pago">
+                        <option value="efectivo">Efectivo (Contra entrega)</option>
+                        <option value="transferencia">Transferencia (Nequi/Daviplata)</option>
+                    </select>
+                </div>
+                <div class="contenedor-botones">
+                    <button type="button" onclick="window.history.back()">VOLVER</button>
+                    <button type="submit" class="btn-grande2" id="btn-submit-dom">CONFIRMAR PEDIDO</button>
+                </div>
+            </form>
+        </div>
+    </main>
+</body>
+</html>

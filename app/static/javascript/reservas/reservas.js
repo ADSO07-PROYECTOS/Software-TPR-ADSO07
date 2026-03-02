@@ -71,7 +71,6 @@ export function prepararPaso2() {
         btn.disabled = true;
         btn.innerText = "PROCESANDO...";
 
-        // Consolidar toda la información
         const payload = {
             cliente: JSON.parse(localStorage.getItem('cliente_temporal')),
             reserva: {
@@ -117,7 +116,6 @@ export function mostrarResultadoFinal() {
     if (img && qrData) {
         img.src = `data:image/png;base64,${qrData}`;
         msg.innerText = `¡Tu reserva ha sido creada con éxito! Revisa tu correo electrónico.`;
-        // Opcional: limpiar localStorage
         localStorage.removeItem('qr_reserva');
         localStorage.removeItem('id_reserva');
     }
