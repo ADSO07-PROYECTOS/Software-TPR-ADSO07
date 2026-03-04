@@ -3,10 +3,115 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel</title>
+    <title>Panel Administración | TRES PASOS</title>
+    <link rel="stylesheet" href="../codigos/formato_panel_admin.css">                                                                                                        
 </head>
 <body>
-    <h1>!PRUEBA ---- FUNCIONAL ADMIN!</h1>
+    <main id="gran_padre">
+        <header id="panel_izq">
+            
+            <figure id="marca">
+                <img src="componentes/sabores.png" alt="Logo">
+            </figure>
+            <nav id="cont_menu">
+                <svg width="23" height="14" viewBox="0 0 23 14" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M1 7H21.25M1 1H21.25M1 13H21.25" stroke="#F5F5F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+
+                <form action="" name="tipo_operación" id="tipo_operación" enctype="application/x-www-form-urlencoded" method="post">
+                    <button type="submit" name="operación" value="usuarios">Usuarios</button>
+                    <button type="submit" name="operación" value="productos">Productos</button>
+                    <button type="submit" name="operación" value="pedidos">Pedidos</button>
+                    <button type="submit" name="operación" value="reservas">Reservas</button>
+                    <button type="submit" name="operación" value="tematica">Temática</button>
+                    <button type="submit" name="operación" value="eliminar_producto">Eliminar Producto</button>
+                    <button type="submit" name="operación" value="añadir_usuario">Añadir Usuario</button>
+                </form>
+
+            </nav>
+            <div id="linea">
+                <a href="" id="btn_cerrar_sesion">
+                    <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H9V2H2V16H9V18H2ZM13 14L11.625 12.55L14.175 10H6V8H14.175L11.625 5.45L13 4L18 9L13 14Z" fill="white"/>
+                    </svg>  
+                </a>
+                <a href="" id="marca_personal"> 
+                    <svg width="21" height="15" viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <path d="M6.3 15L0 7.5L6.3 0L7.79625 1.78125L2.96625 7.53125L7.77 13.25L6.3 15ZM14.7 15L13.2037 13.2188L18.0337 7.46875L13.23 1.75L14.7 0L21 7.5L14.7 15Z" fill="white"/>
+                    </svg>
+                </a>
+                
+            </div> 
+        </header>
+
+        <section id="panel_cen">
+            <article class="hijo_izq">
+                    <div class="hijos_izq">
+                        <h2>PISO 1</h2>
+                        <p id="disponibles">2 </p>
+                        <p id="ocupadas"> 3</p>
+                        <p id="reservadas">7</p>
+
+                    </div>
+
+                    <div class="hijos_izq">
+                        <h2>PISO 2</h2>
+                        <p id="disponibles">2 </p>
+                        <p id="ocupadas"> 8</p>
+                        <p id="reservadas">3</p>
+
+                    </div>
+                    <div class="hijos_izq">
+                        <h2>PISO 3</h2>
+                        <p id="disponibles"> 0</p>
+                        <p id="ocupadas">8 </p>
+                        <p id="reservadas">2</p>
+
+                    </div>
+
+            </article>
+            
+        </section>
+        <section id="panel_der">
+            <article class="hijo_centro">
+                <div id="recientes">
+                    <h1>Pedidos recientes</h1>
+                    <p>Pedido #1234 - Juan Pérez - En preparación</p>
+                    <p>Pedido #5678 - María Gómez - Listo para entregar</p>
+                    <p>Pedido #9012 - Carlos Rodríguez - Entregado</p>
+                </div>
+            </article>
+                
+                <article class="hijo_centro">
+                   <div class="contenedor-tarjetas">
+                        <div class="tarjeta1 naranja">
+                            <p>TOTAL DOMICILIOS HOY</p>
+                            <h3>10</h3>
+                        </div>
+                        <div class="tarjeta1 amarilla">
+                            <p>TOTAL DOMICILIOS PENDIENTES</p>
+                            <h3>5</h3>
+                        </div>
+                    </div>    
+
+                    <div class="contenedor-tarjeta2">
+                        <div class="tarjeta verde">
+                            <p>TOTAL MESAS DISPONIBLES</p>
+                            <h3>3</h3>
+                        </div>
+                    <div class="tarjeta roja">
+                        <p>TOTAL MESAS OCUPADAS</p>
+                        <h3>2</h3>
+                    </div>
+                    <div class="tarjeta azul">
+                        <p>TOTAL MESAS RESERVADAS</p>
+                        <h3>1</h3>
+
+                    </div>
+                </article>
+
+        </section>
+    </main>
     
 </body>
 </html>
