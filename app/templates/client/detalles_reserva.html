@@ -8,7 +8,7 @@
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
 </head>
 <body>
-    <main id="contenedor-reserva">
+    <main id="contenedor">
 
         <div id="tpl-reserva">
             <header><h1>RESERVA</h1></header>
@@ -53,7 +53,7 @@
                     </select>
                 </div>
                 <div class="contenedor-botones">
-                    <button type="button" class="btn-atras" id="btn_atras">VOLVER</button>
+                    <button type="button" class="btn-atras" onclick="window.history.back()">VOLVER</button>
                     <button type="submit" class="btn-grande2" id="btn-submit">RESERVAR</button>
                 </div>
             </form>

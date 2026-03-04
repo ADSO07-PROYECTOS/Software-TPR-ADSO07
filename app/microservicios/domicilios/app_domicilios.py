@@ -51,62 +51,62 @@ def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
 def crear_domicilio():
     datos = request.json
     cli = datos.get('cliente')
-    direccion = datos.get('direccion')
-    
+    dom = datos.get('domicilio')
+    productos = datos.get('productos')
+
     conn = conectar()
-    if not conn: 
-        return jsonify({"status": "error", "msg": "Error de conexión a la base de datos"}), 500
-    
-    cursor = conn.cursor()
+    cursor = conn.cursor(dictionary=True)
     try:
-        cedula = int(cli['doc'])
-        
         cursor.execute("""
-            INSERT INTO clientes (cc_cliente, nombre, email, telefono) 
-            VALUES (%s, %s, %s, %s) 
-            ON DUPLICATE KEY UPDATE nombre=%s, telefono=%s, email=%s
-        """, (cedula, cli['nom'], cli['correo'], cli['tel'], cli['nom'], cli['tel'], cli['correo']))
+            INSERT INTO clientes (cc_cliente, nombre, email, telefono)
+            VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE nombre=%s, email=%s, telefono=%s
+        """, (cli['doc'], cli['nom'], cli['correo'], cli['tel'], cli['nom'], cli['correo'], cli['tel']))
         
-        cursor.execute("SELECT cliente_id FROM clientes WHERE cc_cliente = %s", (cedula,))
-        cliente_id = cursor.fetchone()[0]
+        cursor.execute("SELECT cliente_id FROM clientes WHERE cc_cliente = %s", (cli['doc'],))
+        cliente_id = cursor.fetchone()['cliente_id']
 
-        pago = 1 if datos.get('pago_transferencia') == '1' else 0
-        
+        total_pedido = sum(item['precio'] * item['cantidad'] for item in productos)
         query_dom = """
-            INSERT INTO domicilios (cliente_id, direccion, pago_transferencia, estado_pedido) 
-            VALUES (%s, %s, %s, 'Pendiente')
+            INSERT INTO domicilios (cliente_id, direccion, pago_transferencia, estado_pedido)
+            VALUES (%s, %s, %s, %s)
         """
-        cursor.execute(query_dom, (cliente_id, direccion, pago))
-        
+        cursor.execute(query_dom, (cliente_id, dom['direccion'], dom['metodo_pago'] == 'transferencia', 'Pendiente'))
         dom_id = cursor.lastrowid
-        conn.commit()
 
+        for p in productos:
+            cursor.execute("""
+                INSERT INTO detalles_domicilios (domicilio_id, producto_id, cantidad, valor_unitario)
+                VALUES (%s, %s, %s, %s)
+            """, (dom_id, p['id'], p['cantidad'], p['precio']))
+
+        conn.commit()
         detalles_qr = (
-            f"TRES PASOS - DOMICILIO\n"
-            f"PEDIDO: #{dom_id}\n"
+            f"DOMICILIO: #{dom_id}\n"
             f"CLIENTE: {cli['nom']}\n"
-            f"DIRECCIÓN: {direccion}\n"
-            f"PAGO: {'Transferencia' if pago == 1 else 'Efectivo'}\n"
-            f"ESTADO: EN PREPARACIÓN"
-        )
+            f"DIRECCIÓN: {dom['direccion']}\n"
+            f"METODO DE PAGO: {dom['metodo_pago']}"
+            )
         
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()
         qr.save(buf, format="PNG")
-        
-        enviar_mail_dom(cli, direccion, buf, dom_id)
+        qr_b64 = base64.b64encode(buf.getvalue()).decode()
+
+        enviar_mail_dom(cli, dom['direccion'], buf, dom_id)
 
         return jsonify({
-            "status": "success", 
-            "id": dom_id, 
-            "qr": base64.b64encode(buf.getvalue()).decode()
-        })
-
+                    "status": "success", 
+                    "message": f"Domicilio creado con éxito con ID #{dom_id}",
+                    "qr": qr_b64
+                })
+        
+    
     except Exception as e:
-        if conn: conn.rollback()
-        return jsonify({"status": "error", "msg": f"Error en el servidor: {str(e)}"}), 500
-    finally: 
-        if conn: conn.close()
+        conn.rollback()
+        return jsonify({"status": "error", "message": str(e)}), 500
+    finally:
+        cursor.close()
+        conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5001)
+    app.run(debug=True, port=5004)

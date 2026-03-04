@@ -6,7 +6,6 @@ import requests
 app = Flask(__name__)
 CORS(app)
 
-# -- RUTAS DE NAVEGACIÓN --
 
 @app.route('/')
 def inicio():
@@ -15,7 +14,6 @@ def inicio():
 @app.route('/menu')
 def ver_menu():
     try:
-        # El microservicio de menú está en el 5001 según tu código previo
         respuesta = requests.get('http://localhost:5001/api/categorias', timeout=10)
         respuesta.raise_for_status()
         mis_categorias = respuesta.json()
@@ -28,15 +26,17 @@ def ver_menu():
 def vista_cliente():
     return render_template('client/detalles_cliente.html')
 
+@app.route('/direccion_domicilio')
+def vista_domicilio():
+    return render_template('client/direccion_domicilio.html')
+
 @app.route('/detalles_reserva')
 def vista_reserva():
-    # Esta es la versión ÚNICA y correcta de la ruta
     lista_tematicas = []
     try:
         conn = conectar()
         if conn:
             cursor = conn.cursor(dictionary=True)
-            # Consultamos la tabla 'tematica'
             cursor.execute("SELECT tematica_id, nombre_tematica FROM tematica")
             lista_tematicas = cursor.fetchall()
             cursor.close()
@@ -44,14 +44,12 @@ def vista_reserva():
     except Exception as e:
         print(f"Error al obtener temáticas: {e}")
 
-    # Asegúrate de que la ruta al archivo sea correcta según tu estructura
     return render_template('client/detalles_reserva.html', tematicas=lista_tematicas)
 
 @app.route('/exito')
 def vista_exito():
     return render_template('client/exito.html')
 
-# -- RUTAS DE DATOS (PLATOS Y DETALLES) --
 
 @app.route('/menu/<int:id_categoria>')
 def ver_platos(id_categoria):
@@ -70,7 +68,6 @@ def detalle_plato(id_plato):
     info_plato = {}
     datos_extras = {"tamanos": [], "adiciones": [], "sabores": []}
     try:
-        # Consulta al microservicio de menú (puerto 5001)
         res_plato = requests.get(f'http://localhost:5001/api/plato/{id_plato}', timeout=5)
         if res_plato.status_code == 200:
             info_plato = res_plato.json()

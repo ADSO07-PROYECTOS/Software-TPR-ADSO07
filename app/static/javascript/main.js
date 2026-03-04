@@ -1,49 +1,49 @@
-import{prepararPaso1, prepararPaso2, mostrarResultadoFinal, cargarTematicas, inicio} from './reservas/reservas.js';
-import{seleccionarServicio, enviarAlMicroservicio} from './menu.js';
-
+import { prepararPaso1Reserva, prepararPaso2, mostrarResultadoFinal, cargarTematicas, inicio } from './reservas/reservas.js';
+import { seleccionarServicio } from './menu.js';
+import { prepararPaso1Domicilio, prepararPasoDomicilio } from './domicilios/domicilios.js';
 
 document.addEventListener('DOMContentLoaded', () => {
     const btnReservar = document.getElementById('reservar-btn');
     const btnDomicilio = document.getElementById('domicilio-btn');
     const btnVolverMenu = document.getElementById('btn_irmenu');
-    const btnAtras = document.getElementById('btn_atras');
 
-     if (btnAtras) {
-        btnAtras.addEventListener('click', () => seleccionarServicio('reserva'));
-    }
-
-    if (btnVolverMenu) {
-        btnVolverMenu.addEventListener('click', () => inicio());
-    }
-
-    if (btnReservar) {
-        btnReservar.addEventListener('click', () => seleccionarServicio('reserva'));
-    }
-    
-    if (btnDomicilio) {
-        btnDomicilio.addEventListener('click', () => seleccionarServicio('domicilio'));
-    }
+    if (btnVolverMenu) btnVolverMenu.addEventListener('click', () => inicio());
+    if (btnReservar) btnReservar.addEventListener('click', () => seleccionarServicio('reserva'));
+    if (btnDomicilio) btnDomicilio.addEventListener('click', () => seleccionarServicio('domicilio'));
 
     router(); 
 });
 
+function establecerFechaMinima() {
+    const inputFecha = document.getElementById('v_fec');
+    const hoy = new Date().toISOString().split('T')[0];
+    inputFecha.min = hoy;
+}
+
 const router = () => {
     const path = window.location.pathname;
+    const tipoServicio = localStorage.getItem('tipo_servicio');
 
-    const rutas = {
-        'datos_cliente': () => prepararPaso1(),
-        'detalles_reserva': () => {
-            cargarTematicas();
-            prepararPaso2();
-        },
-        'exito': () => mostrarResultadoFinal()
-    };
-
-    Object.keys(rutas).forEach(route => {
-        if (path.includes(route)) {
-            rutas[route]();
+    if (path.includes('datos_cliente')) {
+        if (tipoServicio === 'domicilio') {
+            prepararPaso1Domicilio();
+        } else {
+            prepararPaso1Reserva();
         }
-    });
+    } 
+    else if (path.includes('detalles_reserva')) {
+        cargarTematicas();
+        prepararPaso2();
+        establecerFechaMinima();
+    } 
+    else if (path.includes('direccion_domicilio')) {
+        prepararPasoDomicilio();
+    }
+    else if (path.includes('exito')) {
+        mostrarResultadoFinal();
+    }
+
+    
 };
 
     

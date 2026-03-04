@@ -13,7 +13,7 @@ def ver_menu():
         if conn:
             cursor = conn.cursor(dictionary=True)
 
-            cursor.execute("SELECT categoria_id, nombre_categoria, imagen_categoria FROM categorias")
+            cursor.execute("SELECT categoria_id, nombre_categoria, imagen_categoria FROM categorias WHERE nombre_categoria != 'Sabores'")
             result = cursor.fetchall()
             
             for row in result:

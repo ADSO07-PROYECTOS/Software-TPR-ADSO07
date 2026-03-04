@@ -49,11 +49,11 @@ def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
 @app.route('/api/tematicas', methods=['GET'])
 def obtener_tematicas():
     conn = conectar()
-    cursor = conn.cursor(dictionary=True) # Importante para que el JS reciba nombres y no solo valores
+    cursor = conn.cursor(dictionary=True) 
     try:
         cursor.execute("SELECT tematica_id, nombre_tematica FROM tematicas")
         filas = cursor.fetchall()
-        return jsonify(filas) # Esto devuelve: [{"tematica_id": 1, "nombre_tematica": "Boda"}, ...]
+        return jsonify(filas)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
     finally:

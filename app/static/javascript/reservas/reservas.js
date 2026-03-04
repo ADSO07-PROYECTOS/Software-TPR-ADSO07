@@ -1,50 +1,8 @@
 const API_RESERVAS = 'http://127.0.0.1:5005/api/';
 
+export async function inicio() { window.location.href = '/menu'; }
 
-document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
-
-    if (path.includes('datos_cliente')) {
-        prepararPaso1();
-    } else if (path.includes('detalles_reserva')) {
-        cargarTematicas(); 
-        prepararPaso2();
-    } else if (path.includes('exito')) {
-        mostrarResultadoFinal();
-    }
-});
-
-export async function inicio() {
-    window.location.href = '/menu';
-};
-    
-
-export async function cargarTematicas() {
-    const select = document.getElementById('v_tematica');
-    if (!select) return;
-    try {
-        const res = await fetch(API_RESERVAS + 'tematicas');
-        if (!res.ok) throw new Error("Error en la respuesta del servidor");
-        
-        const data = await res.json(); 
-
-        select.innerHTML = '<option value="" disabled selected>Selecciona una temática...</option>';
-
-        data.forEach(t => {
-            const option = document.createElement('option');
-            option.value = t.tematica_id;
-            option.textContent = t.nombre_tematica;
-            select.appendChild(option);
-        });
-
-    } catch (e) {
-        console.error("Error cargando temáticas:", e);
-        select.innerHTML = '<option value="1">General (Error al cargar)</option>';
-    }
-}
-
-
-export function prepararPaso1() {
+export function prepararPaso1Reserva() {
     const form = document.getElementById('form-paso1');
     if (!form) return;
 
@@ -61,10 +19,26 @@ export function prepararPaso1() {
     };
 }
 
-export function prepararPaso2() {
-    const form = document.getElementById('form-final');
-    if (!form) return;
 
+export async function cargarTematicas() {
+    const select = document.getElementById('v_tematica');
+    if (!select) return;
+    try {
+        const res = await fetch(API_RESERVAS + 'tematicas');
+        const data = await res.json();
+        select.innerHTML = '<option value="" disabled selected>Selecciona una temática...</option>';
+        data.forEach(t => {
+            const option = document.createElement('option');
+            option.value = t.tematica_id;
+            option.textContent = t.nombre_tematica;
+            select.appendChild(option);
+        });
+    } catch (error) { console.error("Error cargando temáticas", error); }
+}
+
+export function prepararPaso2() {
+    const form = document.getElementById('form-reserva');
+    if (!form) return;
     form.onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn-submit');
@@ -110,13 +84,6 @@ export function prepararPaso2() {
 
 export function mostrarResultadoFinal() {
     const img = document.getElementById('qr-img');
-    const msg = document.getElementById('mensaje-exito');
     const qrData = localStorage.getItem('qr_reserva');
-
-    if (img && qrData) {
-        img.src = `data:image/png;base64,${qrData}`;
-        msg.innerText = `¡Tu reserva ha sido creada con éxito! Revisa tu correo electrónico.`;
-        localStorage.removeItem('qr_reserva');
-        localStorage.removeItem('id_reserva');
-    }
+    if (img && qrData) img.src = `data:image/png;base64,${qrData}`;
 }

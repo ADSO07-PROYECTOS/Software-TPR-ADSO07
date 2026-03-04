@@ -1,18 +1,6 @@
-const API_DOMICILIOS = 'http://127.0.0.1:5006/api/domicilios'; 
+const API_DOMICILIOS = 'http://127.0.0.1:5004/api/domicilios'; 
 
-document.addEventListener('DOMContentLoaded', () => {
-    const path = window.location.pathname;
-
-    if (path.includes('datos_cliente')) {
-        prepararPaso1();
-    } else if (path.includes('direccion_domicilio')) {
-        prepararPasoDomicilio();
-    }
-    // ... resto de tus condiciones (reserva, exito, etc.)
-});
-
-// MODIFICACIÓN EN PASO 1:
-function prepararPaso1() {
+export function prepararPaso1Domicilio() {
     const form = document.getElementById('form-paso1');
     if (!form) return;
 
@@ -25,21 +13,12 @@ function prepararPaso1() {
             tel: form.tel.value
         };
         localStorage.setItem('cliente_temporal', JSON.stringify(cliente));
-        
-        // LÓGICA DE REDIRECCIÓN:
-        // Si el usuario viene del carrito de domicilios, va a dirección. 
-        // Si viene de reserva de mesa, va a detalles_reserva.
-        const tipoFlujo = localStorage.getItem('flujo_actual'); // 'domicilio' o 'reserva'
-        if (tipoFlujo === 'domicilio') {
-            window.location.href = '/direccion_domicilio';
-        } else {
-            window.location.href = '/detalles_reserva';
-        }
+        // REDIRECCIÓN EXCLUSIVA DE DOMICILIOS
+        window.location.href = '/direccion_domicilio'; 
     };
 }
 
-// NUEVO: Lógica para enviar el domicilio
-function prepararPasoDomicilio() {
+export function prepararPasoDomicilio() {
     const form = document.getElementById('form-domicilio');
     if (!form) return;
 
@@ -47,13 +26,11 @@ function prepararPasoDomicilio() {
         e.preventDefault();
         const btn = document.getElementById('btn-submit-dom');
         btn.disabled = true;
-        btn.innerText = "PROCESANDO...";
 
         const payload = {
             cliente: JSON.parse(localStorage.getItem('cliente_temporal')),
             domicilio: {
-                direccion: form.direccion.value,
-                referencia: form.referencia.value,
+                direccion: form.direccion.value+', '+form.referencia.value,
                 metodo_pago: form.metodo_pago.value
             },
             productos: JSON.parse(localStorage.getItem('carrito_tpr')) || []
@@ -67,15 +44,22 @@ function prepararPasoDomicilio() {
             });
             const data = await res.json();
             if (data.status === 'success') {
+                localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_orden', data.id);
-                window.location.href = '/exito_domicilio';
+                window.location.href = '/exito';
             } else {
                 alert("Error: " + data.message);
                 btn.disabled = false;
             }
         } catch (error) {
-            alert("Error conectando con el servicio de domicilios");
+            alert("Error al conectar con el servicio de domicilios");
             btn.disabled = false;
         }
     };
+}
+
+export function mostrarResultadoFinal() {
+    const img = document.getElementById('qr-img');
+    const qrData = localStorage.getItem('qr_reserva');
+    if (img && qrData) img.src = `data:image/png;base64,${qrData}`;
 }

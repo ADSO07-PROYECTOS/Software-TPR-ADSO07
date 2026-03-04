@@ -19,14 +19,20 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function seleccionarServicio(tipo) {
-       /*  const carrito = JSON.parse(localStorage.getItem('carrito_tpr')) || JSON.parse(localStorage.getItem('carrito_seleccionado')) || [];
+    localStorage.setItem('tipo_servicio', tipo); 
+    window.location.href = '/datos_cliente';
+}
+
+/* 
+export function seleccionarServicio(tipo) {
+        const carrito = JSON.parse(localStorage.getItem('carrito_tpr')) || JSON.parse(localStorage.getItem('carrito_seleccionado')) || [];
         if (!carrito || carrito.length === 0) return alert("Selecciona platos primero");
- */
+ 
         localStorage.setItem('tipo_servicio', tipo);
-       /*  localStorage.setItem('carrito_tpr', JSON.stringify(carrito)); */
+        localStorage.setItem('carrito_tpr', JSON.stringify(carrito)); 
         window.location.href = '/datos_cliente';
     }
-
+ */
     // Enviar los datos guardados en localStorage al microservicio correspondiente
 export async function enviarAlMicroservicio() {
     const carrito = JSON.parse(localStorage.getItem('carrito_tpr')) || JSON.parse(localStorage.getItem('carrito_seleccionado')) || [];
@@ -38,7 +44,7 @@ export async function enviarAlMicroservicio() {
 
         const url = tipo === 'reserva'
             ? 'http://localhost:5000/api/reservas'
-            : 'http://localhost:5001/api/domicilios';
+            : 'http://localhost:5004/api/domicilios';
 
         const payload = tipo === 'reserva'
             ? { cliente: cliente, reserva: detalles, pedido: carrito }

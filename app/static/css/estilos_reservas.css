@@ -15,7 +15,7 @@ body {
     margin: 0;
 }
 
-#contenedor-reserva {
+#contenedor {
     background: var(--fondo-tarjeta);
     backdrop-filter: blur(15px);
     -webkit-backdrop-filter: blur(15px);
