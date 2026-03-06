@@ -50,6 +50,76 @@ def vista_reserva():
 def vista_exito():
     return render_template('client/exito.html')
 
+@app.route('/resumen/reserva/<int:id_reserva>')
+def resumen_reserva(id_reserva):
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("""
+            SELECT r.*, t.nombre_tematica
+            FROM reservas r
+            LEFT JOIN tematicas t ON r.tematica_id = t.tematica_id
+            WHERE r.reserva_id = %s
+        """, (id_reserva,))
+        reserva = cursor.fetchone()
+        if not reserva:
+            return "Reserva no encontrada", 404
+
+        cursor.execute("SELECT * FROM clientes WHERE cliente_id = %s", (reserva['cliente_id'],))
+        cliente = cursor.fetchone()
+
+        cursor.execute("""
+            SELECT dr.cantidad, dr.valor_unitario, p.nombre_producto
+            FROM detalles_reservas dr
+            JOIN productos p ON dr.producto_id = p.producto_id
+            WHERE dr.reserva_id = %s
+        """, (id_reserva,))
+        productos = cursor.fetchall()
+
+        cursor.close(); conn.close()
+        return render_template('client/resumen_reserva.html',
+                               reserva=reserva,
+                               cliente=cliente,
+                               productos=productos,
+                               tematica=reserva.get('nombre_tematica', 'N/A'))
+    except Exception as e:
+        return f"Error: {e}", 500
+
+@app.route('/resumen/domicilio/<int:id_domicilio>')
+def resumen_domicilio(id_domicilio):
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+
+        cursor.execute("SELECT * FROM domicilios WHERE domicilio_id = %s", (id_domicilio,))
+        domicilio = cursor.fetchone()
+        if not domicilio:
+            return "Domicilio no encontrado", 404
+
+        cursor.execute("SELECT * FROM clientes WHERE cliente_id = %s", (domicilio['cliente_id'],))
+        cliente = cursor.fetchone()
+
+        cursor.execute("""
+            SELECT dd.cantidad, dd.valor_unitario, p.nombre_producto
+            FROM detalles_domicilios dd
+            JOIN productos p ON dd.producto_id = p.producto_id
+            WHERE dd.domicilio_id = %s
+        """, (id_domicilio,))
+        productos = cursor.fetchall()
+
+        cursor.close(); conn.close()
+        return render_template('client/resumen_domicilio.html',
+                               domicilio=domicilio,
+                               cliente=cliente,
+                               productos=productos)
+    except Exception as e:
+        return f"Error: {e}", 500
+
+@app.route('/carrito')
+def ver_carrito():
+    return render_template('client/carrito.html')
+
 
 @app.route('/menu/<int:id_categoria>')
 def ver_platos(id_categoria):
@@ -89,4 +159,4 @@ def detalle_plato(id_plato):
                            sabores=datos_extras.get('sabores', []))
 
 if __name__ == "__main__":
-    app.run(debug=True, port=5000)
+    app.run(host="0.0.0.0", debug=True, port=5000)

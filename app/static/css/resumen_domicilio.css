@@ -1,0 +1,128 @@
+@import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&family=Roboto:wght@300;400;700&display=swap');
+
+* { margin: 0; padding: 0; box-sizing: border-box; }
+
+body {
+    background: #111;
+    color: #fff;
+    font-family: 'Roboto', sans-serif;
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    padding: 24px 16px 60px;
+}
+
+.tarjeta {
+    background: #1c1c1c;
+    border: 1px solid #99181F;
+    border-radius: 18px;
+    padding: 28px 24px;
+    width: 100%;
+    max-width: 480px;
+}
+
+.logo-titulo {
+    text-align: center;
+    margin-bottom: 20px;
+}
+
+.logo-titulo h1 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 32px;
+    color: #99181F;
+    letter-spacing: 2px;
+}
+
+.logo-titulo p {
+    font-size: 13px;
+    color: #aaa;
+    margin-top: 4px;
+}
+
+.badge {
+    display: inline-block;
+    background: #99181F;
+    color: #fff;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 14px;
+    padding: 4px 14px;
+    border-radius: 20px;
+    margin-bottom: 20px;
+}
+
+.seccion {
+    background: #2a2a2a;
+    border-radius: 12px;
+    padding: 16px;
+    margin-bottom: 14px;
+}
+
+.seccion h2 {
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    color: #99181F;
+    letter-spacing: 1.5px;
+    margin-bottom: 10px;
+    border-bottom: 1px solid #444;
+    padding-bottom: 6px;
+}
+
+.fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 5px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #333;
+}
+
+.fila:last-child { border-bottom: none; }
+
+.fila .label { color: #aaa; font-size: 13px; }
+
+.fila .valor {
+    font-weight: 700;
+    color: #fff;
+    text-align: right;
+    max-width: 65%;
+}
+
+.fila-producto {
+    display: flex;
+    justify-content: space-between;
+    padding: 7px 0;
+    font-size: 14px;
+    border-bottom: 1px solid #333;
+}
+
+.fila-producto:last-child { border-bottom: none; }
+
+.fila-producto .prod-nombre { color: #eee; }
+
+.fila-producto .prod-precio {
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+}
+
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 12px;
+    padding-top: 12px;
+    border-top: 1px solid #99181F;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    color: #99181F;
+}
+
+.estado-badge {
+    display: inline-block;
+    background: #1e3d5c;
+    color: #6dbfff;
+    font-size: 12px;
+    padding: 3px 10px;
+    border-radius: 10px;
+    font-weight: 700;
+}

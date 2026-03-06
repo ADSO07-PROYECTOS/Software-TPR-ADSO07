@@ -90,6 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // E. Renderizar
         displayCantidadTotal.textContent = cantidadDePizzas;
         displayPrecioFinal.textContent = `$ ${granTotal.toLocaleString()}`;
+        displayPrecioFinal.dataset.precioUnitario = precioUnidad;
     }
 
     // === 4. EVENTOS ===
@@ -128,14 +129,13 @@ document.addEventListener('DOMContentLoaded', () => {
         check.addEventListener('change', (e) => calcularTotal(e));
     });
 
-    // === 5. BOTÓN AÑADIR (Guardar y Redirigir) ===
+    // === 5. BOTÓN AÑADIR (Agregar al carrito y Redirigir) ===
     botonAnadir.addEventListener('click', () => {
         const opcion = selectTamano.options[selectTamano.selectedIndex];
         
         // Recolectar datos
         const nombrePizza = document.querySelector('h2').innerText;
         const tamanoNombre = opcion.value;
-        const precioTotalTexto = displayPrecioFinal.innerText;
 
         // Lista Adicionales
         let listaAdicionales = [];
@@ -155,20 +155,25 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         // Crear Objeto
+        const platoId = parseInt(document.getElementById('plato-id').getAttribute('data-id')) || null;
+        const precioUnitario = parseFloat(displayPrecioFinal.dataset.precioUnitario || opcion.getAttribute('data-precio'));
         const pedido = {
+            id: platoId,
             producto: nombrePizza,
             tamano: tamanoNombre,
             cantidad: cantidadDePizzas,
             adicionales: listaAdicionales,
             sabores: listaSabores,
-            precio: precioTotalTexto
+            precio_unitario: precioUnitario,
+            precio: precioUnitario * cantidadDePizzas
         };
 
-        // Guardar y Redirigir
-        localStorage.setItem('pedido_cliente', JSON.stringify(pedido));
+        // Agregar al carrito en localStorage (acumulando items)
+        const carritoActual = JSON.parse(localStorage.getItem('carrito') || '[]');
+        carritoActual.push(pedido);
+        localStorage.setItem('carrito', JSON.stringify(carritoActual));
         
-        // CAMBIA ESTO por tu ruta real de resumen si es diferente
-        window.location.href = "/resumen_pedido"; 
+        window.location.href = "/carrito"; 
     });
 
     function gestionarVisibilidadCombinar() {

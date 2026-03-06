@@ -15,7 +15,7 @@
 body {
     margin: 0;
     font-family: 'Arial Narrow', sans-serif;
-    background: url('../images/fondo.jpg') no-repeat center center fixed;
+    background: url('../img/fondo-madera.jpg') no-repeat center center fixed;
     background-size: cover;
     min-height: 100vh; 
 }

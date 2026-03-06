@@ -8,7 +8,7 @@ def conectar():
             host='64.23.140.136',
             user='usuario',
             password='Rest@uranteTPR?',
-            database='db_tpr',
+            database='db_tpr1',
             auth_plugin='mysql_native_password'
         )
         

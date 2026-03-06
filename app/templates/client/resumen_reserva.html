@@ -1,0 +1,95 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Resumen de Reserva #{{ reserva.reserva_id }}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/resumen_reserva.css') }}">
+</head>
+<body>
+<div class="tarjeta">
+    <div class="logo-titulo">
+        <h1>🍕 TRES PASOS</h1>
+        <p>Resumen de tu reserva</p>
+    </div>
+
+    <div style="text-align:center;">
+        <span class="badge">RESERVA #{{ reserva.reserva_id }}</span>
+    </div>
+
+    <div class="seccion">
+        <h2>CLIENTE</h2>
+        <div class="fila">
+            <span class="label">Nombre</span>
+            <span class="valor">{{ cliente.nombre }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Cédula</span>
+            <span class="valor">{{ cliente.cc_cliente }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Correo</span>
+            <span class="valor">{{ cliente.email }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Teléfono</span>
+            <span class="valor">{{ cliente.telefono }}</span>
+        </div>
+    </div>
+
+    <div class="seccion">
+        <h2>DETALLES DE LA RESERVA</h2>
+        <div class="fila">
+            <span class="label">Fecha y Hora</span>
+            <span class="valor">{{ reserva.fecha_hora.strftime('%d/%m/%Y %H:%M') }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Mesa asignada</span>
+            <span class="valor">Mesa #{{ reserva.mesa_id }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Personas</span>
+            <span class="valor">{{ reserva.cantidad_personas }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Temática</span>
+            <span class="valor">{{ tematica }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Método de pago</span>
+            <span class="valor">{{ 'Transferencia' if reserva.pago_transferencia else 'Efectivo' }}</span>
+        </div>
+        <div class="fila">
+            <span class="label">Estado</span>
+            <span class="valor"><span class="estado-badge">{{ reserva.estado | upper }}</span></span>
+        </div>
+    </div>
+
+    {% if productos %}
+    <div class="seccion">
+        <h2>PRODUCTOS SELECCIONADOS</h2>
+        {% set total = namespace(val=0) %}
+        {% for p in productos %}
+            {% set subtotal = p.valor_unitario * p.cantidad %}
+            {% set total.val = total.val + subtotal %}
+            <div class="fila-producto">
+                <div>
+                    <div class="prod-nombre">{{ p.nombre_producto }} × {{ p.cantidad }}</div>
+                </div>
+                <div class="prod-precio">$ {{ "{:,.0f}".format(p.valor_unitario * p.cantidad) }}</div>
+            </div>
+        {% endfor %}
+        <div class="total-line">
+            <span>TOTAL</span>
+            <span>$ {{ "{:,.0f}".format(total.val) }}</span>
+        </div>
+    </div>
+    {% else %}
+    <div class="seccion">
+        <h2>PRODUCTOS</h2>
+        <p style="color:#888; font-size:14px; text-align:center;">Sin productos registrados.</p>
+    </div>
+    {% endif %}
+</div>
+</body>
+</html>

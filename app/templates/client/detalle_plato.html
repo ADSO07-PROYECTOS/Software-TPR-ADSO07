@@ -129,6 +129,7 @@
             </svg>
         </button>
         
+        <span id="plato-id" data-id="{{ plato.id }}" style="display:none;"></span>
         <button class="añadir"> AÑADIR </button>
         
         <span class="precio-fn">$ {{ plato.precio }}</span>
@@ -136,7 +137,7 @@
 
     
 
-    <script src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
+    <script type="module" src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
     <script src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
     {% else %}
     <main style="justify-content: center; text-align: center;">

@@ -13,7 +13,7 @@ def ver_menu():
         if conn:
             cursor = conn.cursor(dictionary=True)
 
-            cursor.execute("SELECT categoria_id, nombre_categoria, imagen_categoria, tamano FROM categorias WHERE nombre_categoria != 'Sabores'")
+            cursor.execute("SELECT categoria_id, nombre_categoria, imagen_categoria, tamano FROM categorias WHERE nombre_categoria != 'Sabores' AND nombre_categoria != 'tamanos' AND nombre_categoria != 'adiciones'")
             result = cursor.fetchall()
             
             for row in result:
@@ -230,31 +230,44 @@ def obtener_extras_configuracion():
         if conn:
             cursor = conn.cursor(dictionary=True)
             
-            # 1. Obtener Tamaños: productos de categoría pizza usando tamano de categorias como limite_sabores
+            # 1. Obtener Tamaños: productos de la categoría "tamano".
+            # limite_sabores se extrae del número en descripcion_producto (ej: "Capacidad: 3 sabores" → 3)
             cursor.execute("""
-                SELECT p.producto_id AS id, p.nombre_producto AS nombre,
-                       p.precio_base AS precio, c.tamano AS limite_sabores,
-                       c.categoria_id
+                SELECT p.producto_id AS id,
+                       p.nombre_producto AS nombre,
+                       p.precio_base AS precio,
+                       CAST(REGEXP_SUBSTR(p.descripcion_producto, '[0-9]+') AS UNSIGNED) AS limite_sabores
                 FROM productos p
                 INNER JOIN categorias c ON p.categoria_id = c.categoria_id
-                WHERE LOWER(c.nombre_categoria) LIKE '%pizza%'
+                WHERE LOWER(c.nombre_categoria) LIKE '%tamano%'
                   AND p.disponibilidad_producto = 1
                 ORDER BY p.precio_base ASC
             """)
             datos["tamanos"] = cursor.fetchall()
 
-            # 2. Obtener Sabores (productos de la categoría "Sabores", categoria_id=2)
+            # 2. Obtener Sabores/Toppings (categoría "Sabores").
+            # No se filtra por disponibilidad porque son toppings, no productos del menú principal.
             cursor.execute("""
-                SELECT p.producto_id AS id, p.nombre_producto AS nombre, p.precio_base AS precio
+                SELECT p.producto_id AS id,
+                       p.nombre_producto AS nombre,
+                       p.precio_base AS precio
                 FROM productos p
                 INNER JOIN categorias c ON p.categoria_id = c.categoria_id
                 WHERE LOWER(c.nombre_categoria) LIKE '%sabor%'
-                  AND p.disponibilidad_producto = 1
             """)
             datos["sabores"] = cursor.fetchall()
 
-            # 3. Adiciones (por ahora vacío hasta que exista la tabla)
-            datos["adiciones"] = []
+            # 3. Adiciones (toppings extra como queso, piña, etc.)
+            cursor.execute("""
+                SELECT p.producto_id AS id,
+                       p.nombre_producto AS nombre,
+                       p.precio_base AS precio
+                FROM productos p
+                INNER JOIN categorias c ON p.categoria_id = c.categoria_id
+                WHERE LOWER(c.nombre_categoria) LIKE '%adicion%'
+                  AND p.disponibilidad_producto = 1
+            """)
+            datos["adiciones"] = cursor.fetchall()
             
             cursor.close()
             conn.close()
