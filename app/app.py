@@ -78,8 +78,12 @@ def detalle_plato(id_plato):
     except Exception as e:
         print(f"Error en detalle plato: {e}")
 
+    categoria_nombre = info_plato.get('categoria_nombre', '').lower()
+    es_pizza = 'pizza' in categoria_nombre
+
     return render_template('client/detalle_plato.html', 
                            plato=info_plato,
+                           es_pizza=es_pizza,
                            tamanos=datos_extras.get('tamanos', []),
                            adiciones=datos_extras.get('adiciones', []),
                            sabores=datos_extras.get('sabores', []))

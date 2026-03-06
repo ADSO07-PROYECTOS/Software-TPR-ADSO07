@@ -47,6 +47,7 @@
                 <p>{{ plato.descripcion }}</p>
             </div>
             
+            {% if es_pizza %}
             <div class="seleccion-tamano">
             <select class="tamano-pizza" id="select-tamano">
                 {% for tam in tamanos %}
@@ -59,11 +60,13 @@
             </select>
             <button class="precio-btn">$ 0</button>
         </div>
+            {% endif %}
             
             <div class="division">
                 <hr>
             </div>
         
+            {% if es_pizza %}
             <section class="cont-adiciones">
                 <div class="adicion">
                     <h2 id="adicion">¿DESEAS ADICIONAR ALGO A TU COMIDA?</h2>
@@ -71,7 +74,7 @@
                 </div>
             </section>
 
-                    <section class="adiciones-lista">
+            <section class="adiciones-lista">
             {% for adicion in adiciones %}
             <div class="adicion-item" data-precio="{{ adicion.precio }}">
                 <label>{{ adicion.nombre }}</label>
@@ -87,11 +90,13 @@
                 <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
             </div>
             {% endfor %}
-        </section>
+            </section>
+            {% endif %}
                 
             
 
-            <section class="combinar" style="display: none;">
+            {% if es_pizza %}
+            <section class="combinar">
                 <div class="combinar-pizza">
                     <h2 id="adicion">¿DESEAS ADICIONAR OTRO SABOR A TU PIZZA?</h2>
                     <p>solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
@@ -104,10 +109,9 @@
                     <div class="precio">$ {{ "{:,.0f}".format(sabor.precio|float) }}</div>
                 </div>
                 {% endfor %}
-            </div>
-
-         
+                </div>
             </section>
+            {% endif %}
     </main>
     
     <footer class="cont-inferior">
