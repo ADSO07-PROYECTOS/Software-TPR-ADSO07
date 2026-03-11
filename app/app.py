@@ -158,5 +158,22 @@ def detalle_plato(id_plato):
                            adiciones=datos_extras.get('adiciones', []),
                            sabores=datos_extras.get('sabores', []))
 
+@app.route('/api/tematicas', methods=['GET'])
+def proxy_tematicas():
+    try:
+        resp = requests.get('http://127.0.0.1:5005/api/tematicas', timeout=10)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/reservas', methods=['POST'])
+def proxy_reservas():
+    try:
+        resp = requests.post('http://127.0.0.1:5005/api/reservas',
+                             json=request.json, timeout=30)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)
