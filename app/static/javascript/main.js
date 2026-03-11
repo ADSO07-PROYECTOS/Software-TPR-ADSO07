@@ -34,6 +34,7 @@ const router = () => {
     else if (path.includes('detalles_reserva')) {
         cargarTematicas();
         prepararPaso2();
+        establecerFechaMinima();
         
     } 
     else if (path.includes('direccion_domicilio')) {

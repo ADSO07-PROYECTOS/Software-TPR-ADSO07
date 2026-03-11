@@ -29,7 +29,7 @@ def vista_cliente():
 @app.route('/direccion_domicilio')
 def vista_domicilio():
     return render_template('client/direccion_domicilio.html')
-
+    
 @app.route('/detalles_reserva')
 def vista_reserva():
     lista_tematicas = []
