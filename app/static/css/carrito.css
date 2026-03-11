@@ -51,20 +51,36 @@ body {
 }
 
 .producto_detalles{
-    padding: 10px;
-    margin-bottom: 15px;
+    padding: 14px 16px;
+    margin-bottom: 14px;
     display: flex;
-    border-radius: 20px;
+    border-radius: 16px;
     flex-direction: column;
-    border: 3px solid rgb(255, 255, 255);
+    gap: 10px;
+    background: rgba(20, 10, 10, 0.55);
+    border: 1px solid rgba(153, 24, 31, 0.65);
+    backdrop-filter: blur(6px);
 }
 
+
+.descripcion-extra {
+    font-size: 13px;
+    color: rgba(255, 255, 255, 0.6);
+    letter-spacing: 0.5px;
+}
+
+.controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-top: 1px solid rgba(153, 24, 31, 0.35);
+    padding-top: 8px;
+}
 
 .seleccionar_cantidad {
     display: flex;
     align-items: center;
     gap: 15px;
-    margin-bottom: 10px;
 }
 .seleccionar_cantidad button {
     background: none;
@@ -89,20 +105,28 @@ body {
     
 }
 
-.precio_seccion { 
+.precio_seccion {
     display: flex;
     justify-content: space-between;
+    align-items: flex-start;
     width: 100%;
-    align-items: center;
+    gap: 10px;
+}
+.info-producto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    flex: 1;
+    min-width: 0;
 }
 .precio {
     font-size: 22px;
-    margin-left: 125px;
-
+    white-space: nowrap;
+    flex-shrink: 0;
 }
 .ttlo_producto {
-    font-size: 26px;
-    margin-bottom: 10px;
+    font-size: 24px;
+    line-height: 1.1;
 }
 .total_valor{
     font-size: 30px;

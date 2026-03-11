@@ -46,8 +46,10 @@ document.addEventListener('DOMContentLoaded', () => {
 
             div.innerHTML = `
                 <div class="precio_seccion">
-                    <span class="ttlo_producto">${item.producto}</span>
-                    ${descripcionExtra}
+                    <div class="info-producto">
+                        <span class="ttlo_producto">${item.producto}</span>
+                        ${descripcionExtra}
+                    </div>
                     <span class="precio">$ ${(item.precio || 0).toLocaleString('es-CO')}</span>
                 </div>
                 <div class="controles">
