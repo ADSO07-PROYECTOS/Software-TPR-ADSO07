@@ -31,9 +31,9 @@ a{
     }
 
 body {
-    background: url('../img/registro/fondo.jpg');
+    background: url('../img/fondo-madera.jpg') no-repeat center center fixed;
     background-size: cover;
-    
+    min-height: 100vh;
 }
 .barra-superior {
     position: fixed;
@@ -43,7 +43,8 @@ body {
     display: flex;
     background: rgba(0, 0, 0, 0.4);
     justify-content: space-between;
-    /*backdrop-filter: blur(10px);*/
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 50;
 }
 /* BOTÓN MENÚ */
@@ -253,7 +254,8 @@ button {
     display: flex;
     background: rgba(0, 0, 0, 0.4);
     justify-content: space-between;
-    /*backdrop-filter: blur(10px);*/
+    backdrop-filter: blur(10px);
+    -webkit-backdrop-filter: blur(10px);
     z-index: 50;
 }
 /* BOTÓN MENÚ */
