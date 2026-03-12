@@ -30,7 +30,16 @@
             </nav>    
         </header>
 
-        <h3 id="tlo">NUESTROS PLATOS</h3>
+        <h3 id="tlo">{{ nombre_categoria }}</h3>
+
+        <nav class="categorias-tabs">
+            {% for cat in lista_categorias %}
+                <a href="{{ url_for('ver_platos', id_categoria=cat.id) }}"
+                   class="tab-categoria{% if cat.id == id_categoria_actual %} activa{% endif %}">
+                    {{ cat.nombre }}
+                </a>
+            {% endfor %}
+        </nav>
 
         <section class="menu-contenedor">
             {% for plato in lista_platos %}
