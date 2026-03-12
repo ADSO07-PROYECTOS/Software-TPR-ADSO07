@@ -1,0 +1,71 @@
+.modal-overlay {
+    background: #1a1a1a; 
+    padding: 20px;
+    border-radius: 15px;
+    width: 40%;
+    margin: auto;
+    color: white;
+    font-family: sans-serif;
+}
+
+.modal-title {
+    font-size: 24px;
+    text-transform: uppercase;
+    margin-bottom: 20px;
+}
+
+.modal-input {
+    width: 100%;
+    background: #f0f0f0;
+    border: none;
+    padding: 12px;
+    border-radius: 20px;
+    margin-bottom: 15px;
+    box-sizing: border-box;
+}
+
+.upload-zone {
+    border: 2px dashed #ccc;
+    background: #f0f0f0;
+    border-radius: 10px;
+    padding: 20px;
+    text-align: center;
+    color: #333;
+    margin-bottom: 20px;
+}
+
+.btn-buscar {
+    background: #9c1c1c;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+    border-radius: 8px;
+    cursor: pointer;
+    margin-top: 10px;
+}
+
+.modal-actions {
+    display: flex;
+    gap: 10px;
+}
+
+.btn-cancelar {
+    flex: 1;
+    background: #888;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+
+.btn-guardar {
+    flex: 1;
+    background: #9c1c1c;
+    color: white;
+    border: none;
+    padding: 12px;
+    border-radius: 10px;
+    cursor: pointer;
+}
+

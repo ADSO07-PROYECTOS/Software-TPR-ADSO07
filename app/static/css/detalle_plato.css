@@ -9,22 +9,21 @@
     box-sizing: border-box;
     font-family: 'Bebas Neue', sans-serif;
 }
-body {
-    background: url('../img/fondo-madera.jpg') no-repeat center center fixed;
-    background-size: cover;
-    min-height: 100vh;
-    overflow-x: hidden;
-    overflow-y: auto;
+html, body {
+    height: 100%;
+    margin: 0;
+    padding: 0;
 }
 
 main {
-    min-height: 100vh;
+    min-height: 100vh; /* Ocupa toda la pantalla */
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
-    padding-top: 70px;
-    padding-bottom: 90px;
+    background: url('../img/fondo-madera.jpg') center/cover no-repeat;
+    padding-top: 70px; /* espacio para barra superior */
+    padding-bottom: 90px; /* espacio para la barra inferior */
 }
 
 /* Asegura que el contenido principal (tarjeta) no se corte */

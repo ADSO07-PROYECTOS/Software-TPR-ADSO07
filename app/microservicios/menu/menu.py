@@ -32,7 +32,31 @@ def ver_menu():
 
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-    
+
+
+@app.route('/api/categorias', methods=['POST'])
+def crear_categoria():
+    try:
+        datos = request.get_json()
+        nombre = datos.get('nombre_categoria', '').strip()
+        imagen = datos.get('imagen_categoria', None)
+        if not nombre:
+            return jsonify({"error": "nombre_categoria es obligatorio"}), 400
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute(
+                "INSERT INTO categorias (nombre_categoria, imagen_categoria) VALUES (%s, %s)",
+                (nombre, imagen)
+            )
+            conn.commit()
+            nuevo_id = cursor.lastrowid
+            cursor.close()
+            conn.close()
+            return jsonify({"mensaje": "Categoría creada", "categoria_id": nuevo_id}), 201
+        return jsonify({"error": "Sin conexión a BD"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
 
 
 @app.route('/api/platos/<int:id_categoria>', methods=['GET'])

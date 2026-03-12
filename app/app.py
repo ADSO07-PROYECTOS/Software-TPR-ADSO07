@@ -3,6 +3,15 @@ from flask_cors import CORS
 from conexion import conectar
 import requests
 import qrcode, io, base64
+import os
+from werkzeug.utils import secure_filename
+
+UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'img', 'platos')
+ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+
+def allowed_file(filename):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
 
 DIAS_ES = ['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO','DOMINGO']
 MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
@@ -370,8 +379,12 @@ def admin_producto_delete(pid):
     return _proxy_admin('DELETE', f'/api/admin/productos/{pid}')
 
 @app.route('/admin/api/categorias', methods=['GET'])
-def admin_categorias():
+def admin_categorias_get():
     return _proxy_admin('GET', '/api/admin/categorias')
+
+@app.route('/admin/api/categorias', methods=['POST'])
+def admin_categorias_post():
+    return _proxy_admin('POST', '/api/admin/categorias', json=request.get_json())
 
 # Domicilios
 @app.route('/admin/api/domicilios', methods=['GET'])
@@ -403,6 +416,33 @@ def admin_tematicas_post():
 @app.route('/admin/api/tematicas/<int:tid>', methods=['DELETE'])
 def admin_tematica_delete(tid):
     return _proxy_admin('DELETE', f'/api/admin/tematicas/{tid}')
+@app.route('/admin/api/tematicas/<int:tid>', methods=['PUT'])
+def admin_tematicas_put(tid):
+    return _proxy_admin('PUT', f'/api/admin/tematicas/{tid}', json=request.get_json())
+# Upload de imagen de plato
+@app.route('/admin/api/upload-imagen', methods=['POST'])
+def admin_upload_imagen():
+    if 'imagen' not in request.files:
+        return jsonify({'error': 'No se envió ningún archivo'}), 400
+    archivo = request.files['imagen']
+    if archivo.filename == '':
+        return jsonify({'error': 'Nombre de archivo vacío'}), 400
+    if not allowed_file(archivo.filename):
+        return jsonify({'error': 'Formato no permitido. Usa PNG, JPG o WEBP'}), 400
+    nombre = secure_filename(archivo.filename)
+    ruta = os.path.join(UPLOAD_FOLDER, nombre)
+    archivo.save(ruta)
+    # Se guarda 'platos/nombre.jpg' para que las vistas usen url_for('static', filename='img/' + imagen)
+    return jsonify({'url': f'platos/{nombre}'})
+
+# Proxy plato individual (usado por panel.js para editar producto)
+@app.route('/api/plato/<int:pid>', methods=['GET'])
+def proxy_plato_detalle(pid):
+    try:
+        resp = requests.get(f'http://localhost:5001/api/plato/{pid}', timeout=10)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 502
 
 
 if __name__ == "__main__":

@@ -95,31 +95,153 @@ async function eliminarCliente(id, nombre) {
 }
 
 // ══════════════════════════════════════════════════════════════════════════════
-// PRODUCTOS
+// PRODUCTOS – vista por categoría
 // ══════════════════════════════════════════════════════════════════════════════
 
 let _categorias = [];
+let _categActual = null; // { id, nombre }
 
 async function cargarProductos() {
-    const tbody = document.getElementById('tbody-productos');
-    tbody.innerHTML = '<tr><td colspan="6" class="cargando">Cargando...</td></tr>';
-    try {
-        const [productos, categorias] = await Promise.all([
-            apiFetch('/admin/api/productos'),
-            apiFetch('/admin/api/categorias'),
-        ]);
-        _categorias = categorias;
-        llenarSelectCategorias();
+    document.getElementById('vista-categorias').classList.remove('oculta');
+    document.getElementById('vista-platos').classList.add('oculta');
+    cancelarFormProducto();
 
-        if (!productos.length) {
-            tbody.innerHTML = '<tr><td colspan="6" class="cargando">Sin productos</td></tr>';
+    const lista = document.getElementById('lista-categorias');
+    lista.innerHTML = '<div class="cargando" style="padding:20px;text-align:center;">Cargando categorías...</div>';
+    try {
+        _categorias = await apiFetch('/admin/api/categorias');
+        if (!_categorias.length) {
+            lista.innerHTML = '<div class="cargando" style="padding:20px;text-align:center;">Sin categorías</div>';
             return;
         }
-        tbody.innerHTML = productos.map(p => `
+        lista.innerHTML = _categorias.map(c => `
+            <div class="cat-fila" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')"> 
+                <span class="cat-fila-nombre">${esc(c.nombre)}</span>
+                <span class="cat-fila-arrow">›</span>
+            </div>`
+        ).join('');
+    } catch (e) {
+        lista.innerHTML = `<div class="cargando" style="padding:20px;text-align:center;">${esc(e.message)}</div>`;
+        toast(e.message, 'error');
+    }
+}
+
+/* ── Modales ─────────────────────────────────────────── */
+function abrirModalCategoria() {
+    document.getElementById('form-categoria').reset();
+    document.getElementById('fc-imagen').value = '';
+    document.getElementById('modal-categoria').classList.remove('oculta');
+    document.getElementById('fc-nombre').focus();
+}
+function cerrarModalCategoria() {
+    document.getElementById('modal-categoria').classList.add('oculta');
+}
+
+function abrirModalProducto() {
+    document.getElementById('form-producto').reset();
+    document.getElementById('fp-id').value = '';
+    document.getElementById('fp-imagen').value = '';
+    document.getElementById('fp-imagen-preview-label').textContent = '';
+    document.getElementById('modal-producto-titulo').textContent = 'Nuevo Producto';
+    llenarSelectCategorias();
+    if (_categActual) {
+        document.getElementById('fp-categoria').value = _categActual.id;
+        document.getElementById('fp-categoria-grupo').style.display = 'none';
+    } else {
+        document.getElementById('fp-categoria-grupo').style.display = '';
+    }
+    document.getElementById('modal-producto').classList.remove('oculta');
+    document.getElementById('fp-nombre').focus();
+}
+function cerrarModalProducto() {
+    document.getElementById('modal-producto').classList.add('oculta');
+}
+
+function _cerrarModalPorOverlay(e, id) {
+    if (e.target === document.getElementById(id)) {
+        document.getElementById(id).classList.add('oculta');
+    }
+}
+
+document.addEventListener('keydown', e => {
+    if (e.key === 'Escape') {
+        cerrarModalCategoria();
+        cerrarModalProducto();
+    }
+});
+
+// Alias de compatibilidad (cancelarFormProducto sigue siendo llamado internamente)
+function cancelarFormProducto() { cerrarModalProducto(); }
+
+async function guardarCategoria(e) {
+    e.preventDefault();
+    const fileInput = document.getElementById('fc-imagen-file');
+    if (fileInput.files.length > 0) {
+        const fd = new FormData();
+        fd.append('imagen', fileInput.files[0]);
+        try {
+            const resp = await fetch('/admin/api/upload-imagen', { method: 'POST', body: fd });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.error || 'Error al subir imagen');
+            document.getElementById('fc-imagen').value = data.url;
+        } catch (err) {
+            toast(err.message, 'error');
+            return;
+        }
+    }
+    const payload = {
+        nombre_categoria: document.getElementById('fc-nombre').value.trim(),
+        imagen_categoria: document.getElementById('fc-imagen').value.trim() || null,
+    };
+    try {
+        await apiFetch('/admin/api/categorias', { method: 'POST', body: JSON.stringify(payload) });
+        toast('Categoría creada');
+        cerrarModalCategoria();
+        cargarProductos();
+    } catch (err) {
+        toast(err.message, 'error');
+    }
+}
+
+async function abrirCategoria(catId, catNombre) {
+    _categActual = { id: catId, nombre: catNombre };
+    document.getElementById('titulo-categoria').textContent = catNombre;
+    document.getElementById('vista-categorias').classList.add('oculta');
+    document.getElementById('vista-platos').classList.remove('oculta');
+    cancelarFormProducto();
+    // preseleccionar categoría en el formulario
+    llenarSelectCategorias();
+    await cargarProductosDeCategoria(catId);
+}
+
+function volverCategorias() {
+    _categActual = null;
+    document.getElementById('vista-platos').classList.add('oculta');
+    document.getElementById('vista-categorias').classList.remove('oculta');
+    cancelarFormProducto();
+}
+
+async function cargarProductosDeCategoria(catId) {
+    const tbody = document.getElementById('tbody-productos');
+    tbody.innerHTML = '<tr><td colspan="5" class="cargando">Cargando...</td></tr>';
+    try {
+        const todos = await apiFetch('/admin/api/productos');
+        const productos = todos.filter(p => p.nombre_categoria === (_categorias.find(c => c.id === catId) || {}).nombre
+            || todos.filter(p2 => p2.nombre_categoria).length === 0
+        );
+        // Filtrar por categoria_id si existe el campo, si no por nombre
+        const filtrados = todos.filter(p => {
+            const cat = _categorias.find(c => c.id === catId);
+            return cat && p.nombre_categoria === cat.nombre;
+        });
+        if (!filtrados.length) {
+            tbody.innerHTML = '<tr><td colspan="5" class="cargando">Sin productos en esta categoría</td></tr>';
+            return;
+        }
+        tbody.innerHTML = filtrados.map(p => `
             <tr>
                 <td>${p.producto_id}</td>
                 <td>${esc(p.nombre_producto)}</td>
-                <td>${esc(p.nombre_categoria || '')}</td>
                 <td>$${Number(p.precio_base).toLocaleString('es-CO')}</td>
                 <td>
                     <span class="pill ${p.disponibilidad_producto ? 'verde' : 'rojo'}">
@@ -136,27 +258,28 @@ async function cargarProductos() {
             </tr>
         `).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="6" class="cargando">${esc(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
     }
 }
 
 function llenarSelectCategorias() {
     const sel = document.getElementById('fp-categoria');
+    if (!sel) return;
     sel.innerHTML = '<option value="">-- Selecciona --</option>' +
-        _categorias.map(c => `<option value="${c.id}">${esc(c.nombre)}</option>`).join('');
+        _categorias.map(c => `<option value="${c.id}"${_categActual && _categActual.id === c.id ? ' selected' : ''}>${esc(c.nombre)}</option>`).join('');
 }
 
-function toggleFormProducto() {
-    const wrapper = document.getElementById('form-producto-wrapper');
-    wrapper.classList.toggle('oculta');
-    if (!wrapper.classList.contains('oculta')) llenarSelectCategorias();
-}
+function toggleFormProducto() { abrirModalProducto(); }
 
 function cancelarFormProducto() {
-    document.getElementById('form-producto-wrapper').classList.add('oculta');
+    const wrapper = document.getElementById('form-producto-wrapper');
+    if (!wrapper) return;
+    wrapper.classList.add('oculta');
     document.getElementById('form-producto').reset();
     document.getElementById('fp-id').value = '';
+    document.getElementById('fp-imagen').value = '';
+    document.getElementById('fp-imagen-preview-label').textContent = '';
     document.getElementById('form-producto-titulo').textContent = 'Nuevo Producto';
 }
 
@@ -176,14 +299,29 @@ async function editarProducto(id) {
         document.getElementById('fp-precio').value = p.precio || 0;
         document.getElementById('fp-descripcion').value = p.descripcion || '';
         document.getElementById('fp-imagen').value = p.imagen || '';
+        // Mostrar nombre del archivo actual si existe
+        const label = document.getElementById('fp-imagen-preview-label');
+        if (p.imagen) {
+            const imgUrl = p.imagen.startsWith('/') || p.imagen.startsWith('http')
+                ? p.imagen
+                : `/static/img/${p.imagen}`;
+            label.innerHTML = `Imagen actual: <a href="${imgUrl}" target="_blank" style="color:rgba(255,255,255,0.7)">${p.imagen.split('/').pop()}</a>`;
+        } else {
+            label.textContent = '';
+        }
+        document.getElementById('fp-imagen-file').value = '';
 
         llenarSelectCategorias();
         const sel = document.getElementById('fp-categoria');
         sel.value = p.categoria_id || '';
+        if (_categActual) {
+            sel.value = _categActual.id;
+            document.getElementById('fp-categoria-grupo').style.display = 'none';
+        }
 
-        document.getElementById('form-producto-titulo').textContent = 'Editar Producto';
-        document.getElementById('form-producto-wrapper').classList.remove('oculta');
-        document.getElementById('form-producto-wrapper').scrollIntoView({ behavior: 'smooth' });
+        document.getElementById('modal-producto-titulo').textContent = 'Editar Producto';
+        document.getElementById('modal-producto').classList.remove('oculta');
+        document.getElementById('fp-nombre').focus();
     } catch (e) {
         toast(e.message, 'error');
     }
@@ -192,12 +330,29 @@ async function editarProducto(id) {
 async function guardarProducto(e) {
     e.preventDefault();
     const id = document.getElementById('fp-id').value;
+
+    // Subir imagen si el usuario seleccionó un archivo
+    const fileInput = document.getElementById('fp-imagen-file');
+    if (fileInput.files.length > 0) {
+        const formData = new FormData();
+        formData.append('imagen', fileInput.files[0]);
+        try {
+            const resp = await fetch('/admin/api/upload-imagen', { method: 'POST', body: formData });
+            const data = await resp.json();
+            if (!resp.ok) throw new Error(data.error || 'Error al subir imagen');
+            document.getElementById('fp-imagen').value = data.url;
+        } catch (err) {
+            toast(err.message, 'error');
+            return;
+        }
+    }
+
     const payload = {
-        nombre_producto:       document.getElementById('fp-nombre').value.trim(),
-        categoria_id:          parseInt(document.getElementById('fp-categoria').value),
-        precio_base:           parseFloat(document.getElementById('fp-precio').value),
-        descripcion_producto:  document.getElementById('fp-descripcion').value.trim(),
-        imagen_producto:       document.getElementById('fp-imagen').value.trim() || null,
+        nombre_producto:         document.getElementById('fp-nombre').value.trim(),
+        categoria_id:            parseInt(document.getElementById('fp-categoria').value),
+        precio_base:             parseFloat(document.getElementById('fp-precio').value),
+        descripcion_producto:    document.getElementById('fp-descripcion').value.trim(),
+        imagen_producto:         document.getElementById('fp-imagen').value.trim() || null,
         disponibilidad_producto: parseInt(document.getElementById('fp-disponibilidad').value),
     };
 
@@ -210,7 +365,11 @@ async function guardarProducto(e) {
             toast('Producto agregado');
         }
         cancelarFormProducto();
-        cargarProductos();
+        if (_categActual) {
+            await cargarProductosDeCategoria(_categActual.id);
+        } else {
+            cargarProductos();
+        }
     } catch (e) {
         toast(e.message, 'error');
     }
@@ -224,7 +383,11 @@ async function toggleProducto(id, estadoActual) {
             body: JSON.stringify({ disponibilidad_producto: nuevo }),
         });
         toast(nuevo ? 'Producto activado' : 'Producto desactivado');
-        cargarProductos();
+        if (_categActual) {
+            await cargarProductosDeCategoria(_categActual.id);
+        } else {
+            cargarProductos();
+        }
     } catch (e) {
         toast(e.message, 'error');
     }
@@ -355,27 +518,48 @@ async function cambiarEstadoReserva(id, nuevoEstado) {
 
 async function cargarTematicas() {
     const tbody = document.getElementById('tbody-tematicas');
-    tbody.innerHTML = '<tr><td colspan="3" class="cargando">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="4" class="cargando">Cargando...</td></tr>';
     try {
         const tematicas = await apiFetch('/admin/api/tematicas');
         if (!tematicas.length) {
-            tbody.innerHTML = '<tr><td colspan="3" class="cargando">Sin temáticas registradas</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="4" class="cargando">Sin temáticas registradas</td></tr>';
             return;
         }
-        tbody.innerHTML = tematicas.map(t => `
+        tbody.innerHTML = tematicas.map(t => {
+            const activo = t.activo === undefined ? 1 : t.activo;
+            return `
             <tr>
                 <td>${t.tematica_id}</td>
                 <td>${esc(t.nombre_tematica)}</td>
-                <td>
+                <td><span class="pill ${activo ? 'verde' : 'rojo'}">${activo ? 'Activa' : 'Inactiva'}</span></td>
+                <td style="display:flex;gap:8px;flex-wrap:wrap;">
+                    <button class="btn-accion ${activo ? 'gris' : 'verde'}"
+                        onclick="toggleTematica(${t.tematica_id}, ${activo})">
+                        ${activo ? 'Desactivar' : 'Activar'}
+                    </button>
                     <button class="btn-accion rojo"
                         onclick="eliminarTematica(${t.tematica_id}, '${esc(t.nombre_tematica)}')">
                         Eliminar
                     </button>
                 </td>
-            </tr>
-        `).join('');
+            </tr>`;
+        }).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="3" class="cargando">${esc(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="4" class="cargando">${esc(e.message)}</td></tr>`;
+        toast(e.message, 'error');
+    }
+}
+
+async function toggleTematica(id, activoActual) {
+    const nuevo = activoActual ? 0 : 1;
+    try {
+        await apiFetch(`/admin/api/tematicas/${id}`, {
+            method: 'PUT',
+            body: JSON.stringify({ activo: nuevo }),
+        });
+        toast(nuevo ? 'Temática activada' : 'Temática desactivada');
+        cargarTematicas();
+    } catch (e) {
         toast(e.message, 'error');
     }
 }

@@ -180,6 +180,16 @@ def admin_listar_categorias():
         return jsonify({"error": str(e)}), 500
 
 
+@app.route('/api/admin/categorias', methods=['POST'])
+def admin_crear_categoria():
+    try:
+        resp = requests.post(f'{MENU_MS}/api/categorias',
+                             json=request.get_json(), timeout=10)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ── Domicilios ────────────────────────────────────────────────────────────────
 
 @app.route('/api/admin/domicilios', methods=['GET'])
@@ -283,12 +293,38 @@ def admin_listar_tematicas():
     try:
         conn = conectar()
         cursor = conn.cursor(dictionary=True)
-        cursor.execute(
-            "SELECT tematica_id, nombre_tematica FROM tematicas ORDER BY nombre_tematica"
-        )
+        try:
+            cursor.execute(
+                "SELECT tematica_id, nombre_tematica, activo FROM tematicas ORDER BY nombre_tematica"
+            )
+        except Exception:
+            # La columna 'activo' no existe aún — la creamos automáticamente
+            cursor.execute("ALTER TABLE tematicas ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1")
+            conn.commit()
+            cursor.execute(
+                "SELECT tematica_id, nombre_tematica, activo FROM tematicas ORDER BY nombre_tematica"
+            )
         tematicas = cursor.fetchall()
         cursor.close(); conn.close()
         return jsonify(tematicas)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/admin/tematicas/<int:tematica_id>', methods=['PUT'])
+def admin_toggle_tematica(tematica_id):
+    try:
+        datos = request.get_json()
+        activo = int(datos.get('activo', 1))
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE tematicas SET activo = %s WHERE tematica_id = %s",
+            (activo, tematica_id)
+        )
+        conn.commit()
+        cursor.close(); conn.close()
+        return jsonify({"mensaje": "Tem\u00e1tica actualizada"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
