@@ -30,7 +30,7 @@ def admin_stats():
             cursor = conn.cursor(dictionary=True)
 
             cursor.execute(
-                "SELECT COUNT(*) AS c FROM domicilios WHERE DATE(fecha_pedido) = CURDATE()"
+                "SELECT COUNT(*) AS c FROM domicilios WHERE DATE(fecha_hora) = CURDATE()"
             )
             row = cursor.fetchone()
             stats['domicilios_hoy'] = row['c'] if row else 0
@@ -68,14 +68,14 @@ def admin_stats():
                 stats['mesas_reservadas']  += reservadas
 
             cursor.execute("""
-                SELECT d.domicilio_id, d.estado_pedido, d.fecha_pedido,
+                SELECT d.domicilio_id, d.estado_pedido, d.fecha_hora,
                        c.nombre, d.direccion
                 FROM domicilios d
                 LEFT JOIN clientes c ON d.cliente_id = c.cliente_id
-                ORDER BY d.fecha_pedido DESC LIMIT 5
+                ORDER BY d.fecha_hora DESC LIMIT 5
             """)
             for row in cursor.fetchall():
-                row['fecha_pedido'] = str(row['fecha_pedido']) if row.get('fecha_pedido') else None
+                row['fecha_hora'] = str(row['fecha_hora']) if row.get('fecha_hora') else None
                 pedidos_recientes.append(row)
 
             cursor.close()
@@ -189,19 +189,19 @@ def admin_listar_domicilios():
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
             SELECT d.domicilio_id, d.direccion, d.estado_pedido,
-                   d.pago_transferencia, d.fecha_pedido,
+                   d.pago_transferencia, d.fecha_hora,
                    c.nombre, c.telefono, c.email,
                    SUM(dd.cantidad * dd.valor_unitario) AS total
             FROM domicilios d
             LEFT JOIN clientes c ON d.cliente_id = c.cliente_id
             LEFT JOIN detalles_domicilios dd ON d.domicilio_id = dd.domicilio_id
             GROUP BY d.domicilio_id
-            ORDER BY d.fecha_pedido DESC
+            ORDER BY d.fecha_hora DESC
         """)
         domicilios = cursor.fetchall()
         for d in domicilios:
-            if d.get('fecha_pedido'):
-                d['fecha_pedido'] = str(d['fecha_pedido'])
+            if d.get('fecha_hora'):
+                d['fecha_hora'] = str(d['fecha_hora'])
             if d.get('total') is not None:
                 d['total'] = float(d['total'])
         cursor.close(); conn.close()

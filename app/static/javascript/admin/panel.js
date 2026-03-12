@@ -252,7 +252,7 @@ async function cargarPedidos() {
                 <td>${esc(d.direccion || '')}</td>
                 <td>$${d.total ? Number(d.total).toLocaleString('es-CO') : '0'}</td>
                 <td>${d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo'}</td>
-                <td><small>${esc(d.fecha_pedido || '')}</small></td>
+                <td><small>${esc(d.fecha_hora || '')}</small></td>
                 <td><span class="pill ${pillDom(d.estado_pedido)}">${esc(d.estado_pedido || '')}</span></td>
                 <td>
                     <select class="sel-estado" onchange="cambiarEstadoDomicilio(${d.domicilio_id}, this.value)">
