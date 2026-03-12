@@ -261,6 +261,16 @@ border-radius:50%;
 margin-right:5px;
 }
 
+#modal-plato {
+    display: none; 
+    position: fixed;
+    inset: 0;
+    background: #1a1a1a;
+    justify-content: center;
+    border:2px solid white;
+    align-items: center;
+}
+
 .rojo{background:red;}
 .verde{background:green;}
 .naranja{background:orange;}

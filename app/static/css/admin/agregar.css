@@ -1,8 +1,8 @@
 .modal-overlay {
-    background: #1a1a1a; /* Fondo oscuro */
+    background: #1a1a1a; 
     padding: 20px;
     border-radius: 15px;
-    width: 350px;
+    width: 40%;
     margin: auto;
     color: white;
     font-family: sans-serif;
@@ -68,3 +68,4 @@
     border-radius: 10px;
     cursor: pointer;
 }
+
