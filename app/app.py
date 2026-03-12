@@ -6,12 +6,17 @@ import qrcode, io, base64
 import os
 from werkzeug.utils import secure_filename
 
-UPLOAD_FOLDER = os.path.join(os.path.dirname(__file__), 'static', 'img', 'platos')
-ALLOWED_EXTENSIONS = {'png', 'jpg', 'jpeg', 'webp'}
-os.makedirs(UPLOAD_FOLDER, exist_ok=True)
+# Carpetas de subida
+UPLOAD_FOLDER_IMG = os.path.join(os.path.dirname(__file__), 'static', 'img', 'platos')
+UPLOAD_FOLDER_COMPROBANTES = os.path.join(os.path.dirname(__file__), 'static', 'comprobantes')
+os.makedirs(UPLOAD_FOLDER_IMG, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER_COMPROBANTES, exist_ok=True)
 
-def allowed_file(filename):
-    return '.' in filename and filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+ALLOWED_EXT_IMG = {'png', 'jpg', 'jpeg', 'webp'}
+ALLOWED_EXT_COMPROBANTE = {'png', 'jpg', 'jpeg', 'pdf'}
+
+def allowed_file(filename, allowed_ext):
+    return '.' in filename and filename.rsplit('.', 1)[1].lower() in allowed_ext
 
 DIAS_ES = ['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO','DOMINGO']
 MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
@@ -19,6 +24,23 @@ MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
 
 app = Flask(__name__)
 CORS(app)
+
+# Migración: asegurar que tabla reservas tiene columna para comprobante
+try:
+    conn = conectar()
+    if conn:
+        cursor = conn.cursor()
+        cursor.execute("SHOW COLUMNS FROM reservas LIKE 'comprobante_transferencia'")
+        if not cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL
+            """)
+            conn.commit()
+            print("✓ Columna 'comprobante_transferencia' agregada a tabla reservas")
+        cursor.close()
+        conn.close()
+except Exception as e:
+    print(f"Adv: No se pudo verificar migración de reservas: {e}")
 
 
 @app.route('/')
@@ -63,6 +85,10 @@ def vista_reserva():
 @app.route('/exito')
 def vista_exito():
     return render_template('client/exito.html')
+
+@app.route('/subir_comprobante')
+def subir_comprobante():
+    return render_template('client/subir_com.html')
 
 @app.route('/resumen/reserva/<int:id_reserva>')
 def resumen_reserva(id_reserva):
@@ -427,13 +453,77 @@ def admin_upload_imagen():
     archivo = request.files['imagen']
     if archivo.filename == '':
         return jsonify({'error': 'Nombre de archivo vacío'}), 400
-    if not allowed_file(archivo.filename):
+    if not allowed_file(archivo.filename, ALLOWED_EXT_IMG):
         return jsonify({'error': 'Formato no permitido. Usa PNG, JPG o WEBP'}), 400
     nombre = secure_filename(archivo.filename)
-    ruta = os.path.join(UPLOAD_FOLDER, nombre)
+    ruta = os.path.join(UPLOAD_FOLDER_IMG, nombre)
     archivo.save(ruta)
     # Se guarda 'platos/nombre.jpg' para que las vistas usen url_for('static', filename='img/' + imagen)
     return jsonify({'url': f'platos/{nombre}'})
+
+# Upload de comprobante de transferencia para reserva
+@app.route('/api/reservas/comprobante', methods=['POST'])
+def subir_comprobante_reserva():
+    try:
+        reserva_id = request.form.get('reserva_id')
+        if not reserva_id:
+            return jsonify({'success': False, 'message': 'ID de reserva no proporcionado'}), 400
+
+        if 'archivo' not in request.files:
+            return jsonify({'success': False, 'message': 'No se envió ningún archivo'}), 400
+        
+        archivo = request.files['archivo']
+        if archivo.filename == '':
+            return jsonify({'success': False, 'message': 'Nombre de archivo vacío'}), 400
+        
+        if not allowed_file(archivo.filename, ALLOWED_EXT_COMPROBANTE):
+            return jsonify({'success': False, 'message': 'Formato no permitido. Usa PNG, JPG o PDF'}), 400
+        
+        # Generar nombre único con ID de reserva
+        ext = archivo.filename.rsplit('.', 1)[1].lower()
+        nombre = f"comprobante_reserva_{reserva_id}_{secure_filename(archivo.filename)}"
+        ruta = os.path.join(UPLOAD_FOLDER_COMPROBANTES, nombre)
+        archivo.save(ruta)
+        
+        # Guardar referencia en la BD
+        conn = conectar()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Error de conexión a base de datos'}), 500
+        
+        cursor = conn.cursor()
+        try:
+            # Verificar si la columna existe, si no, crearla
+            cursor.execute("SHOW COLUMNS FROM reservas LIKE 'comprobante_transferencia'")
+            if not cursor.fetchone():
+                cursor.execute("ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL")
+                conn.commit()
+                print("✓ Columna agregada")
+            
+            # Actualizar o insertar el comprobante
+            ruta_relativa = f'comprobantes/{nombre}'
+            cursor.execute(
+                "UPDATE reservas SET comprobante_transferencia=%s WHERE reserva_id=%s",
+                (ruta_relativa, reserva_id)
+            )
+            conn.commit()
+            
+            # Verificar que la actualización fue exitosa
+            if cursor.rowcount == 0:
+                cursor.close()
+                conn.close()
+                return jsonify({'success': False, 'message': f'Reserva #{reserva_id} no encontrada'}), 404
+            
+            cursor.close()
+            conn.close()
+            return jsonify({'success': True, 'message': 'Comprobante recibido correctamente'}), 200
+        except Exception as e:
+            cursor.close()
+            conn.close()
+            print(f"Error al guardar en BD: {e}")
+            return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+    except Exception as e:
+        print(f"Error en subir_comprobante: {e}")
+        return jsonify({'success': False, 'message': str(e)}), 500
 
 # Proxy plato individual (usado por panel.js para editar producto)
 @app.route('/api/plato/<int:pid>', methods=['GET'])

@@ -6,10 +6,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnReservar = document.getElementById('reservar-btn');
     const btnDomicilio = document.getElementById('domicilio-btn');
     const btnVolverMenu = document.getElementById('btn_irmenu');
+    const btnDescargarQR = document.getElementById('btn_descargar_qr');
 
     if (btnVolverMenu) btnVolverMenu.addEventListener('click', () => inicio());
     if (btnReservar) btnReservar.addEventListener('click', () => seleccionarServicio('reserva'));
     if (btnDomicilio) btnDomicilio.addEventListener('click', () => seleccionarServicio('domicilio'));
+    if (btnDescargarQR) btnDescargarQR.addEventListener('click', descargarQR);
 
     router(); 
 });
@@ -46,5 +48,27 @@ const router = () => {
 
     
 };
+
+// Función para descargar el código QR
+function descargarQR() {
+    const qrImg = document.getElementById('qr-img');
+    const idReserva = localStorage.getItem('id_reserva') || 'QR_Reserva';
+    
+    if (!qrImg || !qrImg.src) {
+        alert('No hay código QR disponible para descargar');
+        return;
+    }
+
+    // Crear un link temporal
+    const link = document.createElement('a');
+    link.href = qrImg.src; // El src es un data URL en base64
+    link.download = `QR_Reserva_${idReserva}.png`; // Nombre del archivo a descargar
+    link.style.display = 'none';
+    
+    // Agregar al DOM, hacer click y removoer
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
 
     

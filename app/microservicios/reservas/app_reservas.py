@@ -74,8 +74,10 @@ def crear_reserva():
     conn = conectar()
     cursor = conn.cursor(dictionary=True) # Usamos diccionario para manejar mejor las mesas
     try:
-        # 1. FORMATEAR FECHA Y HORA (Igual que antes)
-        hora_limpia = f"{int(res_data['hor']):02d}:00:00"
+        # 1. FORMATEAR FECHA Y HORA
+        # Extraer la hora (puede venir como "14:00" o "14")
+        hora_str = res_data['hor'].split(':')[0] if ':' in res_data['hor'] else res_data['hor']
+        hora_limpia = f"{int(hora_str):02d}:00:00"
         fecha_hora_sql = f"{res_data['fec']} {hora_limpia}"
 
         
