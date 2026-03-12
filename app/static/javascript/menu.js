@@ -58,8 +58,8 @@ export async function enviarAlMicroservicio() {
         const detalles = JSON.parse(localStorage.getItem('detalles_servicio')) || {};
 
         const url = tipo === 'reserva'
-            ? 'http://localhost:5005/api/reservas'
-            : 'http://localhost:5004/api/domicilios';
+            ? 'http://147.182.238.195:5005/api/reservas'
+            : 'http://147.182.238.195:5004/api/domicilios';
 
         const payload = tipo === 'reserva'
             ? { cliente: cliente, reserva: detalles, pedido: carrito }

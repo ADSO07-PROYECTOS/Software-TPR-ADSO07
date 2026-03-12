@@ -487,14 +487,16 @@ const ESTADOS_RESERVA = ['confirmada', 'ocupada', 'cancelada', 'finalizada'];
 
 async function cargarReservas() {
     const tbody = document.getElementById('tbody-reservas');
-    tbody.innerHTML = '<tr><td colspan="9" class="cargando">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="10" class="cargando">Cargando...</td></tr>';
     try {
         const reservas = await apiFetch('/admin/api/reservas');
         if (!reservas.length) {
-            tbody.innerHTML = '<tr><td colspan="9" class="cargando">Sin reservas registradas</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="10" class="cargando">Sin reservas registradas</td></tr>';
             return;
         }
-        tbody.innerHTML = reservas.map(r => `
+        tbody.innerHTML = reservas.map(r => {
+            const tienePendiente = r.pago_transferencia && r.comprobante_transferencia;
+            return `
             <tr>
                 <td>${r.reserva_id}</td>
                 <td>${esc(r.nombre || '')}<br><small>${esc(r.telefono || '')}</small></td>
@@ -503,7 +505,15 @@ async function cargarReservas() {
                 <td>${r.piso || '—'}</td>
                 <td>${esc(r.nombre_tematica || '—')}</td>
                 <td>${r.pago_transferencia ? '🏦 Transfer.' : '💵 Efectivo'}</td>
-                <td><span class="pill ${pillRes(r.estado)}">${esc(r.estado || '')}</span></td>
+                <td>
+                    ${tienePendiente 
+                        ? `<span class="pill amarillo">⏳ PENDIENTE</span><br><button class="btn-accion azul" style="margin-top:4px; font-size:0.85rem;" onclick="abrirModalComprobante(${r.reserva_id})">📄 Ver</button>` 
+                        : '✓ Confirmado'
+                    }
+                </td>
+                <td>
+                    <span class="pill ${pillRes(r.estado)}">${esc(r.estado || '')}</span>
+                </td>
                 <td>
                     <select class="sel-estado" onchange="cambiarEstadoReserva(${r.reserva_id}, this.value)">
                         ${ESTADOS_RESERVA.map(s =>
@@ -512,9 +522,10 @@ async function cargarReservas() {
                     </select>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="9" class="cargando">${esc(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="10" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
     }
 }
@@ -536,6 +547,77 @@ async function cambiarEstadoReserva(id, nuevoEstado) {
         toast(`Reserva #${id} → ${nuevoEstado}`);
     } catch (e) {
         toast(e.message, 'error');
+    }
+}
+
+// Abrir modal para revisar comprobante
+async function abrirModalComprobante(reservaId) {
+    try {
+        const reservas = await apiFetch('/admin/api/reservas');
+        const reserva = reservas.find(r => r.reserva_id === reservaId);
+        
+        if (!reserva || !reserva.comprobante_transferencia) {
+            alert('Comprobante no encontrado');
+            return;
+        }
+
+        const modal = document.getElementById('modal-comprobante');
+        const img = document.getElementById('comprobante-preview');
+        const enlace = document.getElementById('comprobante-enlace');
+        const titulo = document.querySelector('#modal-comprobante .modal-header h2');
+        const btnConfirmar = document.getElementById('btn-confirmar-comprobante');
+
+        titulo.textContent = `Comprobante Reserva #${reservaId} - ${reserva.cc_cliente}`;
+        
+        const rutaComprobante = `/static/${reserva.comprobante_transferencia}`;
+        
+        // Si es PDF
+        if (reserva.comprobante_transferencia.endsWith('.pdf')) {
+            img.style.display = 'none';
+            enlace.href = rutaComprobante;
+            enlace.style.display = 'block';
+            enlace.textContent = '📄 Ver PDF en nueva ventana';
+        } else {
+            // Si es imagen
+            img.src = rutaComprobante;
+            img.style.display = 'block';
+            enlace.style.display = 'none';
+        }
+
+        btnConfirmar.dataset.reservaId = reservaId;
+        modal.classList.remove('oculta');
+    } catch (e) {
+        alert('Error al abrir comprobante: ' + e.message);
+    }
+}
+
+function cerrarModalComprobante() {
+    document.getElementById('modal-comprobante').classList.add('oculta');
+}
+
+async function confirmarComprobante(reservaId) {
+    if (!confirm('¿Confirmar este comprobante de transferencia?')) return;
+    
+    try {
+        const btn = event.target;
+        btn.disabled = true;
+        btn.textContent = 'CONFIRMANDO...';
+
+        await apiFetch(`/admin/api/reservas/${reservaId}`, {
+            method: 'PUT',
+            body: JSON.stringify({ 
+                estado: 'confirmada',
+                comprobante_validado: true
+            }),
+        });
+
+        cerrarModalComprobante();
+        toast(`✓ Comprobante validado. Reserva confirmada.`);
+        cargarReservas(); // Recargar tabla
+    } catch (e) {
+        alert('Error: ' + e.message);
+        event.target.disabled = false;
+        event.target.textContent = '✓ CONFIRMAR PAGO';
     }
 }
 

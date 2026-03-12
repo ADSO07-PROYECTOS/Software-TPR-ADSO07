@@ -214,6 +214,7 @@ def admin_listar_domicilios():
                 d['fecha_hora'] = str(d['fecha_hora'])
             if d.get('total') is not None:
                 d['total'] = float(d['total'])
+            d['pago_transferencia'] = int(d.get('pago_transferencia') or 0)
         cursor.close(); conn.close()
         return jsonify(domicilios)
     except Exception as e:
@@ -249,6 +250,7 @@ def admin_listar_reservas():
         cursor.execute("""
             SELECT r.reserva_id, r.fecha_hora, r.cantidad_personas, r.estado,
                    r.pago_transferencia, m.piso,
+                   r.comprobante_transferencia,
                    c.nombre, c.telefono, c.email, c.cc_cliente,
                    t.nombre_tematica
             FROM reservas r
@@ -261,6 +263,7 @@ def admin_listar_reservas():
         for rv in reservas:
             if rv.get('fecha_hora'):
                 rv['fecha_hora'] = str(rv['fecha_hora'])
+            rv['pago_transferencia'] = int(rv.get('pago_transferencia') or 0)
         cursor.close(); conn.close()
         return jsonify(reservas)
     except Exception as e:
@@ -271,14 +274,23 @@ def admin_actualizar_reserva(reserva_id):
     try:
         datos = request.get_json()
         nuevo_estado = datos.get('estado')
+        comprobante_validado = datos.get('comprobante_validado')
         if not nuevo_estado:
             return jsonify({"error": "estado requerido"}), 400
         conn = conectar()
         cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE reservas SET estado = %s WHERE reserva_id = %s",
-            (nuevo_estado, reserva_id)
-        )
+        
+        # Si se confirma el comprobante, limpiar el campo
+        if comprobante_validado:
+            cursor.execute(
+                "UPDATE reservas SET estado = %s, comprobante_transferencia = NULL WHERE reserva_id = %s",
+                (nuevo_estado, reserva_id)
+            )
+        else:
+            cursor.execute(
+                "UPDATE reservas SET estado = %s WHERE reserva_id = %s",
+                (nuevo_estado, reserva_id)
+            )
         conn.commit()
         cursor.close(); conn.close()
         return jsonify({"mensaje": "Estado actualizado"})
@@ -362,4 +374,4 @@ def admin_eliminar_tematica(tematica_id):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5006)
+    app.run(debug=True, host='0.0.0.0', port=5006)

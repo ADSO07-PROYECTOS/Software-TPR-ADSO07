@@ -113,7 +113,7 @@ async function inyectarTematicas() {
     if (!select) return;
 
     try {
-        const res = await fetch('http://localhost:5005/api/tematicas');
+        const res = await fetch('http://147.182.238.195:5005/api/tematicas');
         const data = await res.json();
         
         if (data.length > 0) {
@@ -146,7 +146,7 @@ async function procesarFinal(datosForm) {
 
     try {
         const port = datosUsuario.tipo === 'reserva' ? '5005' : '5001';
-        const res = await fetch(`http://localhost:${port}/api/${datosUsuario.tipo}s`, {
+        const res = await fetch(`http://147.182.238.195:${port}/api/${datosUsuario.tipo}s`, {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify(payload)

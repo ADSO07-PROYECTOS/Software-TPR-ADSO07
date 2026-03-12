@@ -1,4 +1,4 @@
-const API_DOMICILIOS = 'http://127.0.0.1:5004/api/domicilios'; 
+const API_DOMICILIOS = '/api/domicilios';
 
 export function prepararPaso1Domicilio() {
     const form = document.getElementById('form-paso1');
@@ -46,6 +46,8 @@ export function prepararPasoDomicilio() {
             if (data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_orden', data.id);
+                localStorage.removeItem('carrito');
+                localStorage.removeItem('carrito_tpr');
                 window.location.href = '/exito';
             } else {
                 alert("Error: " + data.message);

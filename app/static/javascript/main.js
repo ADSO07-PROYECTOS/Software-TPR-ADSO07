@@ -44,6 +44,17 @@ const router = () => {
     }
     else if (path.includes('exito')) {
         mostrarResultadoFinal();
+        // Mensaje según tipo de servicio
+        const tipo = localStorage.getItem('tipo_servicio');
+        const idOrden = localStorage.getItem('id_orden') || localStorage.getItem('id_reserva') || '';
+        const msgEl = document.getElementById('mensaje-exito');
+        if (msgEl) {
+            if (tipo === 'domicilio') {
+                msgEl.textContent = `Pedido #${idOrden} registrado. \u00a1Te lo llevamos pronto!`;
+            } else {
+                msgEl.textContent = `Reserva #${idOrden} confirmada. \u00a1Hasta pronto!`;
+            }
+        }
     }
 
     

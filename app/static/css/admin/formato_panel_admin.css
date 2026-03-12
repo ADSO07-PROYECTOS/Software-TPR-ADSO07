@@ -11,7 +11,7 @@
     --negro:#000000;
     --gris:#525055;
     --azul:#369;
-    --verde:#38761d;
+    --verde:#990000;
     --blanco-input:#d9d9d9;
 
 }
@@ -304,6 +304,6 @@ main#gran_padre{
 }
 .naranja { background-color: #e69138; }
 .amarilla { background-color: #f1c232; }
-.verde   { background-color: #38761d; }
+.verde   { background-color: #990000; }
 .roja    { background-color: #990000; }
 .azul    { background-color: #3d85c6; }

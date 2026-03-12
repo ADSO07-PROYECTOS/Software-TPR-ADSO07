@@ -1,4 +1,4 @@
-import sys, os, qrcode, io, base64, smtplib, ssl
+import sys, os, qrcode, io, base64, smtplib, ssl, threading
 from email.mime.text import MIMEText
 from email.mime.multipart import MIMEMultipart
 from email.mime.image import MIMEImage
@@ -157,11 +157,16 @@ def crear_reserva():
         qr.save(buf, format="PNG")
         qr_b64 = base64.b64encode(buf.getvalue()).decode()
 
-        enviar_mail_reserva(cli, res_data, buf)
+        threading.Thread(
+            target=enviar_mail_reserva,
+            args=(cli, res_data, buf),
+            daemon=True
+        ).start()
 
         return jsonify({
             "status": "success", 
             "message": f"Reserva creada con éxito en la mesa {id_mesa_asignada}",
+            "id": res_id,
             "qr": qr_b64
         })
 
@@ -173,4 +178,4 @@ def crear_reserva():
         conn.close()
 
 if __name__ == '__main__':
-    app.run(debug=True, port=5005)
+    app.run(debug=True, host='0.0.0.0', port=5005)

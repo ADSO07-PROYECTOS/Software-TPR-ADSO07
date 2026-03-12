@@ -119,8 +119,8 @@ body {
 
 .estado-badge {
     display: inline-block;
-    background: #1e5c1e;
-    color: #6dff6d;
+    background: #990000;
+    color: #fff;
     font-size: 12px;
     padding: 3px 10px;
     border-radius: 10px;

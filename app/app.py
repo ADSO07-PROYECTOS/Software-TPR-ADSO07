@@ -244,7 +244,7 @@ def mis_reservas():
                 res['pedido'] = cursor.fetchall()
 
                 # Generar QR como base64
-                url_qr = f"http://127.0.0.1:5000/resumen/reserva/{res['reserva_id']}"
+                url_qr = f"http://147.182.238.195:5000/resumen/reserva/{res['reserva_id']}"
                 qr_img = qrcode.make(url_qr)
                 buf = io.BytesIO()
                 qr_img.save(buf, format="PNG")
@@ -326,7 +326,7 @@ def modificar_reserva(id_reserva):
 @app.route('/api/tematicas', methods=['GET'])
 def proxy_tematicas():
     try:
-        resp = requests.get('http://127.0.0.1:5005/api/tematicas', timeout=10)
+        resp = requests.get('http://147.182.238.195:5005/api/tematicas', timeout=10)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
@@ -334,7 +334,7 @@ def proxy_tematicas():
 @app.route('/api/reservas', methods=['POST'])
 def proxy_reservas():
     try:
-        resp = requests.post('http://127.0.0.1:5005/api/reservas',
+        resp = requests.post('http://147.182.238.195:5005/api/reservas',
                              json=request.json, timeout=30)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
@@ -479,42 +479,50 @@ def subir_comprobante_reserva():
         if not allowed_file(archivo.filename, ALLOWED_EXT_COMPROBANTE):
             return jsonify({'success': False, 'message': 'Formato no permitido. Usa PNG, JPG o PDF'}), 400
         
-        # Generar nombre único con ID de reserva
-        ext = archivo.filename.rsplit('.', 1)[1].lower()
-        nombre = f"comprobante_reserva_{reserva_id}_{secure_filename(archivo.filename)}"
-        ruta = os.path.join(UPLOAD_FOLDER_COMPROBANTES, nombre)
-        archivo.save(ruta)
-        
-        # Guardar referencia en la BD
+        # Obtener cédula del cliente desde la reserva
         conn = conectar()
         if not conn:
             return jsonify({'success': False, 'message': 'Error de conexión a base de datos'}), 500
         
-        cursor = conn.cursor()
+        cursor = conn.cursor(dictionary=True)
         try:
+            cursor.execute("""
+                SELECT c.cc_cliente 
+                FROM reservas r
+                JOIN clientes c ON r.cliente_id = c.cliente_id
+                WHERE r.reserva_id = %s
+            """, (reserva_id,))
+            resultado = cursor.fetchone()
+            
+            if not resultado:
+                cursor.close()
+                conn.close()
+                return jsonify({'success': False, 'message': f'Reserva #{reserva_id} no encontrada'}), 404
+            
+            cedula = resultado['cc_cliente']
+            
+            # Generar nombre del archivo con cédula
+            ext = archivo.filename.rsplit('.', 1)[1].lower()
+            nombre = f"comprobante_{cedula}.{ext}"
+            ruta = os.path.join(UPLOAD_FOLDER_COMPROBANTES, nombre)
+            archivo.save(ruta)
+            
             # Verificar si la columna existe, si no, crearla
             cursor.execute("SHOW COLUMNS FROM reservas LIKE 'comprobante_transferencia'")
             if not cursor.fetchone():
                 cursor.execute("ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL")
                 conn.commit()
-                print("✓ Columna agregada")
             
-            # Actualizar o insertar el comprobante
+            # Actualizar con la ruta del comprobante
             ruta_relativa = f'comprobantes/{nombre}'
             cursor.execute(
                 "UPDATE reservas SET comprobante_transferencia=%s WHERE reserva_id=%s",
                 (ruta_relativa, reserva_id)
             )
             conn.commit()
-            
-            # Verificar que la actualización fue exitosa
-            if cursor.rowcount == 0:
-                cursor.close()
-                conn.close()
-                return jsonify({'success': False, 'message': f'Reserva #{reserva_id} no encontrada'}), 404
-            
             cursor.close()
             conn.close()
+            
             return jsonify({'success': True, 'message': 'Comprobante recibido correctamente'}), 200
         except Exception as e:
             cursor.close()
@@ -524,6 +532,16 @@ def subir_comprobante_reserva():
     except Exception as e:
         print(f"Error en subir_comprobante: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
+
+# ── Proxy domicilios (cliente → microservicio 5004) ─────────────────────────
+@app.route('/api/domicilios', methods=['POST'])
+def proxy_crear_domicilio():
+    try:
+        resp = requests.post('http://localhost:5004/api/domicilios',
+                             json=request.get_json(), timeout=30)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"status": "error", "message": str(e)}), 502
 
 # Proxy plato individual (usado por panel.js para editar producto)
 @app.route('/api/plato/<int:pid>', methods=['GET'])
