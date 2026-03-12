@@ -2,6 +2,28 @@
    PANEL ADMINISTRACIÓN – TRES PASOS
    ═══════════════════════════════════════════════════════ */
 
+// ── Sidebar responsive (hamburguesa) ─────────────────────────────────────────
+
+(function () {
+    const btnMenu    = document.getElementById('btn_menu');
+    const sidebar    = document.getElementById('panel_izq');
+    const overlay    = document.getElementById('sidebar-overlay');
+
+    function abrirSidebar() {
+        sidebar.classList.add('abierto');
+        overlay.classList.add('visible');
+    }
+    function cerrarSidebar() {
+        sidebar.classList.remove('abierto');
+        overlay.classList.remove('visible');
+    }
+
+    btnMenu?.addEventListener('click', () => {
+        sidebar.classList.contains('abierto') ? cerrarSidebar() : abrirSidebar();
+    });
+    overlay?.addEventListener('click', cerrarSidebar);
+})();
+
 // ── Navegación entre secciones ────────────────────────────────────────────────
 
 document.querySelectorAll('.nav-btn').forEach(btn => {
@@ -13,6 +35,11 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
         // Mostrar sección
         document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
         document.getElementById('sec-' + target).classList.add('activa');
+        // En móvil cerrar sidebar al navegar
+        if (window.innerWidth <= 900) {
+            document.getElementById('panel_izq').classList.remove('abierto');
+            document.getElementById('sidebar-overlay').classList.remove('visible');
+        }
         // Cargar datos de la sección (excepto dashboard que viene del servidor)
         if (target !== 'dashboard') cargarSeccion(target);
     });

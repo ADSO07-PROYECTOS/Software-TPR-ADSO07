@@ -7,12 +7,25 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/panel.css') }}">
 </head>
 <body>
+
+<!-- Botón hamburguesa (visible solo en móvil) -->
+<button id="btn_menu" aria-label="Abrir menú">
+    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
+        <line x1="3" y1="6"  x2="21" y2="6"/>
+        <line x1="3" y1="12" x2="21" y2="12"/>
+        <line x1="3" y1="18" x2="21" y2="18"/>
+    </svg>
+</button>
+
+<!-- Overlay para cerrar sidebar en móvil -->
+<div id="sidebar-overlay"></div>
+
 <main id="gran_padre">
 
     <!-- SIDEBAR -->
     <header id="panel_izq">
         <figure id="marca">
-            <img src="{{ url_for('static', filename='img/sabores-unidos.svg') }}" alt="Sabores Unidos">
+            <img src="{{ url_for('static', filename='img/sabores-unidos.png') }}" alt="Sabores Unidos">
         </figure>
 
         <nav id="cont_menu">

@@ -86,16 +86,30 @@ main#gran_padre{
         left: 0;
         border:white 2px solid;
         width: 300px; 
-        height: 98vh;
+        height: 100vh;
         display: flex;
         flex-direction: column;
         align-items: center;
+        justify-content: space-between;
         padding: 20px 0;
         border-radius:30px;
         margin: 10px;
         z-index: 1000;
-        
+        transition: transform 0.28s ease;
     }
+
+/* Nav scrollable en pantallas de poca altura */
+#cont_menu {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
 
     #tipo_operación {
     display: flex;
@@ -459,11 +473,14 @@ main#gran_padre{
 /* Tables */
 .tabla-wrapper {
     overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
     border-radius: 16px;
     border: 2px solid rgba(255,255,255,0.25);
+    width: 100%;
 }
 .tabla-admin {
     width: 100%;
+    min-width: 560px;
     border-collapse: collapse;
     background: rgba(12,12,12,0.75);
     border-radius: 16px;
@@ -479,6 +496,7 @@ main#gran_padre{
     font-size: 0.85rem;
     text-transform: uppercase;
     letter-spacing: 0.05em;
+    white-space: nowrap;
 }
 .tabla-admin td {
     padding: 10px 14px;
@@ -729,4 +747,154 @@ main#gran_padre{
     font-size: 1.3rem;
     color: rgba(255,255,255,0.5);
     line-height: 1;
+}
+
+/* ═══════════════════════════════════════════════════════
+   RESPONSIVE
+   ═══════════════════════════════════════════════════════ */
+
+/* Botón hamburguesa (oculto en escritorio) */
+#btn_menu {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1100;
+    background: #990000;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 9px 11px;
+    cursor: pointer;
+    color: white;
+    line-height: 0;
+}
+#btn_menu:hover { background: #bb0000; }
+
+/* Overlay oscuro que cierra el sidebar en móvil */
+#sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1040;
+}
+#sidebar-overlay.visible { display: block; }
+
+/* ——— ≤1200px: reducir sidebar un poco ——— */
+@media (max-width: 1200px) {
+    #panel_izq          { width: 250px; }
+    #contenido_principal{ margin-left: 272px; }
+    #marca img          { width: 110px; height: 110px; }
+}
+
+/* ——— ≤1050px: sidebar más compacto ——— */
+@media (max-width: 1050px) {
+    #panel_izq          { width: 210px; }
+    #contenido_principal{ margin-left: 232px; }
+    #marca img          { width: 90px; height: 90px; }
+    .nav-btn            { font-size: 0.82rem; padding: 9px 8px; width: 93%; }
+    #layout_dashboard #panel_cen { grid-template-columns: 240px; }
+    #layout_dashboard #panel_der { min-width: 0; }
+}
+
+/* ——— ≤900px: sidebar como overlay (hamburguesa) ——— */
+@media (max-width: 900px) {
+    #btn_menu { display: flex; align-items: center; justify-content: center; }
+
+    #panel_izq {
+        width: 270px;
+        transform: translateX(-296px);
+        margin: 0;
+        border-radius: 0 20px 20px 0;
+        height: 100vh;
+        top: 0;
+    }
+    #panel_izq.abierto { transform: translateX(0); }
+
+    #contenido_principal {
+        margin-left: 0;
+        padding: 60px 16px 30px;
+    }
+
+    /* Dashboard apila los bloques verticalmente */
+    #layout_dashboard { flex-direction: column; }
+    #layout_dashboard #panel_cen {
+        width: 100%;
+        grid-template-columns: 1fr;
+        margin-left: 0;
+    }
+    #layout_dashboard #panel_der { min-width: 0; width: 100%; }
+    .hijos_izq { width: 100%; }
+    .hijo_izq  { width: 100%; }
+
+    #recientes { margin-left: 0; margin-right: 0; width: 100%; }
+    .contenedor-tarjetas  { margin-left: 0; margin-right: 0; grid-template-columns: 1fr 1fr; }
+    .contenedor-tarjeta2  { margin-left: 0; margin-right: 0; grid-template-columns: repeat(3, 1fr); }
+    .tarjeta1          { height: auto; padding: 16px; }
+    .tarjeta1 h3       { font-size: 36px; }
+    .tarjeta h3        { font-size: 28px; }
+    .tarjeta p,
+    .tarjeta1 p        { font-size: 15px; }
+
+    /* Headers de sección: título arriba, botón abajo en móvil */
+    .seccion-header    { flex-direction: column; align-items: flex-start; gap: 10px; }
+    .seccion-header h1 { font-size: 1.2rem; }
+    .seccion-header > div { flex-wrap: wrap; }
+
+    /* Botones de acción ancho completo en móvil */
+    .seccion-header .btn-accion { width: 100%; text-align: center; justify-content: center; }
+
+    /* Formularios en 1 columna */
+    .modal-body .form-grid { grid-template-columns: 1fr; }
+    .form-grid             { grid-template-columns: 1fr; }
+    .form-grupo.full-width { grid-column: 1; }
+
+    /* Tablas: reducir fuente un poco más */
+    .tabla-admin th,
+    .tabla-admin td    { padding: 9px 10px; font-size: 0.82rem; }
+
+    /* Form panel (temáticas) */
+    .form-panel        { padding: 16px; }
+}
+
+/* ——— ≤600px: tablet pequeña / móvil ——— */
+@media (max-width: 600px) {
+    .contenedor-tarjetas  { grid-template-columns: 1fr; }
+    .contenedor-tarjeta2  { grid-template-columns: 1fr 1fr; }
+    .tarjeta1 h3          { font-size: 32px; }
+    .tarjeta h3           { font-size: 26px; }
+    .tarjeta p,
+    .tarjeta1 p           { font-size: 14px; }
+    #contenido_principal  { padding: 58px 10px 30px; }
+    /* Tabla scroll más agresivo en móvil */
+    .tabla-admin          { min-width: 480px; }
+    .tabla-admin th,
+    .tabla-admin td       { padding: 8px 8px; font-size: 0.8rem; }
+    /* Sección de categorías: botón Agregar debajo del título */
+    #vista-categorias .seccion-header,
+    #vista-platos   .seccion-header { flex-direction: column; align-items: flex-start; }
+    #vista-platos   .seccion-header > div { width: 100%; }
+    #vista-categorias .btn-accion,
+    #vista-platos   .btn-accion     { width: 100%; text-align: center; }
+}
+
+/* ——— ≤480px: móvil pequeño ——— */
+@media (max-width: 480px) {
+    .contenedor-tarjetas  { grid-template-columns: 1fr; }
+    .contenedor-tarjeta2  { grid-template-columns: 1fr 1fr; }
+    .tarjeta1 h3          { font-size: 28px; }
+    .tarjeta h3           { font-size: 22px; }
+    .tarjeta p,
+    .tarjeta1 p           { font-size: 12px; }
+    #contenido_principal  { padding: 54px 8px 30px; }
+    .tabla-admin          { min-width: 420px; }
+    .tabla-admin th,
+    .tabla-admin td       { padding: 6px 7px; font-size: 0.75rem; }
+    .modal-caja,
+    .modal-caja-lg        { border-radius: 12px; }
+    /* Compactar tarjetas del dashboard */
+    .tarjeta1             { padding: 12px; }
+    .tarjeta              { padding: 14px; }
+    .hijos_izq            { padding: 10px 0; }
+    .estado-mesa          { font-size: 14px; padding: 8px 14px; }
 }
