@@ -3,15 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Panel Administración</title>
-    <link rel="stylesheet" href="../codigos/formato_panel_admin.css">                                                                                                        
+    <title>Tematica</title>
 </head>
+<link rel="stylesheet" href="/codigos/panel_pedidos.css">
 <body>
-    <main id="gran_padre">
-        <header id="panel_izq">
+    <header id="panel_izq">
             
             <figure id="marca">
-                <img src="componentes/sabores.png" alt="Logo">
+                <img src="/componentes/sabores.png" alt="Logo">
             </figure>
             <nav id="cont_menu">
                 <div id="btn_menu">
@@ -46,7 +45,7 @@
                             <rect x="8" y="2" width="8" height="4" rx="1" ry="1"/>
                             <line x1="8" y1="10" x2="16" y2="10"/><line x1="8" y1="14" x2="16" y2="14"/>
                         </svg> Reservas</a>
-                        <a type="submit" name="operación" value="usuarios" href="/panel_mesas.html">
+                         <a type="submit" name="operación" value="usuarios" href="/panel_mesas.html">
                         <svg class="icono-mesa" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                             <rect x="3" y="3" width="18" height="18" rx="2" stroke="currentColor" stroke-width="2"/>
                             <path d="M3 12H21" stroke="currentColor" stroke-width="2"/>
@@ -83,75 +82,57 @@
                 
             </div> 
         </header>
-
-        <section id="panel_cen">
-            <article class="hijo_izq">
-                    <div class="hijos_izq">
-                        <h2>PISO 1</h2>
-                        <p id="disponibles">2 </p>
-                        <p id="ocupadas"> 3</p>
-                        <p id="reservadas">7</p>
-
-                    </div>
-
-                    <div class="hijos_izq">
-                        <h2>PISO 2</h2>
-                        <p id="disponibles">2 </p>
-                        <p id="ocupadas"> 8</p>
-                        <p id="reservadas">3</p>
-
-                    </div>
-                    <div class="hijos_izq">
-                        <h2>PISO 3</h2>
-                        <p id="disponibles"> 0</p>
-                        <p id="ocupadas">8 </p>
-                        <p id="reservadas">2</p>
-
-                    </div>
-
-            </article>
-            
-        </section>
-        <section id="panel_der">
-            <article class="hijo_centro">
-                <div id="recientes">
-                    <h1>Pedidos recientes</h1>
-                    <p>Pedido #1234 - Juan Pérez - En preparación</p>
-                    <p>Pedido #5678 - María Gómez - Listo para entregar</p>
-                    <p>Pedido #9012 - Carlos Rodríguez - Entregado</p>
+    <section class="panel">
+    <header class="main-header">
+                <h1 class="header-title">GESTIÓN DE TEMÁTICA</h1>
+                <div class="header-actions">
+                    <button class="btn btn_rojo">+ Nueva Temática</button>
                 </div>
-            </article>
+            </header>
+
+            
+        <table>
+
+            <thead>
+                <tr>
+                <th>Tema</th>
+                <th>Activa</th>
+                </tr>
+            </thead>
+
+            <tbody>
+
+            <tr>
+                <td>Boda</td>
+                <td><input type="checkbox" class="check"></td>
+            </tr>
+
+            <tr>
+                <td>Romántica</td>
+                <td><input type="checkbox" class="check"></td>
+            </tr>
+
+            <tr>
+                <td>Cumpleaños</td>
+                <td><input type="checkbox" class="check"></td>
+            </tr>
+
+            <tr>
+                <td>Aniversario</td>
+                <td> 
+                    
+                    <input type="checkbox" class="check">
+
+                </td>
+            </tr>
+
+            </tbody>
+
+        </table>
+
+    </section>
                 
-                <article class="hijo_centro">
-                   <div class="contenedor-tarjetas">
-                        <div class="tarjeta1 naranja">
-                            <p>TOTAL DOMICILIOS HOY</p>
-                            <h3>10</h3>
-                        </div>
-                        <div class="tarjeta1 amarilla">
-                            <p>TOTAL DOMICILIOS PENDIENTES</p>
-                            <h3>5</h3>
-                        </div>
-                    </div>    
 
-                    <div class="contenedor-tarjeta2">
-                        <div class="tarjeta verde">
-                            <p>TOTAL MESAS DISPONIBLES</p>
-                            <h3>3</h3>
-                        </div>
-                    <div class="tarjeta roja">
-                        <p>TOTAL MESAS OCUPADAS</p>
-                        <h3>2</h3>
-                    </div>
-                    <div class="tarjeta azul">
-                        <p>TOTAL MESAS RESERVADAS</p>
-                        <h3>1</h3>
-
-                    </div>
-                </article>
-
-        </section>
-    </main>
     
 </body>
 </html>
