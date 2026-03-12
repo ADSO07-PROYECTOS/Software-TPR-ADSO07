@@ -19,13 +19,25 @@
                 </div>
                 <div class="grupo-entrada">
                     <label>Bloque Horario</label>
-                    <select name="hor" id="v_hor">
-                        <option value="6">6</option>
-                        <option value="7">7</option>
-                        <option value="8">8</option>
-                        <option value="9">9</option>
-                        <option value="10">10</option>
-                    </select>
+                    <!-- Campo visual -->
+                    <button type="button" id="btn_hora_reserva" class="campo-hora-btn" onclick="abrirModalHoraReserva()">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
+                            <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"/>
+                            <path d="M12 7v5l3 3" stroke="rgba(255,255,255,0.7)" stroke-width="1.8" stroke-linecap="round"/>
+                        </svg>
+                        <span id="hora_display_reserva">Seleccionar hora</span>
+                    </button>
+                    <!-- Input oculto que se envía al form -->
+                    <input type="hidden" name="hor" id="v_hor" required>
+                </div>
+
+                <!-- Modal selector de hora -->
+                <div id="modal_hora_reserva" class="modal-hora-overlay oculto-hora">
+                    <div class="modal-hora-caja">
+                        <p class="modal-hora-ttlo">SELECCIONA LA HORA</p>
+                        <div class="modal-horas-grid" id="horas_grid_reserva"></div>
+                        <button type="button" class="modal-hora-cerrar" onclick="cerrarModalHoraReserva()">CANCELAR</button>
+                    </div>
                 </div>
                 <div class="grupo-entrada">
                     <label>Temática</label>
@@ -59,5 +71,68 @@
             </form>
         </div>
     </main>
+
+    <script>
+        // Horarios del restaurante: cada hora de 11 AM a 10 PM
+        const HORAS_DISPONIBLES = [11,12,13,14,15,16,17,18,19,20,21,22];
+
+        function generarBloques() {
+            return HORAS_DISPONIBLES.map(h => {
+                const ampm = h < 12 ? 'AM' : 'PM';
+                const h12 = h % 12 === 0 ? 12 : h % 12;
+                return {
+                    label: `${h12}:00 ${ampm}`,
+                    valor: `${String(h).padStart(2,'0')}:00`
+                };
+            });
+        }
+
+        function abrirModalHoraReserva() {
+            const grid = document.getElementById('horas_grid_reserva');
+            grid.innerHTML = '';
+
+            const fechaInput = document.getElementById('v_fec').value;
+            const hoy = new Date();
+            const hoySolo = hoy.toISOString().split('T')[0];
+            const esHoy = fechaInput === hoySolo;
+            const horaActual = hoy.getHours();
+            const valorActual = document.getElementById('v_hor').value;
+
+            generarBloques().forEach(bloque => {
+                const h = parseInt(bloque.valor);
+                const bloqueada = esHoy && h <= horaActual;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = bloque.label;
+                btn.className = 'chip-hora';
+
+                if (bloqueada) {
+                    btn.classList.add('chip-bloqueada');
+                    btn.disabled = true;
+                } else {
+                    if (bloque.valor === valorActual) btn.classList.add('chip-activa');
+                    btn.addEventListener('click', () => seleccionarHoraReserva(bloque.label, bloque.valor));
+                }
+                grid.appendChild(btn);
+            });
+
+            document.getElementById('modal_hora_reserva').classList.remove('oculto-hora');
+        }
+
+        function seleccionarHoraReserva(label, valor) {
+            document.getElementById('v_hor').value = valor;
+            document.getElementById('hora_display_reserva').textContent = label;
+            cerrarModalHoraReserva();
+        }
+
+        function cerrarModalHoraReserva() {
+            document.getElementById('modal_hora_reserva').classList.add('oculto-hora');
+        }
+
+        document.addEventListener('click', function(e) {
+            const overlay = document.getElementById('modal_hora_reserva');
+            if (e.target === overlay) cerrarModalHoraReserva();
+        });
+    </script>
 </body>
 </html>

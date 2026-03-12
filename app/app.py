@@ -1,7 +1,12 @@
 from flask import Flask, render_template, request, redirect, jsonify
 from flask_cors import CORS
 from conexion import conectar
-import requests 
+import requests
+import qrcode, io, base64
+
+DIAS_ES = ['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO','DOMINGO']
+MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
+            'AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE']
 
 app = Flask(__name__)
 CORS(app)
@@ -158,6 +163,131 @@ def detalle_plato(id_plato):
                            adiciones=datos_extras.get('adiciones', []),
                            sabores=datos_extras.get('sabores', []))
 
+@app.route('/mis_reservas')
+def mis_reservas():
+    cedula = request.args.get('cedula', '').strip()
+    reservas = []
+    buscado = False
+    sin_resultados = False
+    if cedula:
+        buscado = True
+        try:
+            conn = conectar()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("""
+                SELECT r.reserva_id, r.fecha_hora, r.cantidad_personas, r.estado,
+                       c.nombre, c.email, c.telefono, c.cc_cliente,
+                       t.nombre_tematica, m.piso
+                FROM reservas r
+                JOIN clientes c ON r.cliente_id = c.cliente_id
+                LEFT JOIN tematicas t ON r.tematica_id = t.tematica_id
+                LEFT JOIN mesas m ON r.mesa_id = m.mesa_id
+                WHERE c.cc_cliente = %s
+                ORDER BY r.fecha_hora DESC
+            """, (cedula,))
+            reservas = cursor.fetchall()
+
+            for res in reservas:
+                # Formatear fecha en español
+                fh = res['fecha_hora']
+                if fh:
+                    res['fecha_formato'] = (
+                        f"{DIAS_ES[fh.weekday()]}, {fh.day} "
+                        f"{MESES_ES[fh.month - 1]}, "
+                        f"{fh.strftime('%I:%M %p')}"
+                    )
+                else:
+                    res['fecha_formato'] = ''
+
+                # Traer productos del pedido
+                cursor.execute("""
+                    SELECT p.nombre_producto, dr.cantidad, dr.notas
+                    FROM detalles_reservas dr
+                    JOIN productos p ON dr.producto_id = p.producto_id
+                    WHERE dr.reserva_id = %s
+                """, (res['reserva_id'],))
+                res['pedido'] = cursor.fetchall()
+
+                # Generar QR como base64
+                url_qr = f"http://127.0.0.1:5000/resumen/reserva/{res['reserva_id']}"
+                qr_img = qrcode.make(url_qr)
+                buf = io.BytesIO()
+                qr_img.save(buf, format="PNG")
+                res['qr_b64'] = base64.b64encode(buf.getvalue()).decode()
+
+            cursor.close()
+            conn.close()
+            if not reservas:
+                sin_resultados = True
+        except Exception as e:
+            print(f"Error al obtener reservas: {e}")
+    return render_template('client/mis_reservas.html', reservas=reservas,
+                           cedula=cedula, buscado=buscado, sin_resultados=sin_resultados)
+
+
+@app.route('/mis_reservas/<int:id_reserva>/eliminar', methods=['POST'])
+def eliminar_reserva(id_reserva):
+    try:
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM detalles_reservas WHERE reserva_id = %s", (id_reserva,))
+        cursor.execute("DELETE FROM reservas WHERE reserva_id = %s", (id_reserva,))
+        conn.commit()
+        cursor.close()
+        conn.close()
+        return jsonify({"success": True})
+    except Exception as e:
+        return jsonify({"success": False, "message": str(e)}), 500
+
+
+@app.route('/mis_reservas/<int:id_reserva>/modificar', methods=['GET', 'POST'])
+def modificar_reserva(id_reserva):
+    if request.method == 'POST':
+        try:
+            datos = request.form
+            conn = conectar()
+            cursor = conn.cursor()
+            fecha_hora = f"{datos['fecha']} {datos['hora']}:00:00"
+            cursor.execute("""
+                UPDATE reservas
+                SET fecha_hora = %s, cantidad_personas = %s, tematica_id = %s
+                WHERE reserva_id = %s
+            """, (fecha_hora, datos['personas'], datos['tematica'], id_reserva))
+            cursor.execute("""
+                UPDATE clientes c
+                JOIN reservas r ON r.cliente_id = c.cliente_id
+                SET c.nombre = %s, c.email = %s, c.telefono = %s
+                WHERE r.reserva_id = %s
+            """, (datos['nombre'], datos['email'], datos['telefono'], id_reserva))
+            conn.commit()
+            cursor.close()
+            conn.close()
+            return redirect('/mis_reservas')
+        except Exception as e:
+            return f"Error al modificar: {e}", 500
+    else:
+        try:
+            conn = conectar()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("""
+                SELECT r.reserva_id, r.fecha_hora, r.cantidad_personas, r.tematica_id, r.estado,
+                       c.nombre, c.email, c.telefono, c.cc_cliente
+                FROM reservas r
+                JOIN clientes c ON r.cliente_id = c.cliente_id
+                WHERE r.reserva_id = %s
+            """, (id_reserva,))
+            reserva = cursor.fetchone()
+            cursor.execute("SELECT tematica_id, nombre_tematica FROM tematicas")
+            tematicas = cursor.fetchall()
+            cursor.close()
+            conn.close()
+            if not reserva:
+                return redirect('/mis_reservas')
+            return render_template('client/modificar_reserva.html', reserva=reserva, tematicas=tematicas)
+        except Exception as e:
+            return f"Error: {e}", 500
+
+
 @app.route('/api/tematicas', methods=['GET'])
 def proxy_tematicas():
     try:
@@ -174,6 +304,106 @@ def proxy_reservas():
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
+
+
+# ─────────────────────────── PANEL ADMINISTRACIÓN ────────────────────────────
+# Toda la lógica de datos vive en el microservicio admin (puerto 5006).
+# app.py solo renderiza la vista y reenvía las llamadas de la API.
+
+ADMIN_MS = 'http://localhost:5006'
+
+@app.route('/admin')
+def panel_admin():
+    stats           = {'domicilios_hoy': 0, 'domicilios_pendientes': 0,
+                       'mesas_disponibles': 0, 'mesas_ocupadas': 0, 'mesas_reservadas': 0}
+    mesas_por_piso  = []
+    pedidos_recientes = []
+    try:
+        resp = requests.get(f'{ADMIN_MS}/api/admin/stats', timeout=10)
+        if resp.status_code == 200:
+            data = resp.json()
+            stats             = data.get('stats', stats)
+            mesas_por_piso    = data.get('mesas_por_piso', [])
+            pedidos_recientes = data.get('pedidos_recientes', [])
+    except Exception as e:
+        print(f"Error contactando microservicio admin: {e}")
+
+    return render_template('admin/panel.html',
+                           stats=stats,
+                           mesas_por_piso=mesas_por_piso,
+                           pedidos_recientes=pedidos_recientes)
+
+
+def _proxy_admin(metodo, ruta, **kwargs):
+    """Reenvía una petición al microservicio admin y devuelve su respuesta."""
+    try:
+        resp = requests.request(metodo, f'{ADMIN_MS}{ruta}', timeout=15, **kwargs)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 502
+
+
+# Clientes
+@app.route('/admin/api/clientes', methods=['GET'])
+def admin_clientes():
+    return _proxy_admin('GET', '/api/admin/clientes')
+
+@app.route('/admin/api/clientes/<int:cid>', methods=['DELETE'])
+def admin_cliente_delete(cid):
+    return _proxy_admin('DELETE', f'/api/admin/clientes/{cid}')
+
+# Productos
+@app.route('/admin/api/productos', methods=['GET'])
+def admin_productos_get():
+    return _proxy_admin('GET', '/api/admin/productos')
+
+@app.route('/admin/api/productos', methods=['POST'])
+def admin_productos_post():
+    return _proxy_admin('POST', '/api/admin/productos', json=request.get_json())
+
+@app.route('/admin/api/productos/<int:pid>', methods=['PUT'])
+def admin_producto_put(pid):
+    return _proxy_admin('PUT', f'/api/admin/productos/{pid}', json=request.get_json())
+
+@app.route('/admin/api/productos/<int:pid>', methods=['DELETE'])
+def admin_producto_delete(pid):
+    return _proxy_admin('DELETE', f'/api/admin/productos/{pid}')
+
+@app.route('/admin/api/categorias', methods=['GET'])
+def admin_categorias():
+    return _proxy_admin('GET', '/api/admin/categorias')
+
+# Domicilios
+@app.route('/admin/api/domicilios', methods=['GET'])
+def admin_domicilios_get():
+    return _proxy_admin('GET', '/api/admin/domicilios')
+
+@app.route('/admin/api/domicilios/<int:did>', methods=['PUT'])
+def admin_domicilio_put(did):
+    return _proxy_admin('PUT', f'/api/admin/domicilios/{did}', json=request.get_json())
+
+# Reservas
+@app.route('/admin/api/reservas', methods=['GET'])
+def admin_reservas_get():
+    return _proxy_admin('GET', '/api/admin/reservas')
+
+@app.route('/admin/api/reservas/<int:rid>', methods=['PUT'])
+def admin_reserva_put(rid):
+    return _proxy_admin('PUT', f'/api/admin/reservas/{rid}', json=request.get_json())
+
+# Temáticas
+@app.route('/admin/api/tematicas', methods=['GET'])
+def admin_tematicas_get():
+    return _proxy_admin('GET', '/api/admin/tematicas')
+
+@app.route('/admin/api/tematicas', methods=['POST'])
+def admin_tematicas_post():
+    return _proxy_admin('POST', '/api/admin/tematicas', json=request.get_json())
+
+@app.route('/admin/api/tematicas/<int:tid>', methods=['DELETE'])
+def admin_tematica_delete(tid):
+    return _proxy_admin('DELETE', f'/api/admin/tematicas/{tid}')
+
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)

@@ -34,8 +34,8 @@ document.addEventListener('DOMContentLoaded', () => {
 
     el.btnConfirmar.addEventListener('click', () => {
         if (accionActual === 'EDITAR') {
-            window.location.href = `modificar_reserva.html?id=${idReservaSeleccionada}`;
-        } else if (accionActual === 'BORRAR') {
+            window.location.href = `/mis_reservas/${idReservaSeleccionada}/modificar`;
+        } else if (accionActual === 'ELIMINAR') {
             ejecutarEliminacion(idReservaSeleccionada);
         }
     });
@@ -47,7 +47,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
 async function ejecutarEliminacion(id) {
     try {
-        const respuesta = await fetch('/eliminar_reserva.py', { 
+        const respuesta = await fetch(`/mis_reservas/${id}/eliminar`, { 
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ id_reserva: id })

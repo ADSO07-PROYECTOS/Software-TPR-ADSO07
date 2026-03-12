@@ -4,114 +4,307 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administración | TRES PASOS</title>
-    <link rel="stylesheet" href="../codigos/formato_panel_admin.css">                                                                                                        
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/panel.css') }}">
 </head>
 <body>
     <main id="gran_padre">
+
+        <!-- ════════════════ SIDEBAR ════════════════ -->
         <header id="panel_izq">
-            
             <figure id="marca">
-                <img src="componentes/sabores.png" alt="Logo">
+                <img src="{{ url_for('static', filename='img/logo-trespasos.png') }}" alt="Logo Tres Pasos">
             </figure>
+
             <nav id="cont_menu">
                 <svg width="23" height="14" viewBox="0 0 23 14" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1 7H21.25M1 1H21.25M1 13H21.25" stroke="#F5F5F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-
-                <form action="" name="tipo_operación" id="tipo_operación" enctype="application/x-www-form-urlencoded" method="post">
-                    <button type="submit" name="operación" value="usuarios">Usuarios</button>
-                    <button type="submit" name="operación" value="productos">Productos</button>
-                    <button type="submit" name="operación" value="pedidos">Pedidos</button>
-                    <button type="submit" name="operación" value="reservas">Reservas</button>
-                    <button type="submit" name="operación" value="tematica">Temática</button>
-                    <button type="submit" name="operación" value="eliminar_producto">Eliminar Producto</button>
-                    <button type="submit" name="operación" value="añadir_usuario">Añadir Usuario</button>
-                </form>
-
+                    <path d="M1 7H21.25M1 1H21.25M1 13H21.25" stroke="#F5F5F5" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+                <div id="tipo_operacion">
+                    <button class="nav-btn active" data-section="dashboard">Dashboard</button>
+                    <button class="nav-btn" data-section="usuarios">Usuarios</button>
+                    <button class="nav-btn" data-section="productos">Productos</button>
+                    <button class="nav-btn" data-section="pedidos">Pedidos</button>
+                    <button class="nav-btn" data-section="reservas">Reservas</button>
+                    <button class="nav-btn" data-section="tematicas">Temáticas</button>
+                </div>
             </nav>
+
             <div id="linea">
-                <a href="" id="btn_cerrar_sesion">
+                <a href="/" id="btn_cerrar_sesion" title="Ir al inicio">
                     <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H9V2H2V16H9V18H2ZM13 14L11.625 12.55L14.175 10H6V8H14.175L11.625 5.45L13 4L18 9L13 14Z" fill="white"/>
-                    </svg>  
+                    </svg>
                 </a>
-                <a href="" id="marca_personal"> 
+                <a href="/admin" id="marca_personal" title="Panel">
                     <svg width="21" height="15" viewBox="0 0 21 15" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <path d="M6.3 15L0 7.5L6.3 0L7.79625 1.78125L2.96625 7.53125L7.77 13.25L6.3 15ZM14.7 15L13.2037 13.2188L18.0337 7.46875L13.23 1.75L14.7 0L21 7.5L14.7 15Z" fill="white"/>
                     </svg>
                 </a>
-                
-            </div> 
+            </div>
         </header>
 
-        <section id="panel_cen">
-            <article class="hijo_izq">
-                    <div class="hijos_izq">
-                        <h2>PISO 1</h2>
-                        <p id="disponibles">2 </p>
-                        <p id="ocupadas"> 3</p>
-                        <p id="reservadas">7</p>
+        <!-- ════════════════ CONTENIDO PRINCIPAL ════════════════ -->
+        <div id="contenido_principal">
 
-                    </div>
+            <!-- ── DASHBOARD ──────────────────────────────────── -->
+            <section id="sec-dashboard" class="seccion activa">
+                <div id="layout_dashboard">
 
-                    <div class="hijos_izq">
-                        <h2>PISO 2</h2>
-                        <p id="disponibles">2 </p>
-                        <p id="ocupadas"> 8</p>
-                        <p id="reservadas">3</p>
+                    <!-- Mesas por piso -->
+                    <section id="panel_cen">
+                        <article class="hijo_izq">
+                            {% if mesas_por_piso %}
+                                {% for piso_data in mesas_por_piso %}
+                                <div class="hijos_izq">
+                                    <h2>PISO {{ piso_data.piso }}</h2>
+                                    <p class="estado-mesa disponibles">{{ piso_data.disponibles }} Disponibles</p>
+                                    <p class="estado-mesa ocupadas">{{ piso_data.ocupadas }} Ocupadas</p>
+                                    <p class="estado-mesa reservadas">{{ piso_data.reservadas }} Reservadas</p>
+                                </div>
+                                {% endfor %}
+                            {% else %}
+                                <div class="hijos_izq">
+                                    <p style="text-align:center;padding:20px;opacity:.6;">Sin datos de mesas</p>
+                                </div>
+                            {% endif %}
+                        </article>
+                    </section>
 
-                    </div>
-                    <div class="hijos_izq">
-                        <h2>PISO 3</h2>
-                        <p id="disponibles"> 0</p>
-                        <p id="ocupadas">8 </p>
-                        <p id="reservadas">2</p>
+                    <!-- Stats y pedidos recientes -->
+                    <section id="panel_der">
+                        <article class="hijo_centro">
+                            <div id="recientes">
+                                <h1>Pedidos recientes</h1>
+                                {% if pedidos_recientes %}
+                                    {% for p in pedidos_recientes %}
+                                    <p>
+                                        <strong>#{{ p.domicilio_id }}</strong>
+                                        — {{ p.nombre or 'Cliente' }}
+                                        — {{ p.direccion or '' }}
+                                        <span class="badge-estado estado-{{ p.estado_pedido | lower | replace(' ','_') }}">{{ p.estado_pedido }}</span>
+                                    </p>
+                                    {% endfor %}
+                                {% else %}
+                                    <p style="opacity:.6;">Sin pedidos registrados hoy</p>
+                                {% endif %}
+                            </div>
+                        </article>
 
-                    </div>
+                        <article class="hijo_centro">
+                            <div class="contenedor-tarjetas">
+                                <div class="tarjeta1 naranja">
+                                    <p>DOMICILIOS HOY</p>
+                                    <h3>{{ stats.domicilios_hoy }}</h3>
+                                </div>
+                                <div class="tarjeta1 amarilla">
+                                    <p>DOMICILIOS PENDIENTES</p>
+                                    <h3>{{ stats.domicilios_pendientes }}</h3>
+                                </div>
+                            </div>
+                            <div class="contenedor-tarjeta2">
+                                <div class="tarjeta verde">
+                                    <p>MESAS DISPONIBLES</p>
+                                    <h3>{{ stats.mesas_disponibles }}</h3>
+                                </div>
+                                <div class="tarjeta roja">
+                                    <p>MESAS OCUPADAS</p>
+                                    <h3>{{ stats.mesas_ocupadas }}</h3>
+                                </div>
+                                <div class="tarjeta azul">
+                                    <p>MESAS RESERVADAS</p>
+                                    <h3>{{ stats.mesas_reservadas }}</h3>
+                                </div>
+                            </div>
+                        </article>
+                    </section>
 
-            </article>
-            
-        </section>
-        <section id="panel_der">
-            <article class="hijo_centro">
-                <div id="recientes">
-                    <h1>Pedidos recientes</h1>
-                    <p>Pedido #1234 - Juan Pérez - En preparación</p>
-                    <p>Pedido #5678 - María Gómez - Listo para entregar</p>
-                    <p>Pedido #9012 - Carlos Rodríguez - Entregado</p>
                 </div>
-            </article>
-                
-                <article class="hijo_centro">
-                   <div class="contenedor-tarjetas">
-                        <div class="tarjeta1 naranja">
-                            <p>TOTAL DOMICILIOS HOY</p>
-                            <h3>10</h3>
-                        </div>
-                        <div class="tarjeta1 amarilla">
-                            <p>TOTAL DOMICILIOS PENDIENTES</p>
-                            <h3>5</h3>
-                        </div>
-                    </div>    
+            </section>
 
-                    <div class="contenedor-tarjeta2">
-                        <div class="tarjeta verde">
-                            <p>TOTAL MESAS DISPONIBLES</p>
-                            <h3>3</h3>
+            <!-- ── USUARIOS ───────────────────────────────────── -->
+            <section id="sec-usuarios" class="seccion oculta">
+                <div class="seccion-header">
+                    <h1>Gestión de Usuarios</h1>
+                    <button class="btn-accion verde" onclick="cargarSeccion('usuarios')">↺ Actualizar</button>
+                </div>
+                <div class="tabla-wrapper">
+                    <table class="tabla-admin" id="tabla-usuarios">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cédula</th>
+                                <th>Nombre</th>
+                                <th>Email</th>
+                                <th>Teléfono</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-usuarios">
+                            <tr><td colspan="6" class="cargando">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ── PRODUCTOS ──────────────────────────────────── -->
+            <section id="sec-productos" class="seccion oculta">
+                <div class="seccion-header">
+                    <h1>Gestión de Productos</h1>
+                    <button class="btn-accion verde" onclick="toggleFormProducto()">+ Añadir producto</button>
+                </div>
+
+                <div id="form-producto-wrapper" class="form-panel oculta">
+                    <h2 id="form-producto-titulo">Nuevo Producto</h2>
+                    <form id="form-producto" onsubmit="guardarProducto(event)">
+                        <input type="hidden" id="fp-id">
+                        <div class="form-grid">
+                            <div class="form-grupo">
+                                <label>Nombre</label>
+                                <input type="text" id="fp-nombre" required maxlength="120">
+                            </div>
+                            <div class="form-grupo">
+                                <label>Categoría</label>
+                                <select id="fp-categoria" required>
+                                    <option value="">Cargando categorías...</option>
+                                </select>
+                            </div>
+                            <div class="form-grupo">
+                                <label>Precio base</label>
+                                <input type="number" id="fp-precio" required min="0" step="0.01">
+                            </div>
+                            <div class="form-grupo">
+                                <label>Disponibilidad</label>
+                                <select id="fp-disponibilidad">
+                                    <option value="1">Disponible</option>
+                                    <option value="0">No disponible</option>
+                                </select>
+                            </div>
+                            <div class="form-grupo full-width">
+                                <label>Descripción</label>
+                                <textarea id="fp-descripcion" rows="2" maxlength="300"></textarea>
+                            </div>
+                            <div class="form-grupo full-width">
+                                <label>URL imagen</label>
+                                <input type="text" id="fp-imagen" maxlength="300">
+                            </div>
                         </div>
-                    <div class="tarjeta roja">
-                        <p>TOTAL MESAS OCUPADAS</p>
-                        <h3>2</h3>
-                    </div>
-                    <div class="tarjeta azul">
-                        <p>TOTAL MESAS RESERVADAS</p>
-                        <h3>1</h3>
+                        <div class="form-acciones">
+                            <button type="submit" class="btn-accion verde">Guardar</button>
+                            <button type="button" class="btn-accion rojo" onclick="cancelarFormProducto()">Cancelar</button>
+                        </div>
+                    </form>
+                </div>
 
-                    </div>
-                </article>
+                <div class="tabla-wrapper">
+                    <table class="tabla-admin">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Nombre</th>
+                                <th>Categoría</th>
+                                <th>Precio</th>
+                                <th>Estado</th>
+                                <th>Acciones</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-productos">
+                            <tr><td colspan="6" class="cargando">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
 
-        </section>
+            <!-- ── PEDIDOS (DOMICILIOS) ───────────────────────── -->
+            <section id="sec-pedidos" class="seccion oculta">
+                <div class="seccion-header">
+                    <h1>Gestión de Pedidos (Domicilios)</h1>
+                    <button class="btn-accion verde" onclick="cargarSeccion('pedidos')">↺ Actualizar</button>
+                </div>
+                <div class="tabla-wrapper">
+                    <table class="tabla-admin">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Dirección</th>
+                                <th>Total</th>
+                                <th>Pago</th>
+                                <th>Fecha</th>
+                                <th>Estado</th>
+                                <th>Cambiar estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-pedidos">
+                            <tr><td colspan="8" class="cargando">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ── RESERVAS ───────────────────────────────────── -->
+            <section id="sec-reservas" class="seccion oculta">
+                <div class="seccion-header">
+                    <h1>Gestión de Reservas</h1>
+                    <button class="btn-accion verde" onclick="cargarSeccion('reservas')">↺ Actualizar</button>
+                </div>
+                <div class="tabla-wrapper">
+                    <table class="tabla-admin">
+                        <thead>
+                            <tr>
+                                <th>#</th>
+                                <th>Cliente</th>
+                                <th>Fecha/Hora</th>
+                                <th>Personas</th>
+                                <th>Piso</th>
+                                <th>Temática</th>
+                                <th>Pago</th>
+                                <th>Estado</th>
+                                <th>Cambiar estado</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tbody-reservas">
+                            <tr><td colspan="9" class="cargando">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <!-- ── TEMÁTICAS ──────────────────────────────────── -->
+            <section id="sec-tematicas" class="seccion oculta">
+                <div class="seccion-header">
+                    <h1>Gestión de Temáticas</h1>
+                </div>
+
+                <div class="form-panel" style="max-width:400px;">
+                    <h2>Añadir Temática</h2>
+                    <form id="form-tematica" onsubmit="agregarTematica(event)">
+                        <div class="form-grupo">
+                            <label>Nombre de la temática</label>
+                            <input type="text" id="ft-nombre" required maxlength="100">
+                        </div>
+                        <div class="form-acciones">
+                            <button type="submit" class="btn-accion verde">Agregar</button>
+                        </div>
+                    </form>
+                </div>
+
+                <div class="tabla-wrapper" style="max-width:600px;">
+                    <table class="tabla-admin">
+                        <thead>
+                            <tr><th>#</th><th>Nombre</th><th>Acciones</th></tr>
+                        </thead>
+                        <tbody id="tbody-tematicas">
+                            <tr><td colspan="3" class="cargando">Cargando...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+        </div><!-- /contenido_principal -->
     </main>
-    
+
+    <div id="toast" class="toast oculta"></div>
+
+    <script src="{{ url_for('static', filename='javascript/admin/panel.js') }}"></script>
 </body>
 </html>

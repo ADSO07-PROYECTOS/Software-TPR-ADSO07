@@ -40,7 +40,7 @@ def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
     msg.attach(img)
     try:
         context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context) as server:
+        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context, timeout=10) as server:
             server.login(MI_CORREO, MI_PASSWORD)
             server.sendmail(MI_CORREO, datos_cliente['correo'], msg.as_string())
     except Exception as e: 
@@ -131,14 +131,24 @@ def crear_reserva():
             prod_id = p.get('id')
             if not prod_id:
                 continue  # Ignorar ítems sin producto_id válido
+            partes = []
+            if p.get('tamano'):
+                partes.append(p['tamano'].upper())
+            adicionales = p.get('adicionales', [])
+            if adicionales:
+                partes.append('Adicionales: ' + ', '.join(adicionales))
+            sabores = p.get('sabores', [])
+            if sabores:
+                partes.append('Sabores: ' + ', '.join(sabores))
+            notas = ' | '.join(partes) if partes else None
             cursor.execute("""
-                INSERT INTO detalles_reservas (reserva_id, producto_id, cantidad, valor_unitario)
-                VALUES (%s, %s, %s, %s)
-            """, (res_id, prod_id, p.get('cantidad', 1), p.get('precio', 0)))
+                INSERT INTO detalles_reservas (reserva_id, producto_id, cantidad, valor_unitario, notas)
+                VALUES (%s, %s, %s, %s, %s)
+            """, (res_id, prod_id, p.get('cantidad', 1), p.get('precio', 0), notas))
 
         conn.commit()
 
-        detalles_qr = f"http://127.0.0.1:5000/resumen/reserva/{res_id}"
+        detalles_qr = f"http://147.182.238.195:5000/resumen/reserva/{res_id}"
         
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()

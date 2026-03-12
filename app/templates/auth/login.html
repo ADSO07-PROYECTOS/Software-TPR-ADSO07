@@ -36,6 +36,9 @@
                 </div>
                 <button type="submit"><strong>INICIAR SESION</strong></button>
             </form>
+            {% if error %}
+            <p style="color:#ff6b6b; text-align:center; margin-top:10px; font-family:'Bebas Neue',sans-serif;">{{ error }}</p>
+            {% endif %}
         </section>
     </main>
 </body>

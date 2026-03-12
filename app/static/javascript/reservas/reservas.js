@@ -50,7 +50,7 @@ export function prepararPaso2() {
             reserva: {
                 fec: form.fec.value,
                 hor: form.hor.value,
-                hor_label: form.hor.options[form.hor.selectedIndex].text,
+                hor_label: document.getElementById('hora_display_reserva')?.textContent || form.hor.value,
                 tematica: form.tematica.value,
                 personas: form.personas.value,
                 piso: form.piso.value,

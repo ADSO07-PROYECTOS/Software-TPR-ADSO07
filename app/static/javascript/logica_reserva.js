@@ -88,10 +88,10 @@ async function mostrarPaso2() {
 
 
 function inyectarHoras() {
-    const select = document.getElementById('v_hor');
-    if (!select) return; 
-    const apertura = 17, cierre = 25, duracion = 90; 
-    let html = "";
+    // Horas ahora se gestionan con el modal en detalles_reserva.html
+    // Esta función se mantiene por compatibilidad pero no hace nada si v_hor es input hidden
+    const el = document.getElementById('v_hor');
+    if (!el || el.tagName !== 'SELECT') return;
     
     for (let min = apertura * 60; min + duracion <= cierre * 60; min += duracion) {
         const h = Math.floor(min / 60) % 24;

@@ -9,10 +9,242 @@
 }
 
 html, body{
-    height:100vh;
+    min-height:100vh;
     background: url('../img/fondo-madera.jpg');
     background-size: cover;
+    background-attachment: fixed;
 }
+
+#padre_ppal{
+    display:flex;
+    flex-direction:column;
+    align-items:center;
+    padding-top: 70px;
+    padding-bottom: 110px;
+}
+
+/* ── Barra superior ── */
+#barra_superior {
+    position: fixed;
+    top: 0;
+    width: 100%;
+    padding: 10px 16px;
+    backdrop-filter: blur(10px);
+    z-index: 100;
+}
+
+/* ── Título ── */
+#titulo{
+    font-size: 42px;
+    text-align: center;
+    margin-top: 20px;
+    letter-spacing: 2px;
+}
+
+/* ── Buscador ── */
+#form_buscar {
+    width: 90%;
+    max-width: 420px;
+    margin-top: 18px;
+}
+#cont_busqueda {
+    display: flex;
+    gap: 8px;
+}
+#input_cedula {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 24px;
+    border: 1px solid rgba(255,255,255,0.5);
+    background: rgba(46, 43, 48, 0.55);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 19px;
+    outline: none;
+    letter-spacing: 1px;
+}
+#input_cedula::placeholder { color: rgba(255,255,255,0.45); }
+#btn_buscar {
+    padding: 10px 16px;
+    border-radius: 24px;
+    border: none;
+    background: #99181F;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+#msg_vacio {
+    margin-top: 30px;
+    font-size: 20px;
+    opacity: 0.7;
+    text-align: center;
+}
+
+/* ── Tarjeta de reserva ── */
+.card_reserva {
+    width: 90%;
+    max-width: 420px;
+    background: rgba(30, 27, 32, 0.72);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 22px;
+    padding: 22px 20px 16px;
+    margin-top: 22px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 4px;
+}
+
+.card_fecha {
+    font-size: 18px;
+    letter-spacing: 1px;
+    color: #fff;
+    line-height: 1.2;
+}
+.card_mesa {
+    font-size: 22px;
+    letter-spacing: 1px;
+}
+.card_tematica {
+    font-size: 20px;
+    opacity: 0.85;
+}
+.card_piso {
+    font-size: 18px;
+    opacity: 0.7;
+}
+
+.card_subtitulo {
+    font-size: 22px;
+    margin-top: 12px;
+    letter-spacing: 1px;
+    border-top: 1px solid rgba(255,255,255,0.2);
+    padding-top: 10px;
+    width: 100%;
+}
+
+.card_pedido {
+    list-style: none;
+    padding: 0;
+    width: 100%;
+}
+.card_pedido li {
+    font-size: 18px;
+    opacity: 0.9;
+    line-height: 1.5;
+    display: flex;
+    flex-direction: column;
+}
+.pedido_nombre {
+    font-weight: 600;
+}
+.pedido_notas {
+    font-size: 13px;
+    opacity: 0.65;
+    font-style: italic;
+    margin-top: 1px;
+}
+
+.card_qr {
+    width: 160px;
+    height: 160px;
+    align-self: center;
+    margin-top: 8px;
+    border-radius: 8px;
+    background: white;
+    padding: 6px;
+}
+
+/* ── Botones dentro de la tarjeta ── */
+.card_botones {
+    display: flex;
+    width: 100%;
+    gap: 10px;
+    margin-top: 16px;
+    border-top: 1px solid rgba(255,255,255,0.15);
+    padding-top: 14px;
+}
+.editar-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border: none;
+    background: #99181F;
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #fff;
+}
+.eliminar-btn {
+    flex: 1;
+    padding: 11px 8px;
+    border: 1px solid rgba(255,255,255,0.35);
+    background: rgba(46, 43, 48, 0.5);
+    border-radius: 12px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 16px;
+    letter-spacing: 1px;
+    color: #D9D9D9;
+}
+
+/* ── Modal ── */
+#cubrir_modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.65);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 200;
+}
+#cubrir_modal.oculto { display: none; }
+.carta_modal {
+    background: rgba(30,27,32,0.95);
+    border: 1px solid rgba(255,255,255,0.2);
+    border-radius: 20px;
+    padding: 28px 24px;
+    width: 80%;
+    max-width: 340px;
+    text-align: center;
+}
+#ttlo_modal { font-size: 24px; margin-bottom: 8px; color: #99181F; }
+#descripcion_modal { font-size: 17px; opacity: 0.85; }
+.pregunta_modal { font-size: 18px; margin: 14px 0 10px; }
+.accion_modal { display: flex; gap: 12px; justify-content: center; }
+.btn-modal {
+    width: 56px; height: 56px;
+    border-radius: 50%;
+    border: none;
+    font-size: 24px;
+    cursor: pointer;
+}
+.btn-confirmar { background: #99181F; }
+.btn-cerrar { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); }
+
+/* ── Menú inferior ── */
+.menu_inferior {
+    position: fixed;
+    bottom: 0;
+    width: 100%;
+    display: flex;
+    justify-content: space-around;
+    padding: 11px;
+    background: rgb(255,255,255);
+    z-index: 100;
+}
+
 #padre_ppal{
     display:flex;
     flex-direction:column;
@@ -34,7 +266,7 @@ html, body{
     text-align: center;
     margin-top: 30px;
 }
-#contenedor_reservas{
+#contenedor_reservas, .contenedor_reservas{
     display:flex;
     flex-direction:column;
     justify-content:flex-start;
@@ -45,10 +277,50 @@ html, body{
     border-radius: 20px;
     font-size: 24px;
     padding: 20px;
+    width: 90%;
 }
 
-
-
+#form_buscar {
+    width: 90%;
+    margin-top: 20px;
+}
+#cont_busqueda {
+    display: flex;
+    gap: 10px;
+}
+#input_cedula {
+    flex: 1;
+    padding: 10px 16px;
+    border-radius: 20px;
+    border: 1px solid white;
+    background: rgba(46, 43, 48, 0.6);
+    color: white;
+    font-family: 'Bebas Neue', sans-serif;
+    font-size: 20px;
+    outline: none;
+}
+#input_cedula::placeholder { color: rgba(255,255,255,0.5); }
+#btn_buscar {
+    padding: 10px 18px;
+    border-radius: 20px;
+    border: none;
+    background: #99181F;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+#msg_vacio {
+    margin-top: 30px;
+    font-size: 20px;
+    opacity: 0.7;
+}
+.botones_reserva {
+    display: flex;
+    gap: 10px;
+    margin-top: 12px;
+    width: 100%;
+    justify-content: space-between;
+}
 
 
 
