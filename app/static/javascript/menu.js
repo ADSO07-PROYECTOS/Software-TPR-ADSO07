@@ -19,7 +19,22 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 export function seleccionarServicio(tipo) {
-    localStorage.setItem('tipo_servicio', tipo); 
+    const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
+    if (carrito.length === 0) {
+        alert('Agrega platos al carrito primero.');
+        return;
+    }
+    const carritoTpr = carrito.map(item => ({
+        id: item.id,
+        nombre: item.producto,
+        cantidad: item.cantidad,
+        precio: item.precio_unitario || item.precio,
+        tamano: item.tamano || '',
+        adicionales: item.adicionales || [],
+        sabores: item.sabores || []
+    }));
+    localStorage.setItem('carrito_tpr', JSON.stringify(carritoTpr));
+    localStorage.setItem('tipo_servicio', tipo);
     window.location.href = '/datos_cliente';
 }
 
@@ -43,7 +58,7 @@ export async function enviarAlMicroservicio() {
         const detalles = JSON.parse(localStorage.getItem('detalles_servicio')) || {};
 
         const url = tipo === 'reserva'
-            ? 'http://localhost:5000/api/reservas'
+            ? 'http://localhost:5005/api/reservas'
             : 'http://localhost:5004/api/domicilios';
 
         const payload = tipo === 'reserva'

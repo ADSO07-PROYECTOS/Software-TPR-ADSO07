@@ -74,18 +74,16 @@ def crear_domicilio():
         dom_id = cursor.lastrowid
 
         for p in productos:
+            prod_id = p.get('id')
+            if not prod_id:
+                continue  # Ignorar ítems sin producto_id válido
             cursor.execute("""
                 INSERT INTO detalles_domicilios (domicilio_id, producto_id, cantidad, valor_unitario)
                 VALUES (%s, %s, %s, %s)
-            """, (dom_id, p['id'], p['cantidad'], p['precio']))
+            """, (dom_id, prod_id, p.get('cantidad', 1), p.get('precio', 0)))
 
         conn.commit()
-        detalles_qr = (
-            f"DOMICILIO: #{dom_id}\n"
-            f"CLIENTE: {cli['nom']}\n"
-            f"DIRECCIÓN: {dom['direccion']}\n"
-            f"METODO DE PAGO: {dom['metodo_pago']}"
-            )
+        detalles_qr = f"http://127.0.0.1:5000/resumen/domicilio/{dom_id}"
         
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()

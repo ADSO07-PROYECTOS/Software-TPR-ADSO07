@@ -10,7 +10,7 @@
 
 html, body{
     height:100vh;
-    background: url('../images/fondo.jpg');
+    background: url('../img/fondo-madera.jpg');
     background-size: cover;
 }
 #padre_ppal{

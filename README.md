@@ -1,4 +1,4 @@
-🚀 Sistema de Reservas para Restaurante "Tres Pasos"
+🚀 Sistema de Reservas para Restaurante "Sabores Unidos"
 Este proyecto es el desarrollo de un Sistema de Reservas y Pedidos en Línea para el restaurante "Tres Pasos", ubicado en Guacarí, Buga.
 
 ✨ Misión y Enfoque Principal (UX)

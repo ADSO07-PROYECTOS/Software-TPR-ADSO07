@@ -66,7 +66,8 @@ def crear_reserva():
     datos = request.json
     cli = datos.get('cliente')
     res_data = datos.get('reserva')
-    
+    pedido = datos.get('pedido', [])
+
     if not cli or not res_data:
         return jsonify({"status": "error", "message": "Datos incompletos"}), 400
 
@@ -126,14 +127,18 @@ def crear_reserva():
         ))
         res_id = cursor.lastrowid
 
+        for p in pedido:
+            prod_id = p.get('id')
+            if not prod_id:
+                continue  # Ignorar ítems sin producto_id válido
+            cursor.execute("""
+                INSERT INTO detalles_reservas (reserva_id, producto_id, cantidad, valor_unitario)
+                VALUES (%s, %s, %s, %s)
+            """, (res_id, prod_id, p.get('cantidad', 1), p.get('precio', 0)))
+
         conn.commit()
 
-        detalles_qr = (
-            f"RESERVA: #{res_id}\n"
-            f"MESA ASIGNADA: {id_mesa_asignada}\n"
-            f"CLIENTE: {cli['nom']}\n"
-            f"FECHA/HORA: {fecha_hora_sql}"
-        )
+        detalles_qr = f"http://127.0.0.1:5000/resumen/reserva/{res_id}"
         
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()
