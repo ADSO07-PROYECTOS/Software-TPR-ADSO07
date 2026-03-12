@@ -4,6 +4,8 @@ import requests
 
 app = Flask(__name__)
 
+MENU_SERVICE_URL = 'http://localhost:5001'
+
 #-- Ruta Principal --
 
 @app.route('/')
@@ -15,7 +17,7 @@ def inicio():
 @app.route('/menu')
 def ver_menu():
     try:
-        respuesta = requests.get('http://localhost:5001/api/categorias', timeout=10)
+        respuesta = requests.get(f'{MENU_SERVICE_URL}/api/categorias', timeout=10)
         respuesta.raise_for_status()
         mis_categorias = respuesta.json()
         print(f"Categorías recibidas: {mis_categorias}")
@@ -31,22 +33,40 @@ def ver_menu():
 @app.route('/menu/<int:id_categoria>')
 def ver_platos(id_categoria):
     mis_platos = []
-    nombre_categoria = "Platos" # Valor por defecto
-    
+    lista_categorias = []
+    nombre_categoria = "Platos"
+
     try:
-        url_microservicio = f'http://localhost:5001/api/platos/{id_categoria}'
-        respuesta = requests.get(url_microservicio, timeout=10)
-        respuesta.raise_for_status()
-        
-        mis_platos = respuesta.json()
+        # Obtener todos los platos de la categoría seleccionada
+        url_platos = f'{MENU_SERVICE_URL}/api/platos/{id_categoria}'
+        respuesta_platos = requests.get(url_platos, timeout=10)
+        respuesta_platos.raise_for_status()
+        mis_platos = respuesta_platos.json()
         print(f"Platos recibidos para categoría {id_categoria}: {mis_platos}")
+
+        # Obtener todas las categorías para mostrar el selector
+        respuesta_cats = requests.get(f'{MENU_SERVICE_URL}/api/categorias', timeout=10)
+        respuesta_cats.raise_for_status()
+        lista_categorias = respuesta_cats.json()
+
+        # Buscar el nombre de la categoría actual
+        nombre_categoria = next(
+            (cat['nombre'] for cat in lista_categorias if cat['id'] == id_categoria),
+            "Platos"
+        )
 
     except requests.exceptions.RequestException as e:
         print(f"Error de conexión con microservicio: {e}")
     except Exception as e:
         print(f"Error general: {e}")
 
-    return render_template('client/ver_platos.html', lista_platos=mis_platos)
+    return render_template(
+        'client/ver_platos.html',
+        lista_platos=mis_platos,
+        lista_categorias=lista_categorias,
+        id_categoria_actual=id_categoria,
+        nombre_categoria=nombre_categoria
+    )
 
 
 
@@ -57,14 +77,14 @@ def detalle_plato(id_plato):
 
     try:
         # 1. Pedir info del plato
-        url_plato = f'http://localhost:5001/api/plato/{id_plato}'
+        url_plato = f'{MENU_SERVICE_URL}/api/plato/{id_plato}'
         res_plato = requests.get(url_plato, timeout=5)
         
         if res_plato.status_code == 200:
             info_plato = res_plato.json()
 
         # 2. Pedir info de extras (Tamaños, adiciones, sabores)
-        url_extras = 'http://localhost:5001/api/extras'
+        url_extras = f'{MENU_SERVICE_URL}/api/extras'
         res_extras = requests.get(url_extras, timeout=5)
 
         if res_extras.status_code == 200:
