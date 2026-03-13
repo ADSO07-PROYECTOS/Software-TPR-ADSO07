@@ -4,6 +4,11 @@ from conexion import conectar
 import requests
 import qrcode, io, base64
 import os
+
+try:
+    import flask_monitoringdashboard as dashboard
+except ImportError:
+    dashboard = None
 from werkzeug.utils import secure_filename
 
 # Carpetas de subida
@@ -24,6 +29,15 @@ MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
 
 app = Flask(__name__)
 CORS(app)
+
+# Configura Flask-MonitoringDashboard si el paquete está instalado.
+if dashboard:
+    dashboard_config_path = os.path.join(os.path.dirname(__file__), 'dashboard.cfg')
+    if os.path.exists(dashboard_config_path):
+        dashboard.config.init_from(file=dashboard_config_path)
+    dashboard.bind(app)
+else:
+    print("Adv: flask-monitoringdashboard no está instalado. Instálalo para habilitar /dashboard.")
 
 ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
 

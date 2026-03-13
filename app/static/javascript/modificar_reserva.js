@@ -1,7 +1,5 @@
-// Bloquear fechas pasadas en el campo fecha
 document.getElementById('input_fecha').min = new Date().toISOString().split('T')[0];
 
-// Horas disponibles del restaurante (11 AM – 10 PM)
 const HORAS_DISPONIBLES = [11,12,13,14,15,16,17,18,19,20,21,22];
 
 function a12h(h) {
@@ -10,7 +8,6 @@ function a12h(h) {
     return `${hora12}:00 ${sufijo}`;
 }
 
-// Inicializar display con hora actual de la reserva
 (function init() {
     const val = document.getElementById('hora_valor').value;
     if (val !== '') {
@@ -59,7 +56,6 @@ function cerrarModalHora() {
     document.getElementById('modal_hora').classList.add('oculto_hora');
 }
 
-// Cerrar al tocar fuera del cuadro
 document.addEventListener('click', function(e) {
     const overlay = document.getElementById('modal_hora');
     if (e.target === overlay) cerrarModalHora();
