@@ -74,8 +74,6 @@ def crear_reserva():
     conn = conectar()
     cursor = conn.cursor(dictionary=True) # Usamos diccionario para manejar mejor las mesas
     try:
-        # 1. FORMATEAR FECHA Y HORA
-        # Extraer la hora (puede venir como "14:00" o "14")
         hora_str = res_data['hor'].split(':')[0] if ':' in res_data['hor'] else res_data['hor']
         hora_limpia = f"{int(hora_str):02d}:00:00"
         fecha_hora_sql = f"{res_data['fec']} {hora_limpia}"
@@ -101,7 +99,6 @@ def crear_reserva():
 
         id_mesa_asignada = mesa_disponible['mesa_id']
 
-        # 3. SINCRONIZAR CLIENTE
         cursor.execute("""
             INSERT INTO clientes (cc_cliente, nombre, email, telefono)
             VALUES (%s, %s, %s, %s) 
@@ -111,7 +108,6 @@ def crear_reserva():
         cursor.execute("SELECT cliente_id FROM clientes WHERE cc_cliente = %s", (cli['doc'],))
         cliente_id = cursor.fetchone()['cliente_id']
 
-        # 4. INSERTAR RESERVA CON MESA ASIGNADA
         metodo_pago = str(res_data.get('metodo_pago', res_data.get('pago', '0')))
         p_trans = 1 if metodo_pago == '1' else 0
         estado = 'en espera' if p_trans else 'confirmada'

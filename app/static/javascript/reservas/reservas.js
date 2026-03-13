@@ -1,4 +1,4 @@
-const API_RESERVAS = '/api/';
+const API_RESERVAS = 'http://147.182.238.195:5005/api/';
 
 export async function inicio() { window.location.href = '/menu'; }
 
