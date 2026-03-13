@@ -19,7 +19,7 @@
                 </div>
                 <div class="grupo-entrada">
                     <label>Cédula</label>
-                    <input type="number" inputmode="numeric" name="doc" maxlength="10" minlength="6" placeholder="1112000000" pattern="[0-9]{6,10}" tabindex="2" required>
+                    <input type="number" inputmode="numeric" name="doc" maxlength="10" minlength="6" placeholder="1112000000" pattern="[0-9]{6,10}" title="!Opss, Estas intentando ingresar letras o algun otro caracter. Por favor solo ingresa numeros." tabindex="2" required>
                 </div>
                 <div class="grupo-entrada">
                     <label>Correo</label>
@@ -29,7 +29,6 @@
                     <label>Teléfono</label>
                     <input type="tel" name="tel" inputmode="tel" maxlength="10" minlength="10" placeholder="3154444444" pattern="[0-9]{10, 10}" tabindex="4" required>
                 </div>
-                
                 <div class="contenedor-botones">
                     <button type="button" class="btn-atras" onclick="window.history.back()">VOLVER</button>
                     <button type="submit" class="btn-grande2" tabindex="5" onclick="document.getElementById('form-paso1').requestSubmit();">CONTINUAR</button>

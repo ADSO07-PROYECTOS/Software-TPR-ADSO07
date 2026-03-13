@@ -71,13 +71,10 @@ export function prepararPaso2() {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
                 
-                // Chequear método de pago: 1 = Transferencia, 0 = Efectivo
                 const metodo_pago = payload.reserva.metodo_pago;
                 if (metodo_pago === '1') {
-                    // Redirigir a subir comprobante si es transferencia
                     window.location.href = '/subir_comprobante';
                 } else {
-                    // Redirigir a éxito si es efectivo
                     window.location.href = '/exito';
                 }
             } else {

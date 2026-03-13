@@ -19,7 +19,6 @@
                 </div>
                 <div class="grupo-entrada">
                     <label>Bloque Horario</label>
-                    <!-- Campo visual -->
                     <button type="button" id="btn_hora_reserva" class="campo-hora-btn" onclick="abrirModalHoraReserva()">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none">
                             <circle cx="12" cy="12" r="10" stroke="rgba(255,255,255,0.7)" stroke-width="1.8"/>
@@ -27,11 +26,9 @@
                         </svg>
                         <span id="hora_display_reserva">Seleccionar hora</span>
                     </button>
-                    <!-- Input oculto que se envía al form -->
                     <input type="hidden" name="hor" id="v_hor" required>
                 </div>
 
-                <!-- Modal selector de hora -->
                 <div id="modal_hora_reserva" class="modal-hora-overlay oculto-hora">
                     <div class="modal-hora-caja">
                         <p class="modal-hora-ttlo">SELECCIONA LA HORA</p>
@@ -73,8 +70,7 @@
     </main>
 
     <script>
-        // Horarios del restaurante: cada hora de 11 AM a 10 PM
-        const HORAS_DISPONIBLES = [11,12,13,14,15,16,17,18,19,20,21,22];
+        const HORAS_DISPONIBLES = [16,17,18,19,20,21,22,23];
 
         function generarBloques() {
             return HORAS_DISPONIBLES.map(h => {
