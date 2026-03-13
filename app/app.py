@@ -513,10 +513,11 @@ def subir_comprobante_reserva():
                 cursor.execute("ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL")
                 conn.commit()
             
-            # Actualizar con la ruta del comprobante
+            # Actualizar con la ruta del comprobante, marcar el pago como transferencia
+            # y dejar la reserva en espera hasta que admin valide el soporte.
             ruta_relativa = f'comprobantes/{nombre}'
             cursor.execute(
-                "UPDATE reservas SET comprobante_transferencia=%s WHERE reserva_id=%s",
+                "UPDATE reservas SET comprobante_transferencia=%s, pago_transferencia=1, estado='en espera' WHERE reserva_id=%s",
                 (ruta_relativa, reserva_id)
             )
             conn.commit()

@@ -483,7 +483,7 @@ async function cambiarEstadoDomicilio(id, nuevoEstado) {
 // RESERVAS
 // ══════════════════════════════════════════════════════════════════════════════
 
-const ESTADOS_RESERVA = ['confirmada', 'ocupada', 'cancelada', 'finalizada'];
+const ESTADOS_RESERVA = ['en espera', 'confirmada', 'ocupada', 'cancelada', 'finalizada'];
 
 async function cargarReservas() {
     const tbody = document.getElementById('tbody-reservas');
@@ -495,7 +495,9 @@ async function cargarReservas() {
             return;
         }
         tbody.innerHTML = reservas.map(r => {
-            const tienePendiente = r.pago_transferencia && r.comprobante_transferencia;
+            const esTransferencia = Boolean(r.pago_transferencia || r.comprobante_transferencia);
+            const tienePendiente = Boolean(r.comprobante_transferencia);
+            const estadoActual = tienePendiente ? 'en espera' : (r.estado || '');
             return `
             <tr>
                 <td>${r.reserva_id}</td>
@@ -504,7 +506,7 @@ async function cargarReservas() {
                 <td>${r.cantidad_personas}</td>
                 <td>${r.piso || '—'}</td>
                 <td>${esc(r.nombre_tematica || '—')}</td>
-                <td>${r.pago_transferencia ? '🏦 Transfer.' : '💵 Efectivo'}</td>
+                <td>${esTransferencia ? '🏦 Transfer.' : '💵 Efectivo'}</td>
                 <td>
                     ${tienePendiente 
                         ? `<span class="pill amarillo">⏳ PENDIENTE</span><br><button class="btn-accion azul" style="margin-top:4px; font-size:0.85rem;" onclick="abrirModalComprobante(${r.reserva_id})">📄 Ver</button>` 
@@ -512,12 +514,12 @@ async function cargarReservas() {
                     }
                 </td>
                 <td>
-                    <span class="pill ${pillRes(r.estado)}">${esc(r.estado || '')}</span>
+                    <span class="pill ${pillRes(estadoActual)}">${esc(estadoActual)}</span>
                 </td>
                 <td>
                     <select class="sel-estado" onchange="cambiarEstadoReserva(${r.reserva_id}, this.value)">
                         ${ESTADOS_RESERVA.map(s =>
-                            `<option value="${s}" ${s === r.estado ? 'selected' : ''}>${s}</option>`
+                            `<option value="${s}" ${s === estadoActual ? 'selected' : ''}>${s}</option>`
                         ).join('')}
                     </select>
                 </td>
@@ -532,7 +534,7 @@ async function cargarReservas() {
 
 function pillRes(estado) {
     const mapa = {
-        'confirmada': 'verde', 'ocupada': 'azul',
+        'en espera': 'amarillo', 'confirmada': 'verde', 'ocupada': 'azul',
         'cancelada': 'rojo', 'finalizada': 'gris',
     };
     return mapa[estado] || 'gris';

@@ -112,8 +112,9 @@ def crear_reserva():
         cliente_id = cursor.fetchone()['cliente_id']
 
         # 4. INSERTAR RESERVA CON MESA ASIGNADA
-        p_trans = 1 if res_data.get('pago') == '1' else 0
-        estado = 'confirmada'
+        metodo_pago = str(res_data.get('metodo_pago', res_data.get('pago', '0')))
+        p_trans = 1 if metodo_pago == '1' else 0
+        estado = 'en espera' if p_trans else 'confirmada'
         query_res = """
             INSERT INTO reservas (cliente_id, mesa_id, cantidad_personas, fecha_hora, tematica_id, estado, pago_transferencia)
             VALUES (%s, %s, %s, %s, %s, %s, %s)

@@ -44,7 +44,7 @@ def admin_stats():
             cursor.execute("""
                 SELECT m.piso,
                     COUNT(*) AS total,
-                    SUM(CASE WHEN r.reserva_id IS NOT NULL AND r.estado = 'confirmada' THEN 1 ELSE 0 END) AS reservadas,
+                    SUM(CASE WHEN r.reserva_id IS NOT NULL AND r.estado IN ('confirmada', 'en espera') THEN 1 ELSE 0 END) AS reservadas,
                     SUM(CASE WHEN r.reserva_id IS NOT NULL AND r.estado = 'ocupada'    THEN 1 ELSE 0 END) AS ocupadas
                 FROM mesas m
                 LEFT JOIN reservas r ON m.mesa_id = r.mesa_id AND DATE(r.fecha_hora) = CURDATE()
