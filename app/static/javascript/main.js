@@ -11,7 +11,7 @@ import { seleccionarServicio } from './menu.js';
 import { prepararPaso1Domicilio, prepararPasoDomicilio } from './domicilios/domicilios.js';
 
 document.addEventListener('DOMContentLoaded', () => {
-    const btnReservar = docProument.getElementById('reservar-btn');
+    const btnReservar = document.getElementById('reservar-btn');
     const btnDomicilio = document.getElementById('domicilio-btn');
     const btnVolverMenu = document.getElementById('btn_irmenu');
     const btnDescargarQR = document.getElementById('btn_descargar_qr');
