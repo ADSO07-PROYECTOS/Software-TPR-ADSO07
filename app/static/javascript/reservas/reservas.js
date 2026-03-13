@@ -119,8 +119,22 @@ export function prepararPaso2() {
         btn.disabled = true;
         btn.innerText = "PROCESANDO...";
 
+        let clienteTemporal = null;
+        try {
+            clienteTemporal = JSON.parse(localStorage.getItem('cliente_temporal') || 'null');
+        } catch (_e) {
+            clienteTemporal = null;
+        }
+
+        if (!clienteTemporal || !clienteTemporal.doc || !clienteTemporal.nom) {
+            alert('No se encontraron los datos del cliente. Vuelve al paso anterior e inténtalo de nuevo.');
+            btn.disabled = false;
+            btn.innerText = 'RESERVAR';
+            return;
+        }
+
         const payload = {
-            cliente: JSON.parse(localStorage.getItem('cliente_temporal')),
+            cliente: clienteTemporal,
             reserva: {
                 fec: form.fec.value,
                 hor: form.hor.value,
@@ -140,11 +154,17 @@ export function prepararPaso2() {
                 body: JSON.stringify(payload)
             });
 
-            const data = await res.json();
-            if (data.status === 'success') {
+            let data = {};
+            try {
+                data = await res.json();
+            } catch (_e) {
+                data = {};
+            }
+
+            if (res.ok && data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
-                
+
                 const metodo_pago = payload.reserva.metodo_pago;
                 if (metodo_pago === '1') {
                     window.location.href = '/subir_comprobante';
@@ -152,12 +172,15 @@ export function prepararPaso2() {
                     window.location.href = '/exito';
                 }
             } else {
-                alert("Error: " + data.message);
+                const mensaje = data.message || data.msg || data.error || 'No fue posible procesar la reserva.';
+                alert('Error: ' + mensaje);
                 btn.disabled = false;
+                btn.innerText = 'RESERVAR';
             }
         } catch (error) {
-            alert("Error de conexión con el microservicio de reservas");
+            alert('Error de conexión con el microservicio de reservas');
             btn.disabled = false;
+            btn.innerText = 'RESERVAR';
         }
     };
 }
