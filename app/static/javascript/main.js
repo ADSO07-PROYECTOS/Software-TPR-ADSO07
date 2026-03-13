@@ -6,6 +6,9 @@ import {
     inicio,
     abrirModalHoraReserva,
     cerrarModalHoraReserva,
+    abrirModalHoraReserva, 
+    cerrarModalHoraReserva,
+    hora
 } from './reservas/reservas.js';
 import { seleccionarServicio } from './menu.js';
 import { prepararPaso1Domicilio, prepararPasoDomicilio } from './domicilios/domicilios.js';
