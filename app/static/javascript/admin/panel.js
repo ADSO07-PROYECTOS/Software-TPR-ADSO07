@@ -65,6 +65,14 @@ function toast(msg, tipo = 'ok') {
     setTimeout(() => el.classList.add('oculta'), 3000);
 }
 
+const ROLES_USUARIO = {
+    cliente: 'Cliente',
+    cajero: 'Cajero',
+    administrador: 'Administrador',
+};
+
+let usuariosCache = [];
+
 // ── Helper fetch JSON ─────────────────────────────────────────────────────────
 
 async function apiFetch(url, opciones = {}) {
@@ -83,34 +91,117 @@ async function apiFetch(url, opciones = {}) {
 
 async function cargarUsuarios() {
     const tbody = document.getElementById('tbody-usuarios');
-    tbody.innerHTML = '<tr><td colspan="6" class="cargando">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="7" class="cargando">Cargando...</td></tr>';
     try {
-        const clientes = await apiFetch('/admin/api/clientes');
-        if (!clientes.length) {
-            tbody.innerHTML = '<tr><td colspan="6" class="cargando">Sin usuarios registrados</td></tr>';
+        usuariosCache = await apiFetch('/admin/api/clientes');
+        if (!usuariosCache.length) {
+            tbody.innerHTML = '<tr><td colspan="7" class="cargando">Sin usuarios registrados</td></tr>';
             return;
         }
-        tbody.innerHTML = clientes.map(c => `
+        tbody.innerHTML = usuariosCache.map(c => `
             <tr>
                 <td>${c.cliente_id}</td>
                 <td>${esc(c.cc_cliente)}</td>
                 <td>${esc(c.nombre)}</td>
                 <td>${esc(c.email || '')}</td>
                 <td>${esc(c.telefono || '')}</td>
+                <td><span class="pill ${pillRol(c.rol)}">${esc(formatearRol(c.rol))}</span></td>
                 <td>
-                    <button class="btn-accion rojo" onclick="eliminarCliente(${c.cliente_id}, '${esc(c.nombre)}')">
+                    <button class="btn-accion azul" onclick="editarUsuario(${c.cliente_id})">
+                        Editar
+                    </button>
+                    <button class="btn-accion rojo" onclick="eliminarCliente(${c.cliente_id})">
                         Eliminar
                     </button>
                 </td>
             </tr>
         `).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="6" class="cargando">${esc(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="7" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
     }
 }
 
-async function eliminarCliente(id, nombre) {
+function formatearRol(rol) {
+    return ROLES_USUARIO[rol] || 'Cliente';
+}
+
+function pillRol(rol) {
+    const mapa = {
+        administrador: 'rojo',
+        cajero: 'azul',
+        cliente: 'verde',
+    };
+    return mapa[rol] || 'gris';
+}
+
+function abrirModalUsuario() {
+    document.getElementById('form-usuario').reset();
+    document.getElementById('fu-id').value = '';
+    document.getElementById('fu-rol').value = 'cliente';
+    document.getElementById('modal-usuario-titulo').textContent = 'Nuevo Usuario';
+    document.getElementById('modal-usuario').classList.remove('oculta');
+    document.getElementById('fu-cedula').focus();
+}
+
+function cerrarModalUsuario() {
+    document.getElementById('modal-usuario').classList.add('oculta');
+}
+
+function editarUsuario(id) {
+    const usuario = usuariosCache.find(item => item.cliente_id === id);
+    if (!usuario) {
+        toast('Usuario no encontrado', 'error');
+        return;
+    }
+
+    document.getElementById('fu-id').value = usuario.cliente_id;
+    document.getElementById('fu-cedula').value = usuario.cc_cliente || '';
+    document.getElementById('fu-nombre').value = usuario.nombre || '';
+    document.getElementById('fu-email').value = usuario.email || '';
+    document.getElementById('fu-telefono').value = usuario.telefono || '';
+    document.getElementById('fu-rol').value = usuario.rol || 'cliente';
+    document.getElementById('modal-usuario-titulo').textContent = 'Editar Usuario';
+    document.getElementById('modal-usuario').classList.remove('oculta');
+    document.getElementById('fu-nombre').focus();
+}
+
+async function guardarUsuario(e) {
+    e.preventDefault();
+
+    const id = document.getElementById('fu-id').value;
+    const payload = {
+        cc_cliente: document.getElementById('fu-cedula').value.trim(),
+        nombre: document.getElementById('fu-nombre').value.trim(),
+        email: document.getElementById('fu-email').value.trim(),
+        telefono: document.getElementById('fu-telefono').value.trim(),
+        rol: document.getElementById('fu-rol').value,
+    };
+
+    try {
+        if (id) {
+            await apiFetch(`/admin/api/clientes/${id}`, {
+                method: 'PUT',
+                body: JSON.stringify(payload),
+            });
+            toast('Usuario actualizado');
+        } else {
+            await apiFetch('/admin/api/clientes', {
+                method: 'POST',
+                body: JSON.stringify(payload),
+            });
+            toast('Usuario creado');
+        }
+        cerrarModalUsuario();
+        cargarUsuarios();
+    } catch (e2) {
+        toast(e2.message, 'error');
+    }
+}
+
+async function eliminarCliente(id) {
+    const usuario = usuariosCache.find(item => item.cliente_id === id);
+    const nombre = usuario ? usuario.nombre : `#${id}`;
     if (!confirm(`¿Eliminar al cliente "${nombre}"? Esta acción no se puede deshacer.`)) return;
     try {
         await apiFetch(`/admin/api/clientes/${id}`, { method: 'DELETE' });
@@ -192,6 +283,7 @@ function _cerrarModalPorOverlay(e, id) {
 
 document.addEventListener('keydown', e => {
     if (e.key === 'Escape') {
+        cerrarModalUsuario();
         cerrarModalCategoria();
         cerrarModalProducto();
     }

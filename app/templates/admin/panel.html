@@ -186,6 +186,7 @@
         <div id="sec-usuarios" class="seccion">
             <div class="seccion-header">
                 <h1>Gestión de Usuarios</h1>
+                <button class="btn-accion verde" onclick="abrirModalUsuario()">+ Nuevo Usuario</button>
             </div>
             <div class="tabla-wrapper">
                 <table class="tabla-admin">
@@ -196,11 +197,12 @@
                             <th>Nombre</th>
                             <th>Email</th>
                             <th>Teléfono</th>
+                            <th>Rol</th>
                             <th>Acciones</th>
                         </tr>
                     </thead>
                     <tbody id="tbody-usuarios">
-                        <tr><td colspan="6" class="cargando">Cargando...</td></tr>
+                        <tr><td colspan="7" class="cargando">Cargando...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -447,6 +449,53 @@
             <button type="button" class="btn-accion gris" onclick="cerrarModalComprobante()">Cerrar</button>
             <button type="button" class="btn-accion verde" id="btn-confirmar-comprobante" onclick="confirmarComprobante(this.dataset.reservaId)">✓ CONFIRMAR PAGO</button>
         </div>
+    </div>
+</div>
+
+<!-- ══════════════════════════════════════════════════════
+     MODAL: Nuevo / Editar Usuario
+     ══════════════════════════════════════════════════════ -->
+<div id="modal-usuario" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-usuario')">
+    <div class="modal-caja">
+        <div class="modal-header">
+            <h2 id="modal-usuario-titulo">Nuevo Usuario</h2>
+            <button class="modal-cerrar" onclick="cerrarModalUsuario()">&times;</button>
+        </div>
+        <form id="form-usuario" onsubmit="guardarUsuario(event)">
+            <input type="hidden" id="fu-id">
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-grupo">
+                        <label>Cédula</label>
+                        <input type="text" id="fu-cedula" required maxlength="20" placeholder="Número de documento">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Nombre completo</label>
+                        <input type="text" id="fu-nombre" required maxlength="120" placeholder="Nombre del usuario">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Correo</label>
+                        <input type="email" id="fu-email" maxlength="120" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Teléfono</label>
+                        <input type="text" id="fu-telefono" maxlength="20" placeholder="Número de contacto">
+                    </div>
+                    <div class="form-grupo full-width">
+                        <label>Rol</label>
+                        <select id="fu-rol" required>
+                            <option value="cliente">Cliente</option>
+                            <option value="cajero">Cajero</option>
+                            <option value="administrador">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion gris" onclick="cerrarModalUsuario()">Cancelar</button>
+                <button type="submit" class="btn-accion verde">Guardar usuario</button>
+            </div>
+        </form>
     </div>
 </div>
 

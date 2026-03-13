@@ -13,6 +13,42 @@ MENU_MS = 'http://localhost:5001'
 app = Flask(__name__)
 CORS(app)
 
+ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
+
+
+def normalizar_rol(valor, predeterminado='cliente'):
+    rol = (valor or predeterminado).strip().lower()
+    return rol if rol in ROLES_VALIDOS else predeterminado
+
+
+def asegurar_columna_rol():
+    conn = conectar()
+    if not conn:
+        return
+
+    cursor = conn.cursor()
+    try:
+        cursor.execute("SHOW COLUMNS FROM clientes LIKE 'rol'")
+        if not cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE clientes
+                ADD COLUMN rol VARCHAR(20) NOT NULL DEFAULT 'cliente'
+            """)
+            conn.commit()
+
+        cursor.execute("""
+            UPDATE clientes
+            SET rol = 'cliente'
+            WHERE rol IS NULL OR TRIM(rol) = ''
+        """)
+        conn.commit()
+    finally:
+        cursor.close()
+        conn.close()
+
+
+asegurar_columna_rol()
+
 
 # ── Dashboard Stats ──────────────────────────────────────────────────────────
 
@@ -98,11 +134,118 @@ def admin_listar_clientes():
         conn = conectar()
         cursor = conn.cursor(dictionary=True)
         cursor.execute(
-            "SELECT cliente_id, cc_cliente, nombre, email, telefono FROM clientes ORDER BY nombre"
+            """
+            SELECT cliente_id, cc_cliente, nombre, email, telefono, rol
+            FROM clientes
+            ORDER BY
+                FIELD(rol, 'administrador', 'cajero', 'cliente'),
+                nombre
+            """
         )
         clientes = cursor.fetchall()
         cursor.close(); conn.close()
         return jsonify(clientes)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/clientes', methods=['POST'])
+def admin_crear_cliente():
+    datos = request.get_json() or {}
+    cc_cliente = (datos.get('cc_cliente') or '').strip()
+    nombre = (datos.get('nombre') or '').strip()
+    email = (datos.get('email') or '').strip() or None
+    telefono = (datos.get('telefono') or '').strip() or None
+    rol = normalizar_rol(datos.get('rol'))
+
+    if not cc_cliente or not nombre:
+        return jsonify({"error": "La cédula y el nombre son obligatorios"}), 400
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT cliente_id FROM clientes WHERE cc_cliente = %s",
+            (cc_cliente,)
+        )
+        existente = cursor.fetchone()
+        if existente:
+            cursor.close(); conn.close()
+            return jsonify({"error": "Ya existe un usuario con esa cédula"}), 409
+
+        cursor.execute(
+            """
+            INSERT INTO clientes (cc_cliente, nombre, email, telefono, rol)
+            VALUES (%s, %s, %s, %s, %s)
+            """,
+            (cc_cliente, nombre, email, telefono, rol)
+        )
+        nuevo_id = cursor.lastrowid
+        conn.commit()
+
+        cursor.execute(
+            "SELECT cliente_id, cc_cliente, nombre, email, telefono, rol FROM clientes WHERE cliente_id = %s",
+            (nuevo_id,)
+        )
+        cliente = cursor.fetchone()
+        cursor.close(); conn.close()
+        return jsonify(cliente), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/clientes/<int:cliente_id>', methods=['PUT'])
+def admin_actualizar_cliente(cliente_id):
+    datos = request.get_json() or {}
+    cc_cliente = (datos.get('cc_cliente') or '').strip()
+    nombre = (datos.get('nombre') or '').strip()
+    email = (datos.get('email') or '').strip() or None
+    telefono = (datos.get('telefono') or '').strip() or None
+    rol = normalizar_rol(datos.get('rol'))
+
+    if not cc_cliente or not nombre:
+        return jsonify({"error": "La cédula y el nombre son obligatorios"}), 400
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT cliente_id FROM clientes WHERE cliente_id = %s",
+            (cliente_id,)
+        )
+        actual = cursor.fetchone()
+        if not actual:
+            cursor.close(); conn.close()
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        cursor.execute(
+            "SELECT cliente_id FROM clientes WHERE cc_cliente = %s AND cliente_id <> %s",
+            (cc_cliente, cliente_id)
+        )
+        duplicado = cursor.fetchone()
+        if duplicado:
+            cursor.close(); conn.close()
+            return jsonify({"error": "Ya existe otro usuario con esa cédula"}), 409
+
+        cursor.execute(
+            """
+            UPDATE clientes
+            SET cc_cliente = %s,
+                nombre = %s,
+                email = %s,
+                telefono = %s,
+                rol = %s
+            WHERE cliente_id = %s
+            """,
+            (cc_cliente, nombre, email, telefono, rol, cliente_id)
+        )
+        conn.commit()
+
+        cursor.execute(
+            "SELECT cliente_id, cc_cliente, nombre, email, telefono, rol FROM clientes WHERE cliente_id = %s",
+            (cliente_id,)
+        )
+        cliente = cursor.fetchone()
+        cursor.close(); conn.close()
+        return jsonify(cliente)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

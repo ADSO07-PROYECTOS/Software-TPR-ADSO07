@@ -1,4 +1,12 @@
-import { prepararPaso1Reserva, prepararPaso2, mostrarResultadoFinal, cargarTematicas, inicio } from './reservas/reservas.js';
+import {
+    prepararPaso1Reserva,
+    prepararPaso2,
+    mostrarResultadoFinal,
+    cargarTematicas,
+    inicio,
+    abrirModalHoraReserva,
+    cerrarModalHoraReserva,
+} from './reservas/reservas.js';
 import { seleccionarServicio } from './menu.js';
 import { prepararPaso1Domicilio, prepararPasoDomicilio } from './domicilios/domicilios.js';
 
@@ -7,11 +15,23 @@ document.addEventListener('DOMContentLoaded', () => {
     const btnDomicilio = document.getElementById('domicilio-btn');
     const btnVolverMenu = document.getElementById('btn_irmenu');
     const btnDescargarQR = document.getElementById('btn_descargar_qr');
+    const overlay = document.getElementById('modal_hora_reserva');
+           
 
     if (btnVolverMenu) btnVolverMenu.addEventListener('click', () => inicio());
     if (btnReservar) btnReservar.addEventListener('click', () => seleccionarServicio('reserva'));
     if (btnDomicilio) btnDomicilio.addEventListener('click', () => seleccionarServicio('domicilio'));
     if (btnDescargarQR) btnDescargarQR.addEventListener('click', descargarQR);
+
+    // Las plantillas usan onclick inline para abrir/cerrar el modal de hora.
+    window.abrirModalHoraReserva = abrirModalHoraReserva;
+    window.cerrarModalHoraReserva = cerrarModalHoraReserva;
+
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
+            if (e.target === overlay) cerrarModalHoraReserva();
+        });
+    }
 
     router(); 
 });

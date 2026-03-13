@@ -58,8 +58,9 @@ def crear_domicilio():
     cursor = conn.cursor(dictionary=True)
     try:
         cursor.execute("""
-            INSERT INTO clientes (cc_cliente, nombre, email, telefono)
-            VALUES (%s, %s, %s, %s) ON DUPLICATE KEY UPDATE nombre=%s, email=%s, telefono=%s
+            INSERT INTO clientes (cc_cliente, nombre, email, telefono, rol)
+            VALUES (%s, %s, %s, %s, 'cliente')
+            ON DUPLICATE KEY UPDATE nombre=%s, email=%s, telefono=%s
         """, (cli['doc'], cli['nom'], cli['correo'], cli['tel'], cli['nom'], cli['correo'], cli['tel']))
         
         cursor.execute("SELECT cliente_id FROM clientes WHERE cc_cliente = %s", (cli['doc'],))

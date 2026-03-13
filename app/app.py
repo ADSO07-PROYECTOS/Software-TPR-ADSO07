@@ -25,6 +25,14 @@ MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
 app = Flask(__name__)
 CORS(app)
 
+ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
+
+
+def normalizar_rol(valor, predeterminado='cliente'):
+    rol = (valor or predeterminado).strip().lower()
+    return rol if rol in ROLES_VALIDOS else predeterminado
+
+
 # Migración: asegurar que tabla reservas tiene columna para comprobante
 try:
     conn = conectar()
@@ -37,10 +45,26 @@ try:
             """)
             conn.commit()
             print("✓ Columna 'comprobante_transferencia' agregada a tabla reservas")
+
+        cursor.execute("SHOW COLUMNS FROM clientes LIKE 'rol'")
+        if not cursor.fetchone():
+            cursor.execute("""
+                ALTER TABLE clientes
+                ADD COLUMN rol VARCHAR(20) NOT NULL DEFAULT 'cliente'
+            """)
+            conn.commit()
+            print("✓ Columna 'rol' agregada a tabla clientes")
+
+        cursor.execute("""
+            UPDATE clientes
+            SET rol = 'cliente'
+            WHERE rol IS NULL OR TRIM(rol) = ''
+        """)
+        conn.commit()
         cursor.close()
         conn.close()
 except Exception as e:
-    print(f"Adv: No se pudo verificar migración de reservas: {e}")
+    print(f"Adv: No se pudo verificar migraciones iniciales: {e}")
 
 
 @app.route('/')
@@ -73,8 +97,13 @@ def vista_reserva():
         conn = conectar()
         if conn:
             cursor = conn.cursor(dictionary=True)
-            cursor.execute("SELECT tematica_id, nombre_tematica FROM tematica")
-            lista_tematicas = cursor.fetchall()
+            try:
+                cursor.execute("SELECT tematica_id, nombre_tematica FROM tematicas")
+                lista_tematicas = cursor.fetchall()
+            except Exception:
+                # Compatibilidad con instalaciones antiguas donde la tabla era singular.
+                cursor.execute("SELECT tematica_id, nombre_tematica FROM tematica")
+                lista_tematicas = cursor.fetchall()
             cursor.close()
             conn.close()
     except Exception as e:
@@ -325,11 +354,38 @@ def modificar_reserva(id_reserva):
 
 @app.route('/api/tematicas', methods=['GET'])
 def proxy_tematicas():
+    errores = []
+
+    # 1) Intentar primero con microservicio local.
     try:
-        resp = requests.get('http://147.182.238.195:5005/api/tematicas', timeout=10)
+        resp = requests.get('http://localhost:5005/api/tematicas', timeout=8)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
-        return jsonify({"error": str(e)}), 500
+        errores.append(f'localhost: {e}')
+
+    # 2) Fallback al host desplegado.
+    try:
+        resp = requests.get('http://147.182.238.195:5005/api/tematicas', timeout=8)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        errores.append(f'remoto: {e}')
+
+    # 3) Fallback final a BD local para no romper la vista.
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("SELECT tematica_id, nombre_tematica FROM tematicas")
+            data = cursor.fetchall()
+        except Exception:
+            cursor.execute("SELECT tematica_id, nombre_tematica FROM tematica")
+            data = cursor.fetchall()
+        cursor.close()
+        conn.close()
+        return jsonify(data), 200
+    except Exception as e:
+        errores.append(f'bd: {e}')
+        return jsonify({"error": "No fue posible cargar temáticas", "detalles": errores}), 500
 
 @app.route('/api/reservas', methods=['POST'])
 def proxy_reservas():
@@ -382,6 +438,18 @@ def _proxy_admin(metodo, ruta, **kwargs):
 @app.route('/admin/api/clientes', methods=['GET'])
 def admin_clientes():
     return _proxy_admin('GET', '/api/admin/clientes')
+
+@app.route('/admin/api/clientes', methods=['POST'])
+def admin_clientes_post():
+    datos = request.get_json() or {}
+    datos['rol'] = normalizar_rol(datos.get('rol'))
+    return _proxy_admin('POST', '/api/admin/clientes', json=datos)
+
+@app.route('/admin/api/clientes/<int:cid>', methods=['PUT'])
+def admin_cliente_put(cid):
+    datos = request.get_json() or {}
+    datos['rol'] = normalizar_rol(datos.get('rol'))
+    return _proxy_admin('PUT', f'/api/admin/clientes/{cid}', json=datos)
 
 @app.route('/admin/api/clientes/<int:cid>', methods=['DELETE'])
 def admin_cliente_delete(cid):

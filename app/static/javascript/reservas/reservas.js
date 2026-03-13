@@ -19,21 +19,95 @@ export function prepararPaso1Reserva() {
     };
 }
 
+export function hora(){
+    const HORAS_DISPONIBLES = [16,17,18,19,20,21,22,23];
+    return HORAS_DISPONIBLES.map(h => {
+                const ampm = h < 12 ? 'AM' : 'PM';
+                const h12 = h % 12 === 0 ? 12 : h % 12;
+                return {
+                    label: `${h12}:00 ${ampm}`,
+                    valor: `${String(h).padStart(2,'0')}:00`
+                };
+            });
+}
+
+export function abrirModalHoraReserva() {
+            const grid = document.getElementById('horas_grid_reserva');
+            grid.innerHTML = '';
+            const fechaInput = document.getElementById('v_fec').value;
+            const hoy = new Date();
+            const hoySolo = hoy.toISOString().split('T')[0];
+            const esHoy = fechaInput === hoySolo;
+            const horaActual = hoy.getHours();
+            const valorActual = document.getElementById('v_hor').value;
+
+            hora().forEach(bloque => {
+                const h = parseInt(bloque.valor);
+                const bloqueada = esHoy && h <= horaActual;
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.textContent = bloque.label;
+                btn.className = 'chip-hora';
+
+                if (bloqueada) {
+                    btn.classList.add('chip-bloqueada');
+                    btn.disabled = true;
+                } else {
+                    if (bloque.valor === valorActual) btn.classList.add('chip-activa');
+                    btn.addEventListener('click', () => seleccionarHoraReserva(bloque.label, bloque.valor));
+                }
+                grid.appendChild(btn);
+});
+            document.getElementById('modal_hora_reserva').classList.remove('oculto-hora');
+}
+
+export function seleccionarHoraReserva(label, valor) {
+            document.getElementById('v_hor').value = valor;
+            document.getElementById('hora_display_reserva').textContent = label;
+            cerrarModalHoraReserva();
+        }
+
+export function cerrarModalHoraReserva() {
+            document.getElementById('modal_hora_reserva').classList.add('oculto-hora');
+        }
+
+       
 
 export async function cargarTematicas() {
     const select = document.getElementById('v_tematica');
     if (!select) return;
+
+    const tieneOpcionesIniciales = select.options.length > 1;
+
     try {
         const res = await fetch(API_RESERVAS + 'tematicas');
+        if (!res.ok) throw new Error('No se pudieron obtener temáticas');
         const data = await res.json();
+
+        const lista = Array.isArray(data)
+            ? data
+            : (Array.isArray(data.tematicas) ? data.tematicas : []);
+
+        if (!lista.length) {
+            if (!tieneOpcionesIniciales) {
+                select.innerHTML = '<option value="" disabled selected>No hay temáticas disponibles</option>';
+            }
+            return;
+        }
+
         select.innerHTML = '<option value="" disabled selected>Selecciona una temática...</option>';
-        data.forEach(t => {
+        lista.forEach(t => {
             const option = document.createElement('option');
             option.value = t.tematica_id;
             option.textContent = t.nombre_tematica;
             select.appendChild(option);
         });
-    } catch (error) { console.error("Error cargando temáticas", error); }
+    } catch (error) {
+        console.error('Error cargando temáticas', error);
+        if (!tieneOpcionesIniciales) {
+            select.innerHTML = '<option value="" disabled selected>Error al cargar temáticas</option>';
+        }
+    }
 }
 
 export function prepararPaso2() {
@@ -88,8 +162,10 @@ export function prepararPaso2() {
     };
 }
 
-export function mostrarResultadoFinal() {
+export function mostrarResultadoFinal(){
     const img = document.getElementById('qr-img');
     const qrData = localStorage.getItem('qr_reserva');
-    if (img && qrData) img.src = `data:image/png;base64,${qrData}`;
+    if (img && qrData) {
+        img.src = `data:image/png;base64,${qrData}`;
 }
+};

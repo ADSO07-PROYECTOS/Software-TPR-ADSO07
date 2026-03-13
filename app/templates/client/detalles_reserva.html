@@ -39,8 +39,15 @@
                 <div class="grupo-entrada">
                     <label>Temática</label>
                     <select name="tematica" id="v_tematica" required>
-                        <option value="" disabled selected>Cargando temáticas...</option>
-                        </select>
+                        {% if tematicas and tematicas|length > 0 %}
+                            <option value="" disabled selected>Selecciona una temática...</option>
+                            {% for t in tematicas %}
+                                <option value="{{ t.tematica_id }}">{{ t.nombre_tematica }}</option>
+                            {% endfor %}
+                        {% else %}
+                            <option value="" disabled selected>Cargando temáticas...</option>
+                        {% endif %}
+                    </select>
                 </div>
                 <div class="grupo-entrada">
                      
@@ -68,67 +75,5 @@
             </form>
         </div>
     </main>
-
-    <script>
-        const HORAS_DISPONIBLES = [16,17,18,19,20,21,22,23];
-
-        function generarBloques() {
-            return HORAS_DISPONIBLES.map(h => {
-                const ampm = h < 12 ? 'AM' : 'PM';
-                const h12 = h % 12 === 0 ? 12 : h % 12;
-                return {
-                    label: `${h12}:00 ${ampm}`,
-                    valor: `${String(h).padStart(2,'0')}:00`
-                };
-            });
-        }
-
-        function abrirModalHoraReserva() {
-            const grid = document.getElementById('horas_grid_reserva');
-            grid.innerHTML = '';
-
-            const fechaInput = document.getElementById('v_fec').value;
-            const hoy = new Date();
-            const hoySolo = hoy.toISOString().split('T')[0];
-            const esHoy = fechaInput === hoySolo;
-            const horaActual = hoy.getHours();
-            const valorActual = document.getElementById('v_hor').value;
-
-            generarBloques().forEach(bloque => {
-                const h = parseInt(bloque.valor);
-                const bloqueada = esHoy && h <= horaActual;
-                const btn = document.createElement('button');
-                btn.type = 'button';
-                btn.textContent = bloque.label;
-                btn.className = 'chip-hora';
-
-                if (bloqueada) {
-                    btn.classList.add('chip-bloqueada');
-                    btn.disabled = true;
-                } else {
-                    if (bloque.valor === valorActual) btn.classList.add('chip-activa');
-                    btn.addEventListener('click', () => seleccionarHoraReserva(bloque.label, bloque.valor));
-                }
-                grid.appendChild(btn);
-            });
-
-            document.getElementById('modal_hora_reserva').classList.remove('oculto-hora');
-        }
-
-        function seleccionarHoraReserva(label, valor) {
-            document.getElementById('v_hor').value = valor;
-            document.getElementById('hora_display_reserva').textContent = label;
-            cerrarModalHoraReserva();
-        }
-
-        function cerrarModalHoraReserva() {
-            document.getElementById('modal_hora_reserva').classList.add('oculto-hora');
-        }
-
-        document.addEventListener('click', function(e) {
-            const overlay = document.getElementById('modal_hora_reserva');
-            if (e.target === overlay) cerrarModalHoraReserva();
-        });
-    </script>
 </body>
 </html>
