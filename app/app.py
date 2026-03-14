@@ -11,7 +11,6 @@ except ImportError:
     dashboard = None
 from werkzeug.utils import secure_filename
 
-# Carpetas de subida
 UPLOAD_FOLDER_IMG = os.path.join(os.path.dirname(__file__), 'static', 'img', 'platos')
 UPLOAD_FOLDER_COMPROBANTES = os.path.join(os.path.dirname(__file__), 'static', 'comprobantes')
 os.makedirs(UPLOAD_FOLDER_IMG, exist_ok=True)
@@ -30,7 +29,6 @@ MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
 app = Flask(__name__)
 CORS(app)
 
-# Configura Flask-MonitoringDashboard si el paquete está instalado.
 if dashboard:
     dashboard_config_path = os.path.join(os.path.dirname(__file__), 'dashboard.cfg')
     if os.path.exists(dashboard_config_path):
@@ -47,7 +45,6 @@ def normalizar_rol(valor, predeterminado='cliente'):
     return rol if rol in ROLES_VALIDOS else predeterminado
 
 
-# Migración: asegurar que tabla reservas tiene columna para comprobante
 try:
     conn = conectar()
     if conn:
@@ -115,7 +112,6 @@ def vista_reserva():
                 cursor.execute("SELECT tematica_id, nombre_tematica FROM tematicas")
                 lista_tematicas = cursor.fetchall()
             except Exception:
-                # Compatibilidad con instalaciones antiguas donde la tabla era singular.
                 cursor.execute("SELECT tematica_id, nombre_tematica FROM tematica")
                 lista_tematicas = cursor.fetchall()
             cursor.close()
@@ -266,7 +262,6 @@ def mis_reservas():
             reservas = cursor.fetchall()
 
             for res in reservas:
-                # Formatear fecha en español
                 fh = res['fecha_hora']
                 if fh:
                     res['fecha_formato'] = (
@@ -277,7 +272,6 @@ def mis_reservas():
                 else:
                     res['fecha_formato'] = ''
 
-                # Traer productos del pedido
                 cursor.execute("""
                     SELECT p.nombre_producto, dr.cantidad, dr.notas
                     FROM detalles_reservas dr
@@ -286,7 +280,6 @@ def mis_reservas():
                 """, (res['reserva_id'],))
                 res['pedido'] = cursor.fetchall()
 
-                # Generar QR como base64
                 url_qr = f"http://147.182.238.195:5000/resumen/reserva/{res['reserva_id']}"
                 qr_img = qrcode.make(url_qr)
                 buf = io.BytesIO()
@@ -370,22 +363,19 @@ def modificar_reserva(id_reserva):
 def proxy_tematicas():
     errores = []
 
-    # 1) Intentar primero con microservicio local.
     try:
         resp = requests.get('http://localhost:5005/api/tematicas', timeout=8)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         errores.append(f'localhost: {e}')
 
-    # 2) Fallback al host desplegado.
     try:
         resp = requests.get('http://147.182.238.195:5005/api/tematicas', timeout=8)
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         errores.append(f'remoto: {e}')
 
-    # 3) Fallback final a BD local para no romper la vista.
-    try:
+    try:  
         conn = conectar()
         cursor = conn.cursor(dictionary=True)
         try:
@@ -527,7 +517,7 @@ def admin_tematica_delete(tid):
 @app.route('/admin/api/tematicas/<int:tid>', methods=['PUT'])
 def admin_tematicas_put(tid):
     return _proxy_admin('PUT', f'/api/admin/tematicas/{tid}', json=request.get_json())
-# Upload de imagen de plato
+
 @app.route('/admin/api/upload-imagen', methods=['POST'])
 def admin_upload_imagen():
     if 'imagen' not in request.files:
@@ -540,10 +530,8 @@ def admin_upload_imagen():
     nombre = secure_filename(archivo.filename)
     ruta = os.path.join(UPLOAD_FOLDER_IMG, nombre)
     archivo.save(ruta)
-    # Se guarda 'platos/nombre.jpg' para que las vistas usen url_for('static', filename='img/' + imagen)
     return jsonify({'url': f'platos/{nombre}'})
 
-# Upload de comprobante de transferencia para reserva
 @app.route('/api/reservas/comprobante', methods=['POST'])
 def subir_comprobante_reserva():
     try:
@@ -561,7 +549,6 @@ def subir_comprobante_reserva():
         if not allowed_file(archivo.filename, ALLOWED_EXT_COMPROBANTE):
             return jsonify({'success': False, 'message': 'Formato no permitido. Usa PNG, JPG o PDF'}), 400
         
-        # Obtener cédula del cliente desde la reserva
         conn = conectar()
         if not conn:
             return jsonify({'success': False, 'message': 'Error de conexión a base de datos'}), 500
@@ -583,13 +570,11 @@ def subir_comprobante_reserva():
             
             cedula = resultado['cc_cliente']
             
-            # Generar nombre del archivo con cédula
             ext = archivo.filename.rsplit('.', 1)[1].lower()
             nombre = f"comprobante_{cedula}.{ext}"
             ruta = os.path.join(UPLOAD_FOLDER_COMPROBANTES, nombre)
             archivo.save(ruta)
             
-            # Verificar si la columna existe, si no, crearla
             cursor.execute("SHOW COLUMNS FROM reservas LIKE 'comprobante_transferencia'")
             if not cursor.fetchone():
                 cursor.execute("ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL")
@@ -616,7 +601,6 @@ def subir_comprobante_reserva():
         print(f"Error en subir_comprobante: {e}")
         return jsonify({'success': False, 'message': str(e)}), 500
 
-# ── Proxy domicilios (cliente → microservicio 5004) ─────────────────────────
 @app.route('/api/domicilios', methods=['POST'])
 def proxy_crear_domicilio():
     try:
@@ -626,7 +610,6 @@ def proxy_crear_domicilio():
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 502
 
-# Proxy plato individual (usado por panel.js para editar producto)
 @app.route('/api/plato/<int:pid>', methods=['GET'])
 def proxy_plato_detalle(pid):
     try:
