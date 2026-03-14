@@ -6,8 +6,6 @@ import {
     inicio,
     abrirModalHoraReserva,
     cerrarModalHoraReserva,
-    abrirModalHoraReserva, 
-    cerrarModalHoraReserva,
     hora
 } from './reservas/reservas.js';
 import { seleccionarServicio } from './menu.js';
@@ -24,9 +22,12 @@ document.addEventListener('DOMContentLoaded', () => {
     if (btnReservar) btnReservar.addEventListener('click', () => seleccionarServicio('reserva'));
     if (btnDomicilio) btnDomicilio.addEventListener('click', () => seleccionarServicio('domicilio'));
     if (btnDescargarQR) btnDescargarQR.addEventListener('click', descargarQR);
+    
     window.abrirModalHoraReserva = abrirModalHoraReserva;
     window.cerrarModalHoraReserva = cerrarModalHoraReserva;
-    if (overlay) {overlay.addEventListener('click', (e) => {
+    
+    if (overlay) {
+        overlay.addEventListener('click', (e) => {
             if (e.target === overlay) cerrarModalHoraReserva();
         });
     }
@@ -36,8 +37,15 @@ document.addEventListener('DOMContentLoaded', () => {
 
 function establecerFechaMinima() {
     const inputFecha = document.getElementById('v_fec');
-    const hoy = new Date().toISOString().split('T')[0];
-    inputFecha.min = hoy;
+    if (!inputFecha) return;
+
+    const fechaMinima = new Date();
+    fechaMinima.setDate(fechaMinima.getDate() + 1); 
+    
+    const minDateStr = fechaMinima.toISOString().split('T')[0];
+    
+    inputFecha.min = minDateStr;
+    inputFecha.value = minDateStr;
 }
 
 const router = () => {
@@ -53,32 +61,27 @@ const router = () => {
     } 
     else if (path.includes('detalles_reserva')) {
         cargarTematicas();
+        establecerFechaMinima(); 
         prepararPaso2();
-        establecerFechaMinima();
-        
     } 
     else if (path.includes('direccion_domicilio')) {
         prepararPasoDomicilio();
     }
     else if (path.includes('exito')) {
         mostrarResultadoFinal();
-        // Mensaje según tipo de servicio
         const tipo = localStorage.getItem('tipo_servicio');
         const idOrden = localStorage.getItem('id_orden') || localStorage.getItem('id_reserva') || '';
         const msgEl = document.getElementById('mensaje-exito');
         if (msgEl) {
             if (tipo === 'domicilio') {
-                msgEl.textContent = `Pedido #${idOrden} registrado. \u00a1Te lo llevamos pronto!`;
+                msgEl.textContent = `Pedido #${idOrden} registrado. ¡Te lo llevamos pronto!`;
             } else {
-                msgEl.textContent = `Reserva #${idOrden} confirmada. \u00a1Hasta pronto!`;
+                msgEl.textContent = `Reserva #${idOrden} confirmada. ¡Hasta pronto!`;
             }
         }
     }
-
-    
 };
 
-// Función para descargar el código QR
 function descargarQR() {
     const qrImg = document.getElementById('qr-img');
     const idReserva = localStorage.getItem('id_reserva') || 'QR_Reserva';
@@ -88,16 +91,12 @@ function descargarQR() {
         return;
     }
 
-    // Crear un link temporal
     const link = document.createElement('a');
-    link.href = qrImg.src; // El src es un data URL en base64
-    link.download = `QR_Reserva_${idReserva}.png`; // Nombre del archivo a descargar
+    link.href = qrImg.src; 
+    link.download = `QR_Reserva_${idReserva}.png`; 
     link.style.display = 'none';
     
-    // Agregar al DOM, hacer click y removoer
     document.body.appendChild(link);
     link.click();
     document.body.removeChild(link);
 }
-
-    

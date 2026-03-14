@@ -4,6 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles Reserva</title>
+    <link rel="icon" href="data:,"> 
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_reservas.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
 </head>
@@ -29,13 +30,14 @@
                     <input type="hidden" name="hor" id="v_hor" required>
                 </div>
 
-                <div id="z<" class="modal-hora-overlay oculto-hora">
+                <div id="modal_hora_reserva" class="modal-hora-overlay oculto-hora">
                     <div class="modal-hora-caja">
                         <p class="modal-hora-ttlo">SELECCIONA LA HORA</p>
                         <div class="modal-horas-grid" id="horas_grid_reserva"></div>
                         <button type="button" class="modal-hora-cerrar" onclick="cerrarModalHoraReserva()">CANCELAR</button>
                     </div>
                 </div>
+                
                 <div class="grupo-entrada">
                     <label>Temática</label>
                     <select name="tematica" id="v_tematica" required>
