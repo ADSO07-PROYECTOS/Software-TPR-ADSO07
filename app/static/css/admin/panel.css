@@ -34,17 +34,64 @@ figure img{
     padding: 0;
     width: 175px;
 }
+/* ── Bloque de usuario en sidebar ─────────────────────────── */
+#usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 85%;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 12px;
+    margin-bottom: 2px;
+    flex-shrink: 0;
+}
+#usuario-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #990000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+#usuario-texto {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#usuario-nombre {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#usuario-rol {
+    font-size: 0.64rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: capitalize;
+}
+
 #marca {
     display: flex;
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 16px 0 8px;
+    padding: 4px 0 4px;
     margin: 0;
+    flex-shrink: 0;
 }
 #marca img {
-    width: 130px;
-    height: 130px;
+    width: 80px;
+    height: 80px;
     object-fit: contain;
     display: block;
 }
@@ -90,12 +137,13 @@ main#gran_padre{
         display: flex;
         flex-direction: column;
         align-items: center;
-        justify-content: space-between;
-        padding: 20px 0;
+        justify-content: flex-start;
+        padding: 12px 0 10px;
         border-radius:30px;
         margin: 10px;
         z-index: 1000;
         transition: transform 0.28s ease;
+        overflow: hidden;
     }
 
 /* Nav scrollable en pantallas de poca altura */
@@ -106,7 +154,7 @@ main#gran_padre{
     overflow-x: hidden;
     display: flex;
     flex-direction: column;
-    justify-content: center;
+    justify-content: flex-start;
     scrollbar-width: thin;
     scrollbar-color: rgba(255,255,255,0.2) transparent;
 }
@@ -143,7 +191,8 @@ main#gran_padre{
     justify-content: space-between;
     display: flex;
     width: 70%;
-    margin:20px 0;
+    margin: 10px 0 4px;
+    flex-shrink: 0;
 }
 
 #panel_cen {
@@ -330,8 +379,9 @@ main#gran_padre{
     flex-direction: column;
     width: 100%;
     align-items: center;
-    gap: 12px;
-    margin-top: 8px;
+    gap: 7px;
+    margin-top: 4px;
+    padding-bottom: 6px;
 }
 .nav-btn {
     background: white;
@@ -339,16 +389,17 @@ main#gran_padre{
     border: none;
     border-radius: 12px;
     width: 90%;
-    padding: 12px 12px;
+    padding: 10px 12px;
     font-weight: bold;
     cursor: pointer;
-    font-size: 0.95rem;
+    font-size: 0.92rem;
     text-align: left;
     font-family: inherit;
     transition: all 0.3s;
     display: flex;
     align-items: center;
     gap: 10px;
+    flex-shrink: 0;
 }
 .nav-btn svg {
     flex-shrink: 0;
@@ -469,6 +520,23 @@ main#gran_padre{
 .btn-accion.rojo  { background: #990000; color: white; }
 .btn-accion.azul  { background: #3d85c6; color: white; }
 .btn-accion.gris  { background: #525055; color: white; }
+
+/* Filtro de roles */
+.filtro-roles { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 14px; }
+.btn-filtro-rol {
+    border: 2px solid rgba(255,255,255,0.35);
+    border-radius: 20px;
+    padding: 6px 18px;
+    font-size: 0.85rem;
+    font-weight: 600;
+    cursor: pointer;
+    background: transparent;
+    color: rgba(255,255,255,0.75);
+    font-family: inherit;
+    transition: background 0.2s, color 0.2s, border-color 0.2s;
+}
+.btn-filtro-rol:hover { background: rgba(255,255,255,0.12); color: #fff; }
+.btn-filtro-rol.activo { background: #990000; border-color: #990000; color: #fff; }
 
 /* Tables */
 .tabla-wrapper {

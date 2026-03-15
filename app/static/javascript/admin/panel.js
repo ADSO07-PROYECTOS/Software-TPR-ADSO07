@@ -2,6 +2,27 @@
    PANEL ADMINISTRACIÓN – TRES PASOS
    ═══════════════════════════════════════════════════════ */
 
+// ── Control de acceso por rol ────────────────────────────────────────────────
+(function aplicarPermisosPorRol() {
+    const ROL = document.body.dataset.rol || 'cajero';
+    // Secciones permitidas por rol
+    const PERMISOS = {
+        administrador: ['dashboard', 'productos', 'pedidos', 'reservas', 'tematicas', 'usuarios'],
+        cajero:        ['dashboard'],
+    };
+    const permitidas = PERMISOS[ROL] || ['dashboard'];
+
+    document.querySelectorAll('.nav-btn[data-requiere-rol]').forEach(btn => {
+        const seccion = btn.dataset.section;
+        if (!permitidas.includes(seccion)) {
+            btn.style.display = 'none';
+        }
+    });
+
+    // Sobreescribir cargarSeccion para bloquear acceso directo
+    window._rolPermitidas = permitidas;
+})();
+
 // ── Sidebar responsive (hamburguesa) ─────────────────────────────────────────
 
 (function () {
@@ -40,6 +61,8 @@ document.querySelectorAll('.nav-btn').forEach(btn => {
             document.getElementById('panel_izq').classList.remove('abierto');
             document.getElementById('sidebar-overlay').classList.remove('visible');
         }
+        // Bloquear si el rol no tiene acceso a la sección
+        if (window._rolPermitidas && !window._rolPermitidas.includes(target)) return;
         // Cargar datos de la sección (excepto dashboard que viene del servidor)
         if (target !== 'dashboard') cargarSeccion(target);
     });
@@ -98,37 +121,54 @@ async function apiFetch(url, opciones = {}) {
 // USUARIOS
 // ══════════════════════════════════════════════════════════════════════════════
 
+let _rolFiltroActual = '';
+
 async function cargarUsuarios() {
     const tbody = document.getElementById('tbody-usuarios');
     tbody.innerHTML = '<tr><td colspan="7" class="cargando">Cargando...</td></tr>';
     try {
         usuariosCache = await apiFetch('/admin/api/clientes');
-        if (!usuariosCache.length) {
-            tbody.innerHTML = '<tr><td colspan="7" class="cargando">Sin usuarios registrados</td></tr>';
-            return;
-        }
-        tbody.innerHTML = usuariosCache.map(c => `
-            <tr>
-                <td>${c.cliente_id}</td>
-                <td>${esc(c.cc_cliente)}</td>
-                <td>${esc(c.nombre)}</td>
-                <td>${esc(c.email || '')}</td>
-                <td>${esc(c.telefono || '')}</td>
-                <td><span class="pill ${pillRol(c.rol)}">${esc(formatearRol(c.rol))}</span></td>
-                <td>
-                    <button class="btn-accion azul" onclick="editarUsuario(${c.cliente_id})">
-                        Editar
-                    </button>
-                    <button class="btn-accion rojo" onclick="eliminarCliente(${c.cliente_id})">
-                        Eliminar
-                    </button>
-                </td>
-            </tr>
-        `).join('');
+        renderizarUsuarios();
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="7" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
     }
+}
+
+function renderizarUsuarios() {
+    const tbody = document.getElementById('tbody-usuarios');
+    const lista = _rolFiltroActual
+        ? usuariosCache.filter(c => (c.rol || 'cliente') === _rolFiltroActual)
+        : usuariosCache;
+    if (!lista.length) {
+        tbody.innerHTML = '<tr><td colspan="7" class="cargando">Sin usuarios para el filtro seleccionado</td></tr>';
+        return;
+    }
+    tbody.innerHTML = lista.map(c => `
+        <tr>
+            <td>${c.cliente_id}</td>
+            <td>${esc(c.cc_cliente)}</td>
+            <td>${esc(c.nombre)}</td>
+            <td>${esc(c.email || '')}</td>
+            <td>${esc(c.telefono || '')}</td>
+            <td><span class="pill ${pillRol(c.rol)}">${esc(formatearRol(c.rol))}</span></td>
+            <td>
+                <button class="btn-accion azul" onclick="editarUsuario(${c.cliente_id})">
+                    Editar
+                </button>
+                <button class="btn-accion rojo" onclick="eliminarCliente(${c.cliente_id})">
+                    Eliminar
+                </button>
+            </td>
+        </tr>
+    `).join('');
+}
+
+function filtrarPorRol(btn) {
+    _rolFiltroActual = btn.dataset.rol;
+    document.querySelectorAll('.btn-filtro-rol').forEach(b => b.classList.remove('activo'));
+    btn.classList.add('activo');
+    renderizarUsuarios();
 }
 
 function formatearRol(rol) {
@@ -354,13 +394,11 @@ async function cargarProductosDeCategoria(catId) {
     tbody.innerHTML = '<tr><td colspan="5" class="cargando">Cargando...</td></tr>';
     try {
         const todos = await apiFetch('/admin/api/productos');
-        const productos = todos.filter(p => p.nombre_categoria === (_categorias.find(c => c.id === catId) || {}).nombre
-            || todos.filter(p2 => p2.nombre_categoria).length === 0
-        );
-        // Filtrar por categoria_id si existe el campo, si no por nombre
+        // Filtrar por categoria_id cuando exista; dejar el nombre como compatibilidad.
         const filtrados = todos.filter(p => {
             const cat = _categorias.find(c => c.id === catId);
-            return cat && p.nombre_categoria === cat.nombre;
+            if (!cat) return false;
+            return Number(p.categoria_id) === Number(catId) || p.nombre_categoria === cat.nombre;
         });
         if (!filtrados.length) {
             tbody.innerHTML = '<tr><td colspan="5" class="cargando">Sin productos en esta categoría</td></tr>';
@@ -458,6 +496,12 @@ async function editarProducto(id) {
 async function guardarProducto(e) {
     e.preventDefault();
     const id = document.getElementById('fp-id').value;
+    const categoriaId = Number.parseInt(document.getElementById('fp-categoria').value, 10);
+
+    if (!Number.isInteger(categoriaId)) {
+        toast('Selecciona una categoría válida', 'error');
+        return;
+    }
 
     // Subir imagen si el usuario seleccionó un archivo
     const fileInput = document.getElementById('fp-imagen-file');
@@ -477,7 +521,7 @@ async function guardarProducto(e) {
 
     const payload = {
         nombre_producto:         document.getElementById('fp-nombre').value.trim(),
-        categoria_id:            parseInt(document.getElementById('fp-categoria').value),
+        categoria_id:            categoriaId,
         precio_base:             parseFloat(document.getElementById('fp-precio').value),
         descripcion_producto:    document.getElementById('fp-descripcion').value.trim(),
         imagen_producto:         document.getElementById('fp-imagen').value.trim() || null,

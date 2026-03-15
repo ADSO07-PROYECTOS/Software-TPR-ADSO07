@@ -4,3 +4,4 @@ __pycache__/
 .flaskenv
 instance/
 .env
+.env

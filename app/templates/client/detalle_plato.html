@@ -57,6 +57,9 @@
             </div>
         
             {% if es_pizza %}
+            {% endif %}
+
+            {% if adiciones %}
             <section class="cont-adiciones">
                 <div class="adicion">
                     <h2 id="adicion">¿DESEAS ADICIONAR ALGO A TU COMIDA?</h2>
@@ -65,22 +68,93 @@
             </section>
 
             <section class="adiciones-lista">
-            {% for adicion in adiciones %}
-            <div class="adicion-item" data-precio="{{ adicion.precio }}">
-                <label>{{ adicion.nombre }}</label>
-                <div class="contador">
-                    <button class="btn-menos">
-                        <svg width="10" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H7L3.5 5L0 0Z" fill="black" fill-opacity="0.5"/></svg>
-                    </button>
-                    <span class="cantidad">0</span>
-                    <button class="btn-mas">
-                        <svg width="10" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H0V4H4V0H6V4H10V6H6V10H4V6Z" fill="#99181F"/></svg>
-                    </button>
+                <div class="adiciones-box">
+                {% for adicion in adiciones %}
+                <div class="adicion-item" data-precio="{{ adicion.precio }}">
+                    <div class="adicion-nombre">
+                        <span>{{ adicion.nombre }}</span>
+                    </div>
+                    <div class="contador">
+                        <button class="btn-menos">
+                            <svg width="10" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H7L3.5 5L0 0Z" fill="black" fill-opacity="0.5"/></svg>
+                        </button>
+                        <span class="cantidad">0</span>
+                        <button class="btn-mas">
+                            <svg width="10" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H0V4H4V0H6V4H10V6H6V10H4V6Z" fill="#99181F"/></svg>
+                        </button>
+                    </div>
+                    <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
                 </div>
-                <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
-            </div>
-            {% endfor %}
+                {% endfor %}
+                </div>
             </section>
+            <style>
+            .adiciones-lista {
+                margin-top: 10px;
+                background-color: #fff;
+                padding: 10px;
+                box-sizing: border-box;
+                border-radius: 10px;
+                border: 2px solid #99181F;
+                width: 100%;
+                max-width: 400px;
+                margin-left: auto;
+                margin-right: auto;
+            }
+            .adiciones-box {
+                display: flex;
+                flex-direction: column;
+                gap: 8px;
+            }
+            .adicion-item {
+                display: grid;
+                grid-template-columns: 1.5fr 1fr 1fr;
+                align-items: center;
+                background: #fff;
+                border-radius: 10px;
+                padding: 4px 0;
+                color: #99181F;
+                font-size: 18px;
+            }
+            .adicion-nombre span {
+                color: #99181F;
+                font-size: 18px;
+                font-weight: normal;
+            }
+            .contador {
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                gap: 10px;
+            }
+            .btn-menos, .btn-mas {
+                background: #fff;
+                border: 1px solid #99181F;
+                border-radius: 20px;
+                width: 22px;
+                height: 22px;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                cursor: pointer;
+            }
+            .cantidad {
+                color: #99181F;
+                font-size: 18px;
+                font-weight: normal;
+            }
+            .seleccionar-btn {
+                background: #99181F;
+                color: #fff;
+                border-radius: 20px;
+                border: none;
+                padding: 4px 16px;
+                font-size: 18px;
+                font-weight: bold;
+                width: 90px;
+                text-align: center;
+            }
+            </style>
             {% endif %}
                 
             

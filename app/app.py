@@ -1,5 +1,6 @@
-from flask import Flask, render_template, request, redirect, jsonify
+from flask import Flask, render_template, request, redirect, jsonify, session
 from flask_cors import CORS
+from werkzeug.utils import secure_filename
 from conexion import conectar
 import requests
 import qrcode, io, base64
@@ -31,8 +32,8 @@ MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
 app = Flask(__name__)
 CORS(app)
 
-# Configuración DebugToolbar
-app.config['SECRET_KEY'] = 'debug_secret_key'
+# Configuración sesión y DebugToolbar
+app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'trespasos_secret_2026')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 if DebugToolbarExtension:
     toolbar = DebugToolbarExtension(app)
@@ -76,6 +77,45 @@ try:
         conn.close()
 except Exception as e:
     print(f"Adv: No se pudo verificar migraciones iniciales: {e}")
+
+
+# ─────────────────────────── AUTENTICACIÓN ──────────────────────────────────
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    if request.method == 'POST':
+        usuario    = request.form.get('usuario', '').strip()
+        cc_cliente = request.form.get('palabra_clave', '').strip()
+        if not usuario or not cc_cliente:
+            return render_template('auth/login.html', error='Completa todos los campos')
+        try:
+            conn = conectar()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                "SELECT cliente_id, nombre, rol FROM clientes "
+                "WHERE nombre = %s AND cc_cliente = %s AND rol IN ('administrador','cajero')",
+                (usuario, cc_cliente)
+            )
+            usuario_db = cursor.fetchone()
+            cursor.close(); conn.close()
+        except Exception as e:
+            return render_template('auth/login.html', error=f'Error de conexión: {e}')
+
+        if not usuario_db:
+            return render_template('auth/login.html', error='Credenciales incorrectas o sin acceso al panel')
+
+        session['usuario_id']  = usuario_db['cliente_id']
+        session['usuario_nombre'] = usuario_db['nombre']
+        session['rol']         = usuario_db['rol']
+        return redirect('/admin')
+
+    return render_template('auth/login.html', error=None)
+
+
+@app.route('/logout')
+def logout():
+    session.clear()
+    return redirect('/login')
 
 
 @app.route('/')
@@ -354,7 +394,9 @@ def modificar_reserva(id_reserva):
             conn.close()
             if not reserva:
                 return redirect('/mis_reservas')
-            return render_template('client/modificar_reserva.html', reserva=reserva, tematicas=tematicas)
+            from datetime import datetime, timedelta
+            fecha_actual = datetime.today()
+            return render_template('client/modificar_reserva.html', reserva=reserva, tematicas=tematicas, fecha_actual=fecha_actual, timedelta=timedelta)
         except Exception as e:
             return f"Error: {e}", 500
 
@@ -409,6 +451,10 @@ ADMIN_MS = 'http://localhost:5006'
 
 @app.route('/admin')
 def panel_admin():
+    rol = session.get('rol')
+    if rol not in ('administrador', 'cajero'):
+        return redirect('/login')
+
     stats           = {'domicilios_hoy': 0, 'domicilios_pendientes': 0,
                        'mesas_disponibles': 0, 'mesas_ocupadas': 0, 'mesas_reservadas': 0}
     mesas_por_piso  = []
@@ -426,7 +472,9 @@ def panel_admin():
     return render_template('admin/panel.html',
                            stats=stats,
                            mesas_por_piso=mesas_por_piso,
-                           pedidos_recientes=pedidos_recientes)
+                           pedidos_recientes=pedidos_recientes,
+                           rol_usuario=rol,
+                           nombre_usuario=session.get('usuario_nombre', ''))
 
 
 def _proxy_admin(metodo, ruta, **kwargs):
@@ -520,17 +568,20 @@ def admin_tematicas_put(tid):
 
 @app.route('/admin/api/upload-imagen', methods=['POST'])
 def admin_upload_imagen():
-    if 'imagen' not in request.files:
-        return jsonify({'error': 'No se envió ningún archivo'}), 400
-    archivo = request.files['imagen']
-    if archivo.filename == '':
-        return jsonify({'error': 'Nombre de archivo vacío'}), 400
-    if not allowed_file(archivo.filename, ALLOWED_EXT_IMG):
-        return jsonify({'error': 'Formato no permitido. Usa PNG, JPG o WEBP'}), 400
-    nombre = secure_filename(archivo.filename)
-    ruta = os.path.join(UPLOAD_FOLDER_IMG, nombre)
-    archivo.save(ruta)
-    return jsonify({'url': f'platos/{nombre}'})
+    try:
+        if 'imagen' not in request.files:
+            return jsonify({'error': 'No se envió ningún archivo'}), 400
+        archivo = request.files['imagen']
+        if archivo.filename == '':
+            return jsonify({'error': 'Nombre de archivo vacío'}), 400
+        if not allowed_file(archivo.filename, ALLOWED_EXT_IMG):
+            return jsonify({'error': 'Formato no permitido. Usa PNG, JPG o WEBP'}), 400
+        nombre = secure_filename(archivo.filename)
+        ruta = os.path.join(UPLOAD_FOLDER_IMG, nombre)
+        archivo.save(ruta)
+        return jsonify({'url': f'platos/{nombre}'})
+    except Exception as e:
+        return jsonify({'error': 'Error interno al guardar la imagen', 'detalle': str(e)}), 500
 
 @app.route('/api/reservas/comprobante', methods=['POST'])
 def subir_comprobante_reserva():

@@ -2,9 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modificar_reserva.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
+    
+    <script defer src="{{ url_for('static', filename='javascript/modificar_reserva.js') }}"></script>
 
     <title>Modificar Reserva</title>
 </head>
@@ -51,7 +54,8 @@
                 <div class="grupo">
                     <label>FECHA</label>
                     <input type="date" name="fecha" id="input_fecha"
-                        value="{{ reserva.fecha_hora.strftime('%Y-%m-%d') if reserva.fecha_hora else '' }}">
+                        value="{{ reserva.fecha_hora.strftime('%Y-%m-%d') if reserva.fecha_hora else '' }}"
+                        min="{{ (fecha_actual + timedelta(days=1)).strftime('%Y-%m-%d') }}">
                 </div>
 
                 <div class="grupo">

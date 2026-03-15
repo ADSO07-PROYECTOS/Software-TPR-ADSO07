@@ -1,25 +1,22 @@
-import sys, os, qrcode, io, base64, smtplib, ssl, threading
-from email.mime.text import MIMEText
-from email.mime.multipart import MIMEMultipart
-from email.mime.image import MIMEImage
+import sys, os, qrcode, io, base64, threading, requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
+from dotenv import load_dotenv
 
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
-from conexion import conectar
+# Carga variables de entorno desde .env en la raiz del proyecto
+load_dotenv(os.path.join(os.path.dirname(__file__), '../../..', '.env'))
 
 app = Flask(__name__)
 CORS(app)
 
-MI_CORREO = "e5toesparapruebas12@gmail.com" 
-MI_PASSWORD = "nmus gbvy uxtl ycte"
+BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
+BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
+BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Tres Pasos")
 
 def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
-    msg = MIMEMultipart()
-    msg["From"] = f"Tres Pasos <{MI_CORREO}>"
-    msg["To"] = cli['correo']
-    msg["Subject"] = f"Confirmación de Pedido - Tres Pasos #{dom_id}"
-    
+    qr_buf.seek(0)
+    qr_b64 = base64.b64encode(qr_buf.read()).decode()
+
     cuerpo = f"""
     <html>
         <body style="font-family: Arial; text-align: center;">
@@ -27,25 +24,34 @@ def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
             <p>Hola <b>{cli['nom']}</b>, estamos preparando tu pedido.</p>
             <p><b>ID del Pedido:</b> #{dom_id}</p>
             <p><b>Dirección de entrega:</b> {direccion}</p>
-            <img src="cid:qr_img" style="width: 200px; border: 2px solid #99181F;">
+            <img src="data:image/png;base64,{qr_b64}" style="width: 200px; border: 2px solid #99181F;">
             <p>Escanea este código para ver los detalles de tu entrega.</p>
         </body>
     </html>
     """
-    msg.attach(MIMEText(cuerpo, "html"))
-    
-    qr_buf.seek(0)
-    img = MIMEImage(qr_buf.read())
-    img.add_header('Content-ID', '<qr_img>')
-    msg.attach(img)
-    
     try:
-        context = ssl.create_default_context()
-        with smtplib.SMTP_SSL("smtp.gmail.com", 465, context=context, timeout=10) as server:
-            server.login(MI_CORREO, MI_PASSWORD)
-            server.sendmail(MI_CORREO, cli['correo'], msg.as_string())
-    except Exception as e: 
+        resp = requests.post(
+            "https://api.brevo.com/v3/smtp/email",
+            headers={
+                "api-key": BREVO_API_KEY,
+                "Content-Type": "application/json"
+            },
+            json={
+                "sender": {"name": BREVO_SENDER_NAME, "email": BREVO_SENDER_EMAIL},
+                "to": [{"email": cli['correo']}],
+                "subject": f"Confirmación de Pedido - Tres Pasos #{dom_id}",
+                "htmlContent": cuerpo
+            },
+            timeout=30
+        )
+        if resp.status_code not in (200, 201):
+            print(f"Error Brevo domicilio: {resp.status_code} - {resp.text}")
+        else:
+            print(f"Correo de domicilio enviado correctamente: {resp.json()}")
+    except Exception as e:
+        import traceback
         print(f"Error enviando mail de domicilio: {e}")
+        traceback.print_exc()
 
 @app.route('/api/domicilios', methods=['POST'])
 def crear_domicilio():

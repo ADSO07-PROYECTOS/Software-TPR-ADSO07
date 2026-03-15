@@ -31,7 +31,7 @@
                         <h3>{{ plato.nombre }}</h3>
                         <p>{{ plato.descripcion }}</p>
                         
-                        <span class="precio-plato">$ {{ plato.precio }}</span>
+                        <span class="precio-plato">$ {{ "{:,.0f}".format(plato.precio | float).replace(",", ".") }}</span>
                         
                         <a href="{{ url_for('detalle_plato', id_plato=plato.id) }}" class="seleccionar-btn">
                             SELECCIONAR

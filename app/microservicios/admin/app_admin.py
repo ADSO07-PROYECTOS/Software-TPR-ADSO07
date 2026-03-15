@@ -273,7 +273,7 @@ def admin_listar_productos():
         conn = conectar()
         cursor = conn.cursor(dictionary=True)
         cursor.execute("""
-            SELECT p.producto_id, p.nombre_producto, p.precio_base,
+            SELECT p.producto_id, p.nombre_producto, p.categoria_id, p.precio_base,
                    p.descripcion_producto, p.disponibilidad_producto,
                    p.imagen_producto, c.nombre_categoria
             FROM productos p
