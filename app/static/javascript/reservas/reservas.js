@@ -164,6 +164,9 @@ export function prepararPaso2() {
             if (res.ok && data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
+                // Limpiar carrito
+                localStorage.removeItem('carrito');
+                localStorage.removeItem('carrito_tpr');
 
                 const metodo_pago = payload.reserva.metodo_pago;
                 if (metodo_pago === '1') {

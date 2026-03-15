@@ -46,6 +46,7 @@ export function prepararPasoDomicilio() {
             if (data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_orden', data.id);
+                // Limpiar carrito
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
                 window.location.href = '/exito';
