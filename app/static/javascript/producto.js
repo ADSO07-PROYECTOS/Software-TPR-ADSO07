@@ -52,14 +52,19 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === 3. FUNCIÓN DE CÁLCULO TOTAL ===
     function calcularTotal(event) {
-        validarCombinaciones(event);
+        let precioUnidad;
 
-        // A. Precio Base (Desde BD -> HTML data-precio)
-        const opcion = selectTamano.options[selectTamano.selectedIndex];
-        let precioUnidad = parseFloat(opcion.getAttribute('data-precio'));
-
-        if (displayPrecioBase) {
-            displayPrecioBase.textContent = `$ ${precioUnidad.toLocaleString()}`;
+        if (selectTamano) {
+            validarCombinaciones(event);
+            const opcion = selectTamano.options[selectTamano.selectedIndex];
+            precioUnidad = parseFloat(opcion.getAttribute('data-precio'));
+            if (displayPrecioBase) {
+                displayPrecioBase.textContent = `$ ${precioUnidad.toLocaleString()}`;
+            }
+        } else {
+            // Producto no-pizza: precio base desde data-precio del span plato-id
+            const platoSpan = document.getElementById('plato-id');
+            precioUnidad = parseFloat(platoSpan.getAttribute('data-precio')) || 0;
         }
 
         // B. Sumar Adicionales (Precio dinámico desde data-precio)
@@ -77,12 +82,14 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // C. Sumar Sabores (Precio dinámico desde data-precio)
-        const saboresMarcados = document.querySelectorAll('.lista-pizzas .check:checked');
-        saboresMarcados.forEach(check => {
-            const precioSabor = parseFloat(check.getAttribute('data-precio'));
-            precioUnidad += precioSabor;
-        });
+        // C. Sumar Sabores (solo para pizzas)
+        if (selectTamano) {
+            const saboresMarcados = document.querySelectorAll('.lista-pizzas .check:checked');
+            saboresMarcados.forEach(check => {
+                const precioSabor = parseFloat(check.getAttribute('data-precio'));
+                precioUnidad += precioSabor;
+            });
+        }
 
         // D. Total Final
         const granTotal = precioUnidad * cantidadDePizzas;
@@ -118,12 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
     btnMenosTotal.addEventListener('click', () => { if(cantidadDePizzas > 1){ cantidadDePizzas--; calcularTotal();} });
 
     // -- Cambios en select o checkboxes --
-    selectTamano.addEventListener('change', (e) => {
-        // Reiniciar sabores al cambiar tamaño para evitar conflictos
-        checkboxesSabores.forEach(c => {c.checked = false; c.disabled = false;});
-        gestionarVisibilidadCombinar();
-        calcularTotal(e);
-    });
+    if (selectTamano) {
+        selectTamano.addEventListener('change', (e) => {
+            // Reiniciar sabores al cambiar tamaño para evitar conflictos
+            checkboxesSabores.forEach(c => {c.checked = false; c.disabled = false;});
+            gestionarVisibilidadCombinar();
+            calcularTotal(e);
+        });
+    }
     
     checkboxesSabores.forEach(check => {
         check.addEventListener('change', (e) => calcularTotal(e));
@@ -131,18 +140,28 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // === 5. BOTÓN AÑADIR (Agregar al carrito y Redirigir) ===
     botonAnadir.addEventListener('click', () => {
-        const opcion = selectTamano.options[selectTamano.selectedIndex];
+        let tamanoNombre = '';
+        let precioUnitario;
+
+        if (selectTamano) {
+            const opcion = selectTamano.options[selectTamano.selectedIndex];
+            tamanoNombre = opcion.value;
+            precioUnitario = parseFloat(displayPrecioFinal.dataset.precioUnitario || opcion.getAttribute('data-precio'));
+        } else {
+            const platoSpan = document.getElementById('plato-id');
+            precioUnitario = parseFloat(displayPrecioFinal.dataset.precioUnitario || platoSpan.getAttribute('data-precio'));
+        }
         
         // Recolectar datos
         const nombrePizza = document.querySelector('h2').innerText;
-        const tamanoNombre = opcion.value;
 
         // Lista Adicionales
         let listaAdicionales = [];
         itemsAdicionales.forEach(item => {
             const cant = parseInt(item.querySelector('.cantidad').innerText);
             if (cant > 0) {
-                const nombre = item.querySelector('label').innerText;
+                const nombreEl = item.querySelector('label') || item.querySelector('.adicion-nombre span');
+                const nombre = nombreEl ? nombreEl.innerText : '';
                 listaAdicionales.push(`${nombre} (x${cant})`);
             }
         });
@@ -154,9 +173,7 @@ document.addEventListener('DOMContentLoaded', () => {
             listaSabores.push(nombre);
         });
 
-        // Crear Objeto
         const platoId = parseInt(document.getElementById('plato-id').getAttribute('data-id')) || null;
-        const precioUnitario = parseFloat(displayPrecioFinal.dataset.precioUnitario || opcion.getAttribute('data-precio'));
         const pedido = {
             id: platoId,
             producto: nombrePizza,
@@ -177,6 +194,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     function gestionarVisibilidadCombinar() {
+        if (!seccionCombinar || !selectTamano) return;
         const opcion = selectTamano.options[selectTamano.selectedIndex];
         if (!opcion) {
             seccionCombinar.style.display = 'none';
