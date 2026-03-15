@@ -5,11 +5,12 @@ import requests
 import qrcode, io, base64
 import os
 
+# Configuración para Flask-DebugToolbar
 try:
-    import flask_monitoringdashboard as dashboard
+    from flask_debugtoolbar import DebugToolbarExtension
 except ImportError:
-    dashboard = None
-from werkzeug.utils import secure_filename
+    DebugToolbarExtension = None
+
 
 UPLOAD_FOLDER_IMG = os.path.join(os.path.dirname(__file__), 'static', 'img', 'platos')
 UPLOAD_FOLDER_COMPROBANTES = os.path.join(os.path.dirname(__file__), 'static', 'comprobantes')
@@ -26,16 +27,15 @@ DIAS_ES = ['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO','DOMINGO']
 MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
             'AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE']
 
+
 app = Flask(__name__)
 CORS(app)
 
-if dashboard:
-    dashboard_config_path = os.path.join(os.path.dirname(__file__), 'dashboard.cfg')
-    if os.path.exists(dashboard_config_path):
-        dashboard.config.init_from(file=dashboard_config_path)
-    dashboard.bind(app)
-else:
-    print("Adv: flask-monitoringdashboard no está instalado. Instálalo para habilitar /dashboard.")
+# Configuración DebugToolbar
+app.config['SECRET_KEY'] = 'debug_secret_key'
+app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+if DebugToolbarExtension:
+    toolbar = DebugToolbarExtension(app)
 
 ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
 
