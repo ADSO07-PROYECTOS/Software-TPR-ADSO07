@@ -17,7 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         // Limpiar tarjetas previas
         document.querySelectorAll('.producto_detalles').forEach(el => el.remove());
 
-        const metodoPago = listaProductos.querySelector('.metodo-pago');
+        const metodoPago = listaProductos.querySelector('.divider');
 
         if (items.length === 0) {
             const vacio = document.createElement('p');
@@ -132,7 +132,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (e.target.classList.contains('accion')) {
             card.remove();
             if (document.querySelectorAll('.producto_detalles').length === 0) {
-                const metodoPago = listaProductos.querySelector('.metodo-pago');
+                const metodoPago = listaProductos.querySelector('.divider');
                 const vacio = document.createElement('p');
                 vacio.classList.add('carrito-vacio');
                 vacio.textContent = 'Tu carrito está vacío.';
