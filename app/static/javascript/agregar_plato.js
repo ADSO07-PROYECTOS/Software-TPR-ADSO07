@@ -65,7 +65,7 @@ function activarEnvioFormulario() {
             if (inputFoto.files.length > 0) {
                 datosFormulario.append('foto', inputFoto.files[0]);
             }
-
+            //CAMILO O BEDOYA LO ACOMODAN 
             fetch('/api/guardar_plato', { 
                 method: 'POST',
                 body: datosFormulario 
