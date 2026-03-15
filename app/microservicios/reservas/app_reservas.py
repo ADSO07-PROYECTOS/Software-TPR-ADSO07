@@ -7,12 +7,28 @@ from dotenv import load_dotenv
 # Carga variables de entorno desde .env en la raiz del proyecto
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../..', '.env'))
 
+# Configuración de rutas para importar conexión
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
+from conexion import conectar
+
 app = Flask(__name__)
 CORS(app)
 
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
 BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Restaurante Tres Pasos")
+
+def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
+    qr_buf.seek(0)
+    qr_b64 = base64.b64encode(qr_buf.read()).decode()
+
+    cuerpo = f"""
+    <html>
+        <body style="font-family: Arial; text-align: center;">
+            <h2 style="color: #99181F;">¡Reserva Confirmada!</h2>
+            <p>Hola <b>{datos_cliente['nom']}</b>, tu mesa ha sido reservada con éxito.</p>
+            <p><b>Fecha:</b> {datos_reserva['fec']} | <b>Hora:</b> {datos_reserva['hor']}:00</p>
+            <img src="data:image/png;base64,{qr_b64}" style="width: 200px; border: 2px solid #99181F;">
             <p>Por favor, presenta este QR al llegar al restaurante.</p>
         </body>
     </html>
