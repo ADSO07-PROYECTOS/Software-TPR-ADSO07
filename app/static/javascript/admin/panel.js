@@ -74,6 +74,15 @@ const ROLES_USUARIO = {
 let usuariosCache = [];
 
 // ── Helper fetch JSON ─────────────────────────────────────────────────────────
+// ── Formatear hora a 12h AM/PM ────────────────────────────────────────────────
+function formatearHora(fechaStr) {
+    if (!fechaStr) return '';
+    const fecha = new Date(fechaStr.replace(' ', 'T'));
+    if (isNaN(fecha)) return fechaStr;
+    const opciones = { hour: 'numeric', minute: '2-digit', hour12: true };
+    return fecha.toLocaleDateString('es-CO', { year: 'numeric', month: 'short', day: 'numeric' }) +
+        ' ' + fecha.toLocaleTimeString('es-CO', opciones);
+}
 
 async function apiFetch(url, opciones = {}) {
     const resp = await fetch(url, {
@@ -534,7 +543,7 @@ async function cargarPedidos() {
                 <td>${esc(d.direccion || '')}</td>
                 <td>$${d.total ? Number(d.total).toLocaleString('es-CO') : '0'}</td>
                 <td>${d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo'}</td>
-                <td><small>${esc(d.fecha_hora || '')}</small></td>
+                <td><small>${formatearHora(d.fecha_hora)}</small></td>
                 <td><span class="pill ${pillDom(d.estado_pedido)}">${esc(d.estado_pedido || '')}</span></td>
                 <td>
                     <select class="sel-estado" onchange="cambiarEstadoDomicilio(${d.domicilio_id}, this.value)">
@@ -594,7 +603,7 @@ async function cargarReservas() {
             <tr>
                 <td>${r.reserva_id}</td>
                 <td>${esc(r.nombre || '')}<br><small>${esc(r.telefono || '')}</small></td>
-                <td><small>${esc(r.fecha_hora || '')}</small></td>
+                <td><small>${formatearHora(r.fecha_hora)}</small></td>
                 <td>${r.cantidad_personas}</td>
                 <td>${r.piso || '—'}</td>
                 <td>${esc(r.nombre_tematica || '—')}</td>

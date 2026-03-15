@@ -17,10 +17,7 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // Simular click al label para abrir file picker
-    labelCaja.addEventListener('click', () => {
-        inputFile.click();
-    });
+    // El label con for="input_foto" abrirá el diálogo automáticamente
 
     // Cuando se selecciona un archivo
     inputFile.addEventListener('change', (e) => {

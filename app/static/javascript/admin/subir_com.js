@@ -3,8 +3,18 @@ document.addEventListener('DOMContentLoaded', () => {
     const inputFoto = document.getElementById('input_foto');
     const btnEnviar = document.getElementById('enviar');
     const nombreDisplay = document.getElementById('nombre_archivo');
+    const labelCaja = document.querySelector('.caja-subida');
 
-    // 2. Lógica para mostrar el nombre del archivo al seleccionarlo
+    // Evitar doble apertura del diálogo
+    let abriendoDialogo = false;
+    labelCaja.addEventListener('click', (e) => {
+        if (!abriendoDialogo) {
+            abriendoDialogo = true;
+            inputFoto.click();
+            setTimeout(() => abriendoDialogo = false, 500);
+        }
+    });
+
     inputFoto.addEventListener('change', function() {
         if (this.files && this.files.length > 0) {
             nombreDisplay.innerText = "Archivo: " + this.files[0].name;
@@ -14,38 +24,41 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     // 3. Lógica para enviar el formulario
-    btnEnviar.addEventListener('click', () => {
-        const file = inputFoto.files[0]; // Usamos la variable correcta
-
+    btnEnviar.addEventListener('click', async () => {
+        const file = inputFoto.files[0];
         if (!file) {
             alert("Por favor, selecciona un archivo.");
             return;
         }
-
-        // Validación de tamaño (Máximo 2MB)
-        if (file.size > 2 * 1024 * 1024) {
-            alert("El archivo es muy pesado. Máximo 2MB.");
+        // Validación de tamaño (Máximo 10MB)
+        if (file.size > 10 * 1024 * 1024) {
+            alert("El archivo es muy pesado. Máximo 10MB.");
             return;
         }
-
-        // Preparar los datos
+        // Obtener id de reserva (puedes ajustar esto según tu lógica)
+        let reservaId = localStorage.getItem('id_reserva') || prompt('ID de reserva:');
+        if (!reservaId) {
+            alert('No se encontró el ID de la reserva.');
+            return;
+        }
         const formData = new FormData();
-        formData.append('comprobante', file);
-
-        // Envío al servidor
-        // Nota para Camilo: Asegúrate de que esta URL sea la correcta en tu backend
-        fetch('/tu-endpoint-de-subida', {
-            method: 'POST',
-            body: formData
-        })
-        .then(res => res.json())
-        .then(data => {
-            console.log("Subida exitosa", data);
-            alert("¡Comprobante enviado con éxito!");
-        })
-        .catch(err => {
+        formData.append('archivo', file);
+        formData.append('reserva_id', reservaId);
+        try {
+            const res = await fetch('/api/reservas/comprobante', {
+                method: 'POST',
+                body: formData
+            });
+            const data = await res.json();
+            if (res.ok && data.success) {
+                alert('¡Comprobante enviado con éxito!');
+                // Puedes cerrar el modal aquí si tienes lógica para eso
+            } else {
+                alert('Error: ' + (data.message || 'No se pudo enviar el comprobante'));
+            }
+        } catch (err) {
+            alert('Hubo un error al subir el archivo.');
             console.error("Error:", err);
-            alert("Hubo un error al subir el archivo.");
-        });
+        }
     });
 });

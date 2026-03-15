@@ -26,13 +26,27 @@ function abrirModalHora() {
     const horaActual = hoy.getHours();
     const horaSeleccionada = parseInt(document.getElementById('hora_valor').value);
 
+    // Si la fecha es hoy, no permitir modificar la reserva
+    if (esHoy) {
+        alert('No puedes modificar la reserva el día de hoy.');
+        document.querySelector('input[name="fecha"]').value = '';
+        document.getElementById('modal_hora').classList.add('oculto_hora');
+        return;
+    }
+
     HORAS_DISPONIBLES.forEach(h => {
         const btn = document.createElement('button');
         btn.type = 'button';
         btn.textContent = a12h(h);
         btn.className = 'chip_hora';
 
-        const bloqueada = esHoy && h <= horaActual;
+        // Bloquear horas pasadas para cualquier fecha
+        let bloqueada = false;
+        if (!fechaInput) bloqueada = true;
+        else {
+            const fechaSeleccionada = new Date(fechaInput);
+            if (fechaSeleccionada < hoy) bloqueada = true;
+        }
         if (bloqueada) {
             btn.classList.add('chip_bloqueada');
             btn.disabled = true;
@@ -44,6 +58,10 @@ function abrirModalHora() {
     });
 
     document.getElementById('modal_hora').classList.remove('oculto_hora');
+// Abrir el modal de hora automáticamente al cambiar la fecha
+document.querySelector('input[name="fecha"]').addEventListener('change', function() {
+    abrirModalHora();
+});
 }
 
 function seleccionarHora(h) {
