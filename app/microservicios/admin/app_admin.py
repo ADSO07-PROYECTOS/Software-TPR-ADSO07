@@ -1,5 +1,5 @@
 """
-Microservicio Admin – Tres Pasos
+Microservicio Admin – Sabores Unidos
 Puerto: 5006
 Rutas: /api/admin/*
 """

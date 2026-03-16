@@ -14,7 +14,7 @@ CORS(app)
 
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
-BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Restaurante Tres Pasos")
+BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Sabores Unidos")
 
 def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
     qr_buf.seek(0)
@@ -41,7 +41,7 @@ def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
             json={
                 "sender": {"name": BREVO_SENDER_NAME, "email": BREVO_SENDER_EMAIL},
                 "to": [{"email": datos_cliente['correo']}],
-                "subject": "Confirmación de Reserva - Tres Pasos",
+                "subject": "Confirmación de Reserva - Sabores Unidos",
                 "htmlContent": cuerpo
             },
             timeout=30

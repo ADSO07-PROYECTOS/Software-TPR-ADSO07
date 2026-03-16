@@ -11,7 +11,7 @@ CORS(app)
 
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
-BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Tres Pasos")
+BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Sabores Unidos")
 
 def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
     qr_buf.seek(0)
@@ -39,7 +39,7 @@ def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
             json={
                 "sender": {"name": BREVO_SENDER_NAME, "email": BREVO_SENDER_EMAIL},
                 "to": [{"email": cli['correo']}],
-                "subject": f"Confirmación de Pedido - Tres Pasos #{dom_id}",
+                "subject": f"Confirmación de Pedido - Sabores Unidos #{dom_id}",
                 "htmlContent": cuerpo
             },
             timeout=30
