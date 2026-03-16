@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Panel Administración – Sabores Unidos</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/admin/panel.css') }}">
+    <script type="module" src="{{ url_for('static', filename='javascript/admin/panel.js') }}"></script>
+
 </head>
 <body data-rol="{{ rol_usuario }}">
 
@@ -517,7 +519,6 @@
     </div>
 </div>
 
-<script src="{{ url_for('static', filename='javascript/admin/panel.js') }}"></script>
 
 <div id="modal-devs" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(6px);">
     <div style="background:linear-gradient(160deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%); border:1px solid rgba(153,24,31,0.6); border-radius:24px; padding:36px 28px 28px; text-align:center; width:310px; max-width:92vw; box-shadow:0 8px 40px rgba(0,0,0,0.6); position:relative;">
