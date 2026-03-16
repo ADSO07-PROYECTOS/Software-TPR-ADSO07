@@ -111,7 +111,7 @@ async function cargarUsuarios() {
     const tbody = document.getElementById('tbody-usuarios');
     tbody.innerHTML = '<tr><td colspan="7" class="cargando">Cargando...</td></tr>';
     try {
-        usuariosCache = await apiFetch('/admin/api/clientes');
+        usuariosCache = await apiFetch('/admin/api/usuarios');
         renderizarUsuarios();
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="7" class="cargando">${esc(e.message)}</td></tr>`;
@@ -130,17 +130,17 @@ function renderizarUsuarios() {
     }
     tbody.innerHTML = lista.map(c => `
         <tr>
-            <td>${c.cliente_id}</td>
-            <td>${esc(c.cc_cliente)}</td>
-            <td>${esc(c.nombre)}</td>
+            <td>${c.usuario_id}</td>
+            <td>${esc(c.cc_usuario)}</td>
+            <td>${esc(c.nombre)} ${esc(c.apellidos || '')}</td>
             <td>${esc(c.email || '')}</td>
             <td>${esc(c.telefono || '')}</td>
             <td><span class="pill ${pillRol(c.rol)}">${esc(formatearRol(c.rol))}</span></td>
             <td>
-                <button class="btn-accion azul" onclick="editarUsuario(${c.cliente_id})">
+                <button class="btn-accion azul" onclick="editarUsuario(${c.usuario_id})">
                     Editar
                 </button>
-                <button class="btn-accion rojo" onclick="eliminarCliente(${c.cliente_id})">
+                <button class="btn-accion rojo" onclick="eliminarUsuario(${c.usuario_id})">
                     Eliminar
                 </button>
             </td>
@@ -171,7 +171,8 @@ function pillRol(rol) {
 function abrirModalUsuario() {
     document.getElementById('form-usuario').reset();
     document.getElementById('fu-id').value = '';
-    document.getElementById('fu-rol').value = 'cliente';
+    document.getElementById('fu-rol').value = 'cajero';
+    document.getElementById('fu-contrasena').required = true;
     document.getElementById('modal-usuario-titulo').textContent = 'Nuevo Usuario';
     document.getElementById('modal-usuario').classList.remove('oculta');
     document.getElementById('fu-cedula').focus();
@@ -182,18 +183,20 @@ function cerrarModalUsuario() {
 }
 
 function editarUsuario(id) {
-    const usuario = usuariosCache.find(item => item.cliente_id === id);
+    const usuario = usuariosCache.find(item => item.usuario_id === id);
     if (!usuario) {
         toast('Usuario no encontrado', 'error');
         return;
     }
-
-    document.getElementById('fu-id').value = usuario.cliente_id;
-    document.getElementById('fu-cedula').value = usuario.cc_cliente || '';
+    document.getElementById('fu-id').value = usuario.usuario_id;
+    document.getElementById('fu-cedula').value = usuario.cc_usuario || '';
     document.getElementById('fu-nombre').value = usuario.nombre || '';
+    document.getElementById('fu-apellidos').value = usuario.apellidos || '';
     document.getElementById('fu-email').value = usuario.email || '';
     document.getElementById('fu-telefono').value = usuario.telefono || '';
-    document.getElementById('fu-rol').value = usuario.rol || 'cliente';
+    document.getElementById('fu-contrasena').value = '';
+    document.getElementById('fu-contrasena').required = false;
+    document.getElementById('fu-rol').value = usuario.rol || 'cajero';
     document.getElementById('modal-usuario-titulo').textContent = 'Editar Usuario';
     document.getElementById('modal-usuario').classList.remove('oculta');
     document.getElementById('fu-nombre').focus();
@@ -201,25 +204,25 @@ function editarUsuario(id) {
 
 async function guardarUsuario(e) {
     e.preventDefault();
-
     const id = document.getElementById('fu-id').value;
     const payload = {
-        cc_cliente: document.getElementById('fu-cedula').value.trim(),
-        nombre: document.getElementById('fu-nombre').value.trim(),
-        email: document.getElementById('fu-email').value.trim(),
-        telefono: document.getElementById('fu-telefono').value.trim(),
-        rol: document.getElementById('fu-rol').value,
+        cc_usuario:  document.getElementById('fu-cedula').value.trim(),
+        nombre:      document.getElementById('fu-nombre').value.trim(),
+        apellidos:   document.getElementById('fu-apellidos').value.trim(),
+        email:       document.getElementById('fu-email').value.trim(),
+        telefono:    document.getElementById('fu-telefono').value.trim(),
+        rol:         document.getElementById('fu-rol').value,
+        contrasena:  document.getElementById('fu-contrasena').value.trim(),
     };
-
     try {
         if (id) {
-            await apiFetch(`/admin/api/clientes/${id}`, {
+            await apiFetch(`/admin/api/usuarios/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(payload),
             });
             toast('Usuario actualizado');
         } else {
-            await apiFetch('/admin/api/clientes', {
+            await apiFetch('/admin/api/usuarios', {
                 method: 'POST',
                 body: JSON.stringify(payload),
             });
@@ -232,13 +235,13 @@ async function guardarUsuario(e) {
     }
 }
 
-async function eliminarCliente(id) {
-    const usuario = usuariosCache.find(item => item.cliente_id === id);
-    const nombre = usuario ? usuario.nombre : `#${id}`;
-    if (!confirm(`¿Eliminar al cliente "${nombre}"? Esta acción no se puede deshacer.`)) return;
+async function eliminarUsuario(id) {
+    const usuario = usuariosCache.find(item => item.usuario_id === id);
+    const nombre = usuario ? `${usuario.nombre} ${usuario.apellidos || ''}`.trim() : `#${id}`;
+    if (!confirm(`¿Eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
     try {
-        await apiFetch(`/admin/api/clientes/${id}`, { method: 'DELETE' });
-        toast('Cliente eliminado');
+        await apiFetch(`/admin/api/usuarios/${id}`, { method: 'DELETE' });
+        toast('Usuario eliminado');
         cargarUsuarios();
     } catch (e) {
         toast(e.message, 'error');
@@ -261,12 +264,23 @@ async function cargarProductos() {
             lista.innerHTML = '<div class="cargando" style="padding:20px;text-align:center;">Sin categorías</div>';
             return;
         }
-        lista.innerHTML = _categorias.map(c => `
-            <div class="cat-fila" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')"> 
-                <span class="cat-fila-nombre">${esc(c.nombre)}</span>
-                <span class="cat-fila-arrow">›</span>
-            </div>`
-        ).join('');
+        lista.innerHTML = _categorias.map(c => {
+            const imgSrc = c.imagen
+                ? (c.imagen.startsWith('/') || c.imagen.startsWith('http') ? c.imagen : `/static/img/${c.imagen}`)
+                : null;
+            const imgHtml = imgSrc
+                ? `<img src="${imgSrc}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:6px;margin-right:10px;flex-shrink:0;">`
+                : `<span style="width:48px;height:48px;background:rgba(255,255,255,0.08);border-radius:6px;margin-right:10px;flex-shrink:0;display:inline-block;"></span>`;
+            return `
+            <div class="cat-fila" style="display:flex;align-items:center;gap:0;">
+                <div style="display:flex;align-items:center;flex:1;cursor:pointer;" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')">
+                    ${imgHtml}
+                    <span class="cat-fila-nombre">${esc(c.nombre)}</span>
+                </div>
+                <button class="btn-accion azul" style="margin-right:8px;" onclick="editarCategoria(${c.id})">Editar</button>
+                <span class="cat-fila-arrow" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')" style="cursor:pointer;">&#8250;</span>
+            </div>`;
+        }).join('');
     } catch (e) {
         lista.innerHTML = `<div class="cargando" style="padding:20px;text-align:center;">${esc(e.message)}</div>`;
         toast(e.message, 'error');
@@ -275,7 +289,10 @@ async function cargarProductos() {
 
 function abrirModalCategoria() {
     document.getElementById('form-categoria').reset();
+    document.getElementById('fc-id').value = '';
     document.getElementById('fc-imagen').value = '';
+    document.getElementById('fc-imagen-preview-label').textContent = '';
+    document.getElementById('modal-categoria-titulo').textContent = 'Nueva Categoría';
     document.getElementById('modal-categoria').classList.remove('oculta');
     document.getElementById('fc-nombre').focus();
 }
@@ -296,6 +313,8 @@ function abrirModalProducto() {
     } else {
         document.getElementById('fp-categoria-grupo').style.display = '';
     }
+    const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
+    document.getElementById('fp-stock-grupo').style.display = esAdic ? '' : 'none';
     document.getElementById('modal-producto').classList.remove('oculta');
     document.getElementById('fp-nombre').focus();
 }
@@ -319,6 +338,26 @@ document.addEventListener('keydown', e => {
 
 function cancelarFormProducto() { cerrarModalProducto(); }
 
+async function editarCategoria(id) {
+    const cat = _categorias.find(c => c.id === id);
+    if (!cat) return;
+    document.getElementById('fc-id').value = cat.id;
+    document.getElementById('fc-nombre').value = cat.nombre;
+    document.getElementById('fc-imagen').value = cat.imagen || '';
+    document.getElementById('fc-imagen-file').value = '';
+    const label = document.getElementById('fc-imagen-preview-label');
+    if (cat.imagen) {
+        const imgSrc = cat.imagen.startsWith('/') || cat.imagen.startsWith('http')
+            ? cat.imagen : `/static/img/${cat.imagen}`;
+        label.innerHTML = `Imagen actual: <a href="${imgSrc}" target="_blank" style="color:rgba(255,255,255,0.7)">${cat.imagen.split('/').pop()}</a>`;
+    } else {
+        label.textContent = '';
+    }
+    document.getElementById('modal-categoria-titulo').textContent = 'Editar Categoría';
+    document.getElementById('modal-categoria').classList.remove('oculta');
+    document.getElementById('fc-nombre').focus();
+}
+
 async function guardarCategoria(e) {
     e.preventDefault();
     const fileInput = document.getElementById('fc-imagen-file');
@@ -339,9 +378,15 @@ async function guardarCategoria(e) {
         nombre_categoria: document.getElementById('fc-nombre').value.trim(),
         imagen_categoria: document.getElementById('fc-imagen').value.trim() || null,
     };
+    const id = document.getElementById('fc-id').value;
     try {
-        await apiFetch('/admin/api/categorias', { method: 'POST', body: JSON.stringify(payload) });
-        toast('Categoría creada');
+        if (id) {
+            await apiFetch(`/admin/api/categorias/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            toast('Categoría actualizada');
+        } else {
+            await apiFetch('/admin/api/categorias', { method: 'POST', body: JSON.stringify(payload) });
+            toast('Categoría creada');
+        }
         cerrarModalCategoria();
         cargarProductos();
     } catch (err) {
@@ -356,6 +401,9 @@ async function abrirCategoria(catId, catNombre) {
     document.getElementById('vista-platos').classList.remove('oculta');
     cancelarFormProducto();
 
+    const esAdic = catNombre.toLowerCase() === 'adiciones';
+    document.getElementById('th-stock').style.display = esAdic ? '' : 'none';
+
     llenarSelectCategorias();
     await cargarProductosDeCategoria(catId);
 }
@@ -369,7 +417,7 @@ function volverCategorias() {
 
 async function cargarProductosDeCategoria(catId) {
     const tbody = document.getElementById('tbody-productos');
-    tbody.innerHTML = '<tr><td colspan="5" class="cargando">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="cargando">Cargando...</td></tr>';
     try {
         const todos = await apiFetch('/admin/api/productos');
 
@@ -379,14 +427,17 @@ async function cargarProductosDeCategoria(catId) {
             return Number(p.categoria_id) === Number(catId) || p.nombre_categoria === cat.nombre;
         });
         if (!filtrados.length) {
-            tbody.innerHTML = '<tr><td colspan="5" class="cargando">Sin productos en esta categoría</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="cargando">Sin productos en esta categoría</td></tr>';
             return;
         }
-        tbody.innerHTML = filtrados.map(p => `
+        tbody.innerHTML = filtrados.map(p => {
+            const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
+            return `
             <tr>
                 <td>${p.producto_id}</td>
                 <td>${esc(p.nombre_producto)}</td>
                 <td>$${Number(p.precio_base).toLocaleString('es-CO')}</td>
+                ${esAdic ? `<td>${p.stock ?? 0}</td>` : ''}
                 <td>
                     <span class="pill ${p.disponibilidad_producto ? 'verde' : 'rojo'}">
                         ${p.disponibilidad_producto ? 'Activo' : 'Inactivo'}
@@ -400,9 +451,10 @@ async function cargarProductosDeCategoria(catId) {
                     </button>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="5" class="cargando">${esc(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
     }
 }
@@ -454,6 +506,10 @@ async function editarProducto(id) {
         }
         document.getElementById('fp-imagen-file').value = '';
 
+        document.getElementById('fp-stock').value = p.stock ?? 0;
+        const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
+        document.getElementById('fp-stock-grupo').style.display = esAdic ? '' : 'none';
+
         llenarSelectCategorias();
         const sel = document.getElementById('fp-categoria');
         sel.value = p.categoria_id || '';
@@ -502,6 +558,7 @@ async function guardarProducto(e) {
         descripcion_producto:    document.getElementById('fp-descripcion').value.trim(),
         imagen_producto:         document.getElementById('fp-imagen').value.trim() || null,
         disponibilidad_producto: parseInt(document.getElementById('fp-disponibilidad').value),
+        stock:                   parseInt(document.getElementById('fp-stock').value) || 0,
     };
 
     try {

@@ -263,10 +263,10 @@ def admin_listar_productos():
         cursor.execute("""
             SELECT p.producto_id, p.nombre_producto, p.categoria_id, p.precio_base,
                    p.descripcion_producto, p.disponibilidad_producto,
-                   p.imagen_producto, c.nombre_categoria
+                   p.imagen_producto, p.stock, c.nombre_categoria
             FROM productos p
             LEFT JOIN categorias c ON p.categoria_id = c.categoria_id
-            WHERE c.nombre_categoria NOT IN ('Sabores','tamanos','adiciones')
+            WHERE c.nombre_categoria NOT IN ('Sabores','tamanos')
                OR c.nombre_categoria IS NULL
             ORDER BY p.nombre_producto
         """)
@@ -305,8 +305,18 @@ def admin_desactivar_producto(producto_id):
 @app.route('/api/admin/categorias', methods=['GET'])
 def admin_listar_categorias():
     try:
-        resp = requests.get(f'{MENU_MS}/api/categorias', timeout=10)
-        return jsonify(resp.json()), resp.status_code
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT categoria_id, nombre_categoria, imagen_categoria "
+            "FROM categorias "
+            "WHERE nombre_categoria NOT IN ('Sabores', 'tamanos') "
+            "ORDER BY categoria_id"
+        )
+        rows = cursor.fetchall()
+        cursor.close(); conn.close()
+        categorias = [{'id': r['categoria_id'], 'nombre': r['nombre_categoria'], 'imagen': r['imagen_categoria']} for r in rows]
+        return jsonify(categorias)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -316,6 +326,26 @@ def admin_crear_categoria():
         resp = requests.post(f'{MENU_MS}/api/categorias',
                              json=request.get_json(), timeout=10)
         return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/categorias/<int:cat_id>', methods=['PUT'])
+def admin_editar_categoria(cat_id):
+    try:
+        datos = request.get_json()
+        nombre = datos.get('nombre_categoria', '').strip()
+        imagen = datos.get('imagen_categoria', None)
+        if not nombre:
+            return jsonify({"error": "nombre_categoria es obligatorio"}), 400
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute(
+            "UPDATE categorias SET nombre_categoria=%s, imagen_categoria=%s WHERE categoria_id=%s",
+            (nombre, imagen, cat_id)
+        )
+        conn.commit()
+        cursor.close(); conn.close()
+        return jsonify({"mensaje": "Categoría actualizada"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
@@ -487,6 +517,133 @@ def admin_eliminar_tematica(tematica_id):
         if afectados == 0:
             return jsonify({"error": "Temática no encontrada"}), 404
         return jsonify({"mensaje": "Temática eliminada"})
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/usuarios', methods=['GET'])
+def admin_listar_usuarios():
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute(
+            "SELECT usuario_id, cc_usuario, nombre, apellidos, email, telefono, rol, estado "
+            "FROM usuarios ORDER BY FIELD(rol,'administrador','cajero'), nombre"
+        )
+        usuarios = cursor.fetchall()
+        cursor.close(); conn.close()
+        return jsonify(usuarios)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/usuarios', methods=['POST'])
+def admin_crear_usuario():
+    datos = request.get_json() or {}
+    cc_usuario  = (datos.get('cc_usuario') or '').strip()
+    nombre      = (datos.get('nombre') or '').strip()
+    apellidos   = (datos.get('apellidos') or '').strip()
+    email       = (datos.get('email') or '').strip() or None
+    telefono    = (datos.get('telefono') or '').strip() or None
+    rol         = (datos.get('rol') or '').strip().lower()
+    contrasena  = (datos.get('contrasena') or '').strip()
+
+    if not cc_usuario or not nombre or not contrasena:
+        return jsonify({"error": "Cédula, nombre y contraseña son obligatorios"}), 400
+    if rol not in ('administrador', 'cajero'):
+        return jsonify({"error": "El rol debe ser administrador o cajero"}), 400
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT usuario_id FROM usuarios WHERE cc_usuario = %s", (cc_usuario,))
+        if cursor.fetchone():
+            cursor.close(); conn.close()
+            return jsonify({"error": "Ya existe un usuario con esa cédula"}), 409
+
+        cursor.execute(
+            "INSERT INTO usuarios (cc_usuario, nombre, apellidos, email, telefono, rol, contrasena) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (cc_usuario, nombre, apellidos, email, telefono, rol, contrasena)
+        )
+        nuevo_id = cursor.lastrowid
+        conn.commit()
+        cursor.execute(
+            "SELECT usuario_id, cc_usuario, nombre, apellidos, email, telefono, rol, estado "
+            "FROM usuarios WHERE usuario_id = %s", (nuevo_id,)
+        )
+        usuario = cursor.fetchone()
+        cursor.close(); conn.close()
+        return jsonify(usuario), 201
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/usuarios/<int:usuario_id>', methods=['PUT'])
+def admin_actualizar_usuario(usuario_id):
+    datos = request.get_json() or {}
+    cc_usuario  = (datos.get('cc_usuario') or '').strip()
+    nombre      = (datos.get('nombre') or '').strip()
+    apellidos   = (datos.get('apellidos') or '').strip()
+    email       = (datos.get('email') or '').strip() or None
+    telefono    = (datos.get('telefono') or '').strip() or None
+    rol         = (datos.get('rol') or '').strip().lower()
+    contrasena  = (datos.get('contrasena') or '').strip()
+    estado      = int(datos.get('estado', 1))
+
+    if not cc_usuario or not nombre:
+        return jsonify({"error": "Cédula y nombre son obligatorios"}), 400
+    if rol not in ('administrador', 'cajero'):
+        return jsonify({"error": "El rol debe ser administrador o cajero"}), 400
+
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("SELECT usuario_id FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        if not cursor.fetchone():
+            cursor.close(); conn.close()
+            return jsonify({"error": "Usuario no encontrado"}), 404
+
+        cursor.execute(
+            "SELECT usuario_id FROM usuarios WHERE cc_usuario = %s AND usuario_id <> %s",
+            (cc_usuario, usuario_id)
+        )
+        if cursor.fetchone():
+            cursor.close(); conn.close()
+            return jsonify({"error": "Ya existe otro usuario con esa cédula"}), 409
+
+        if contrasena:
+            cursor.execute(
+                "UPDATE usuarios SET cc_usuario=%s, nombre=%s, apellidos=%s, email=%s, "
+                "telefono=%s, rol=%s, estado=%s, contrasena=%s WHERE usuario_id=%s",
+                (cc_usuario, nombre, apellidos, email, telefono, rol, estado, contrasena, usuario_id)
+            )
+        else:
+            cursor.execute(
+                "UPDATE usuarios SET cc_usuario=%s, nombre=%s, apellidos=%s, email=%s, "
+                "telefono=%s, rol=%s, estado=%s WHERE usuario_id=%s",
+                (cc_usuario, nombre, apellidos, email, telefono, rol, estado, usuario_id)
+            )
+        conn.commit()
+        cursor.execute(
+            "SELECT usuario_id, cc_usuario, nombre, apellidos, email, telefono, rol, estado "
+            "FROM usuarios WHERE usuario_id = %s", (usuario_id,)
+        )
+        usuario = cursor.fetchone()
+        cursor.close(); conn.close()
+        return jsonify(usuario)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+@app.route('/api/admin/usuarios/<int:usuario_id>', methods=['DELETE'])
+def admin_eliminar_usuario(usuario_id):
+    try:
+        conn = conectar()
+        cursor = conn.cursor()
+        cursor.execute("DELETE FROM usuarios WHERE usuario_id = %s", (usuario_id,))
+        conn.commit()
+        afectados = cursor.rowcount
+        cursor.close(); conn.close()
+        if afectados == 0:
+            return jsonify({"error": "Usuario no encontrado"}), 404
+        return jsonify({"mensaje": "Usuario eliminado"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 

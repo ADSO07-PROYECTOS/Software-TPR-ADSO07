@@ -200,7 +200,6 @@
                 <button class="btn-filtro-rol activo" data-rol="" onclick="filtrarPorRol(this)">Todos</button>
                 <button class="btn-filtro-rol" data-rol="administrador" onclick="filtrarPorRol(this)">Administradores</button>
                 <button class="btn-filtro-rol" data-rol="cajero" onclick="filtrarPorRol(this)">Cajeros</button>
-                <button class="btn-filtro-rol" data-rol="cliente" onclick="filtrarPorRol(this)">Clientes</button>
             </div>
             <div class="tabla-wrapper">
                 <table class="tabla-admin">
@@ -253,12 +252,13 @@
                                 <th>#</th>
                                 <th>Nombre</th>
                                 <th>Precio</th>
+                                <th id="th-stock" style="display:none">Stock</th>
                                 <th>Estado</th>
                                 <th>Acciones</th>
                             </tr>
                         </thead>
                         <tbody id="tbody-productos">
-                            <tr><td colspan="5" class="cargando">Cargando...</td></tr>
+                            <tr><td colspan="6" class="cargando">Cargando...</td></tr>
                         </tbody>
                     </table>
                 </div>
@@ -367,10 +367,11 @@
 <div id="modal-categoria" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-categoria')">
     <div class="modal-caja">
         <div class="modal-header">
-            <h2>Nueva Categoría</h2>
+            <h2 id="modal-categoria-titulo">Nueva Categoría</h2>
             <button class="modal-cerrar" onclick="cerrarModalCategoria()">&times;</button>
         </div>
         <form id="form-categoria" onsubmit="guardarCategoria(event)">
+            <input type="hidden" id="fc-id">
             <div class="modal-body">
                 <div class="form-grupo">
                     <label>Nombre de la categoría</label>
@@ -379,6 +380,7 @@
                 <div class="form-grupo">
                     <label>Imagen (PNG / JPG)</label>
                     <input type="file" id="fc-imagen-file" accept=".png,.jpg,.jpeg,.webp">
+                    <small id="fc-imagen-preview-label" style="opacity:0.6;margin-top:4px;"></small>
                     <input type="hidden" id="fc-imagen">
                 </div>
             </div>
@@ -420,6 +422,10 @@
                             <option value="1">Activo</option>
                             <option value="0">Inactivo</option>
                         </select>
+                    </div>
+                    <div class="form-grupo" id="fp-stock-grupo" style="display:none">
+                        <label>Stock</label>
+                        <input type="number" id="fp-stock" min="0" step="1" value="0" placeholder="0">
                     </div>
                     <div class="form-grupo full-width">
                         <label>Descripción</label>
@@ -470,11 +476,15 @@
                 <div class="form-grid">
                     <div class="form-grupo">
                         <label>Cédula</label>
-                        <input type="text" id="fu-cedula" required maxlength="20" placeholder="Número de documento">
+                        <input type="text" id="fu-cedula" required maxlength="10" placeholder="Número de documento">
                     </div>
                     <div class="form-grupo">
-                        <label>Nombre completo</label>
-                        <input type="text" id="fu-nombre" required maxlength="120" placeholder="Nombre del usuario">
+                        <label>Nombre</label>
+                        <input type="text" id="fu-nombre" required maxlength="40" placeholder="Nombres del usuario">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Apellidos</label>
+                        <input type="text" id="fu-apellidos" maxlength="40" placeholder="Apellidos del usuario">
                     </div>
                     <div class="form-grupo">
                         <label>Correo</label>
@@ -482,12 +492,15 @@
                     </div>
                     <div class="form-grupo">
                         <label>Teléfono</label>
-                        <input type="text" id="fu-telefono" maxlength="20" placeholder="Número de contacto">
+                        <input type="text" id="fu-telefono" maxlength="10" placeholder="Número de contacto">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Contraseña <span style="font-size:11px;color:rgba(255,255,255,0.4);">(dejar vacío para no cambiar)</span></label>
+                        <input type="password" id="fu-contrasena" maxlength="100" placeholder="Contraseña de acceso">
                     </div>
                     <div class="form-grupo full-width">
                         <label>Rol</label>
                         <select id="fu-rol" required>
-                            <option value="cliente">Cliente</option>
                             <option value="cajero">Cajero</option>
                             <option value="administrador">Administrador</option>
                         </select>

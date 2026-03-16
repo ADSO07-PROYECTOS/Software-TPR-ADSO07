@@ -96,7 +96,13 @@ document.addEventListener('DOMContentLoaded', () => {
     itemsAdicionales.forEach(item => {
         item.querySelector('.btn-mas').addEventListener('click', () => {
             const span = item.querySelector('.cantidad');
-            span.textContent = parseInt(span.textContent) + 1;
+            const stock = parseInt(item.getAttribute('data-stock') ?? '999');
+            const actual = parseInt(span.textContent);
+            if (actual >= stock) {
+                alert(`Solo hay ${stock} unidad${stock === 1 ? '' : 'es'} disponible${stock === 1 ? '' : 's'} de este adicional.`);
+                return;
+            }
+            span.textContent = actual + 1;
             calcularTotal();
         });
 

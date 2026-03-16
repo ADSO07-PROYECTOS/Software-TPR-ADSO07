@@ -1,4 +1,4 @@
-const API_RESERVAS = 'http:
+const API_RESERVAS = '/api/';
 
 export async function inicio() { window.location.href = '/menu'; }
 

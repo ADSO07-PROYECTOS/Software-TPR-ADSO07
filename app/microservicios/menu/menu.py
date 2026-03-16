@@ -116,7 +116,9 @@ def ver_detalle_plato(id_plato):
                     'descripcion': row.get('descripcion_producto'),
                     'imagen': row.get('imagen_producto'),
                     'categoria_id': row.get('categoria_id'),
-                    'categoria_nombre': row.get('nombre_categoria', '')
+                    'categoria_nombre': row.get('nombre_categoria', ''),
+                    'stock': row.get('stock', 0),
+                    'disponibilidad_producto': row.get('disponibilidad_producto', 1)
                 }
                 return jsonify(plato)
             else:
@@ -136,6 +138,7 @@ def agregar_producto():
         precio    = datos.get('precio_base', 0)
         imagen    = datos.get('imagen_producto', None)
         disponibilidad = datos.get('disponibilidad_producto', 1)
+        stock = int(datos.get('stock', 0))
 
         if not nombre or not categoria:
             return jsonify({"error": "nombre_producto y categoria_id son obligatorios"}), 400
@@ -145,10 +148,10 @@ def agregar_producto():
             cursor = conn.cursor()
             query = """
                 INSERT INTO productos
-                    (nombre_producto, categoria_id, descripcion_producto, precio_base, imagen_producto, disponibilidad_producto)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                    (nombre_producto, categoria_id, descripcion_producto, precio_base, imagen_producto, disponibilidad_producto, stock)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(query, (nombre, categoria, descripcion, precio, imagen, disponibilidad))
+            cursor.execute(query, (nombre, categoria, descripcion, precio, imagen, disponibilidad, stock))
             conn.commit()
             nuevo_id = cursor.lastrowid
             cursor.close()
@@ -186,6 +189,9 @@ def actualizar_producto(id_producto):
         if 'disponibilidad_producto' in datos:
             campos.append('disponibilidad_producto = %s')
             valores.append(datos['disponibilidad_producto'])
+        if 'stock' in datos:
+            campos.append('stock = %s')
+            valores.append(int(datos['stock']))
 
         if not campos:
             return jsonify({"error": "No hay campos para actualizar"}), 400
@@ -269,7 +275,8 @@ def obtener_extras_configuracion():
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
-                       p.precio_base AS precio
+                       p.precio_base AS precio,
+                       p.stock AS stock
                 FROM productos p
                 INNER JOIN categorias c ON p.categoria_id = c.categoria_id
                 WHERE LOWER(c.nombre_categoria) LIKE '%adicion%'

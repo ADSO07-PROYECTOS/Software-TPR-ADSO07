@@ -85,13 +85,13 @@ figure img{
     justify-content: center;
     align-items: center;
     width: 100%;
-    padding: 4px 0 4px;
+    padding: 12px 0 12px;
     margin: 0;
     flex-shrink: 0;
 }
 #marca img {
-    width: 80px;
-    height: 80px;
+    width: 140px;
+    height: 140px;
     object-fit: contain;
     display: block;
 }
@@ -828,13 +828,13 @@ main#gran_padre{
 @media (max-width: 1200px) {
     #panel_izq          { width: 250px; }
     #contenido_principal{ margin-left: 272px; }
-    #marca img          { width: 110px; height: 110px; }
+    #marca img          { width: 130px; height: 130px; }
 }
 
 @media (max-width: 1050px) {
     #panel_izq          { width: 210px; }
     #contenido_principal{ margin-left: 232px; }
-    #marca img          { width: 90px; height: 90px; }
+    #marca img          { width: 110px; height: 110px; }
     .nav-btn            { font-size: 0.82rem; padding: 9px 8px; width: 93%; }
     #layout_dashboard #panel_cen { grid-template-columns: 240px; }
     #layout_dashboard #panel_der { min-width: 0; }

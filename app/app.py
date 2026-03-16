@@ -43,17 +43,17 @@ def normalizar_rol(valor, predeterminado='cliente'):
 @app.route('/login', methods=['GET', 'POST'])
 def login():
     if request.method == 'POST':
-        usuario    = request.form.get('usuario', '').strip()
-        cc_cliente = request.form.get('palabra_clave', '').strip()
-        if not usuario or not cc_cliente:
+        nombre_input = request.form.get('usuario', '').strip()
+        contrasena   = request.form.get('palabra_clave', '').strip()
+        if not nombre_input or not contrasena:
             return render_template('auth/login.html', error='Completa todos los campos')
         try:
             conn = conectar()
             cursor = conn.cursor(dictionary=True)
             cursor.execute(
-                "SELECT cliente_id, nombre, rol FROM clientes "
-                "WHERE nombre = %s AND cc_cliente = %s AND rol IN ('administrador','cajero')",
-                (usuario, cc_cliente)
+                "SELECT usuario_id, nombre, apellidos, rol FROM usuarios "
+                "WHERE nombre = %s AND contrasena = %s AND estado = 1 AND rol IN ('administrador','cajero')",
+                (nombre_input, contrasena)
             )
             usuario_db = cursor.fetchone()
             cursor.close(); conn.close()
@@ -63,9 +63,9 @@ def login():
         if not usuario_db:
             return render_template('auth/login.html', error='Credenciales incorrectas o sin acceso al panel')
 
-        session['usuario_id']  = usuario_db['cliente_id']
+        session['usuario_id']     = usuario_db['usuario_id']
         session['usuario_nombre'] = usuario_db['nombre']
-        session['rol']         = usuario_db['rol']
+        session['rol']            = usuario_db['rol']
         return redirect('/admin')
 
     return render_template('auth/login.html', error=None)
@@ -476,6 +476,10 @@ def admin_categorias_get():
 def admin_categorias_post():
     return _proxy_admin('POST', '/api/admin/categorias', json=request.get_json())
 
+@app.route('/admin/api/categorias/<int:cat_id>', methods=['PUT'])
+def admin_categorias_put(cat_id):
+    return _proxy_admin('PUT', f'/api/admin/categorias/{cat_id}', json=request.get_json())
+
 @app.route('/admin/api/domicilios', methods=['GET'])
 def admin_domicilios_get():
     return _proxy_admin('GET', '/api/admin/domicilios')
@@ -506,6 +510,22 @@ def admin_tematica_delete(tid):
 @app.route('/admin/api/tematicas/<int:tid>', methods=['PUT'])
 def admin_tematicas_put(tid):
     return _proxy_admin('PUT', f'/api/admin/tematicas/{tid}', json=request.get_json())
+
+@app.route('/admin/api/usuarios', methods=['GET'])
+def admin_usuarios_get():
+    return _proxy_admin('GET', '/api/admin/usuarios')
+
+@app.route('/admin/api/usuarios', methods=['POST'])
+def admin_usuarios_post():
+    return _proxy_admin('POST', '/api/admin/usuarios', json=request.get_json())
+
+@app.route('/admin/api/usuarios/<int:uid>', methods=['PUT'])
+def admin_usuario_put(uid):
+    return _proxy_admin('PUT', f'/api/admin/usuarios/{uid}', json=request.get_json())
+
+@app.route('/admin/api/usuarios/<int:uid>', methods=['DELETE'])
+def admin_usuario_delete(uid):
+    return _proxy_admin('DELETE', f'/api/admin/usuarios/{uid}')
 
 @app.route('/admin/api/upload-imagen', methods=['POST'])
 def admin_upload_imagen():

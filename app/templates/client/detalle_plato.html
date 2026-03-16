@@ -70,7 +70,7 @@
             <section class="adiciones-lista">
                 <div class="adiciones-box">
                 {% for adicion in adiciones %}
-                <div class="adicion-item" data-precio="{{ adicion.precio }}">
+                <div class="adicion-item" data-precio="{{ adicion.precio }}" data-stock="{{ adicion.stock if adicion.stock is defined else 999 }}">
                     <div class="adicion-nombre">
                         <span>{{ adicion.nombre }}</span>
                     </div>
