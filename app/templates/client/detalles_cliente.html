@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Detalles cliente</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_reservas.css') }}">
@@ -29,9 +30,15 @@
                     <label>Teléfono</label>
                     <input type="tel" name="tel" inputmode="tel" maxlength="10" minlength="10" placeholder="3154444444" pattern="[0-9]{10}" tabindex="4" required>
                 </div>
+                <div class="grupo-habeas">
+                    <label class="habeas-label">
+                        <input type="checkbox" name="habeas" id="habeas-datos" required>
+                        <span>Autorizo la recopilación y tratamiento de mis datos personales conforme a la política de <strong>Habeas Data</strong> de Sabores Unidos. Mi información será usada únicamente para gestionar el pedido.</span>
+                    </label>
+                </div>
                 <div class="contenedor-botones">
                     <button type="button" class="btn-atras" onclick="window.history.back()">VOLVER</button>
-                    <button type="submit" class="btn-grande2" tabindex="5" onclick="document.getElementById('form-paso1').requestSubmit();">CONTINUAR</button>
+                    <button type="submit" class="btn-grande2" tabindex="5">CONTINUAR</button>
                 </div>
             </form>
         </div>

@@ -1,11 +1,10 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Referencias a los elementos del DOM
+
     const inputFoto = document.getElementById('input_foto');
     const btnEnviar = document.getElementById('enviar');
     const nombreDisplay = document.getElementById('nombre_archivo');
     const labelCaja = document.querySelector('.caja-subida');
 
-    // Evitar doble apertura del diálogo
     let abriendoDialogo = false;
     labelCaja.addEventListener('click', (e) => {
         if (!abriendoDialogo) {
@@ -23,19 +22,18 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 3. Lógica para enviar el formulario
     btnEnviar.addEventListener('click', async () => {
         const file = inputFoto.files[0];
         if (!file) {
             alert("Por favor, selecciona un archivo.");
             return;
         }
-        // Validación de tamaño (Máximo 10MB)
+
         if (file.size > 10 * 1024 * 1024) {
             alert("El archivo es muy pesado. Máximo 10MB.");
             return;
         }
-        // Obtener id de reserva (puedes ajustar esto según tu lógica)
+
         let reservaId = localStorage.getItem('id_reserva') || prompt('ID de reserva:');
         if (!reservaId) {
             alert('No se encontró el ID de la reserva.');
@@ -52,7 +50,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
             if (res.ok && data.success) {
                 alert('¡Comprobante enviado con éxito!');
-                // Puedes cerrar el modal aquí si tienes lógica para eso
+
             } else {
                 alert('Error: ' + (data.message || 'No se pudo enviar el comprobante'));
             }

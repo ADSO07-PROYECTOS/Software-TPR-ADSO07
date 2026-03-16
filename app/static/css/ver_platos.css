@@ -1,7 +1,6 @@
-/* Importamos la fuente */
+
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-/* Reinicio básico */
 * {
     color: white;
     margin: 0;
@@ -14,10 +13,8 @@ a{
         
     }
 
-/* Importamos la fuente */
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-/* Reinicio básico */
 * {
     color: white;
     margin: 0;
@@ -47,7 +44,7 @@ body {
     -webkit-backdrop-filter: blur(10px);
     z-index: 50;
 }
-/* BOTÓN MENÚ */
+
 #menu_btn {
     background: none;
     border: none;
@@ -117,8 +114,6 @@ button {
 
 }
 
-
-/* Botones superiores */
 .atras-btn, .menu-btn {
     background: none;
     border: none;
@@ -126,8 +121,6 @@ button {
     cursor: pointer;
     padding: 5px;
 }
-
-/* Platos*/
 
 .plato-cont {
     margin: 10px 0;
@@ -146,7 +139,6 @@ button {
     transform: scale(1.03);
 }
 
-/* Imagen pequeña a la izquierda */
 .plato-cont img {
     display: flex;
     align-items: left;
@@ -157,7 +149,6 @@ button {
     border-radius: 6px;
 }
 
-/* Contenedor del texto */
 .info {
     margin: 0 0 0 15px;
     display: flex;
@@ -166,7 +157,6 @@ button {
     flex: 1;
 }
 
-/* Título y descripción */
 .info h3 {
     font-size: 26px;
     margin: 0;
@@ -181,7 +171,6 @@ button {
     line-height: 1.2;
 }
 
-/* Botón Seleccionar */
 .info .seleccionar-btn {
     background-color: #99181F;
     color: white;
@@ -197,7 +186,6 @@ button {
     background-color: #b9232c;
 }
 
-/* Botón Reservar */
 .reservar-btn {
     width: 48%;
     position: fixed;
@@ -227,7 +215,6 @@ button {
     border-radius: 30px;
 }
 
-/* Menú Inferior */
 .cont-inferior {
     position: fixed;
     bottom: 0;
@@ -258,7 +245,7 @@ button {
     -webkit-backdrop-filter: blur(10px);
     z-index: 50;
 }
-/* BOTÓN MENÚ */
+
 #menu_btn {
     background: none;
     border: none;
@@ -328,8 +315,6 @@ button {
 
 }
 
-
-/* Botones superiores */
 .atras-btn, .menu-btn {
     background: none;
     border: none;
@@ -337,8 +322,6 @@ button {
     cursor: pointer;
     padding: 5px;
 }
-
-/* Platos*/
 
 .plato-cont {
     margin: 10px 0;
@@ -357,7 +340,6 @@ button {
     transform: scale(1.03);
 }
 
-/* Imagen pequeña a la izquierda */
 .plato-cont img {
     display: flex;
     align-items: left;
@@ -368,7 +350,6 @@ button {
     border-radius: 6px;
 }
 
-/* Contenedor del texto */
 .info {
     margin: 0 0 0 15px;
     display: flex;
@@ -377,7 +358,6 @@ button {
     flex: 1;
 }
 
-/* Título y descripción */
 .info h3 {
     font-size: 26px;
     margin: 0;
@@ -392,7 +372,6 @@ button {
     line-height: 1.2;
 }
 
-/* Botón Seleccionar */
 .info .seleccionar-btn {
     background-color: #99181F;
     color: white;
@@ -408,7 +387,6 @@ button {
     background-color: #b9232c;
 }
 
-/* Botón Reservar */
 .reservar-btn {
     width: 48%;
     position: fixed;
@@ -438,7 +416,6 @@ button {
     border-radius: 30px;
 }
 
-/* Menú Inferior */
 .cont-inferior {
     position: fixed;
     bottom: 0;
@@ -458,7 +435,6 @@ button {
     cursor: pointer;
 }
 
-/* Aseguramos que la información se apile verticalmente */
 .info {
     margin: 0 0 0 15px;
     display: flex;
@@ -467,7 +443,6 @@ button {
     flex: 1;
 }
 
-/* Título y descripción */
 .info h3 {
     font-size: 26px;
     margin: 0;
@@ -482,15 +457,13 @@ button {
     line-height: 1.2;
 }
 
-/* NUEVO: Estilo del precio ubicado arriba del botón */
 .precio-plato {
     color: white;
     font-size: 22px;
-    margin-bottom: 12px; /* Espacio para separar el precio del botón */
+    margin-bottom: 12px; 
     font-weight: bold;
 }
 
-/* NUEVO: Botón Seleccionar con efecto base */
 .info .seleccionar-btn {
     background-color: #99181F;
     color: white;
@@ -503,14 +476,13 @@ button {
     text-align: center;
     text-decoration: none;
     display: inline-block;
-    width: max-content; /* Evita que el botón se estire a todo el ancho */
-    transition: all 0.3s ease; /* Esta línea es la magia que hace que la iluminación sea suave */
+    width: max-content; 
+    transition: all 0.3s ease; 
 }
 
-/* NUEVO: El efecto de iluminación (Glow) al pasar el mouse */
 .info .seleccionar-btn:hover {
-    background-color: #b9232c; /* Un rojo un poco más claro */
-    /* Aquí creamos el efecto de luz difuminada alrededor del botón */
+    background-color: #b9232c; 
+    
     box-shadow: 0 0 15px 5px rgba(153, 24, 31, 0.6); 
-    transform: scale(1.05); /* Hace que el botón crezca un poquito, haciéndolo muy interactivo */
+    transform: scale(1.05); 
 }

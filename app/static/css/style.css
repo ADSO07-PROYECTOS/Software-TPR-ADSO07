@@ -1,4 +1,4 @@
-/* Importamos la fuente */
+
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 :root {
@@ -15,7 +15,6 @@
     color: white;
 }
 
-/* BODY */
 html, body {
     background: url('../img/fondo-madera.jpg') no-repeat center center fixed;
     background-size: cover;
@@ -28,15 +27,12 @@ html, body {
 
 }
 
-
-/* TÍTULO */
 #tlo {
     text-align: center;
     font-size: 40px;
     margin-top: 90px;
 }
 
-/* HEADER */
 .barra-superior {
     position: fixed;
     top: 0;
@@ -49,7 +45,6 @@ html, body {
     z-index: 50;
 }
 
-/* BOTÓN MENÚ */
 #menu_btn {
     background: none;
     border: none;
@@ -88,7 +83,6 @@ html, body {
     margin-bottom: 30px;
 }
 
-/* CONTENEDOR DEL MENÚ */
 .menu-contenedor {
     position: relative;        
     margin: 20px auto;
@@ -102,7 +96,6 @@ html, body {
     border-radius: 20px;
 }
 
-/* Categorías */
 .categoria {
     border-radius: 15px;
     background: rgba(255,255,255,0.2);
@@ -130,7 +123,7 @@ html, body {
 .categoria a {
     font-size: 30px;
 }
-/* Botón Reservar */
+
 #reservar-btn {
     position: fixed;
     width: 48%;
@@ -158,7 +151,6 @@ html, body {
     border-radius: 30px;
 }
 
-/* Menú Inferior */
 .menu_inferior {
     position: fixed;
     bottom: 0;
@@ -178,13 +170,11 @@ html, body {
     cursor: pointer;
 }
 
-/*<------- MEDIA QUERY -------->*/
 @media (min-width: 1000px) {
     .menu-contenedor {
         padding: 80px;
         margin: 50px;
         background-color:rgba(46, 43, 48, 0.459);
-
 
     } 
     .categoria img {

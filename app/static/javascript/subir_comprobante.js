@@ -1,4 +1,4 @@
-// Manejador para subir comprobante de transferencia
+
 
 document.addEventListener('DOMContentLoaded', () => {
     const inputFile = document.getElementById('input_foto');
@@ -9,7 +9,6 @@ document.addEventListener('DOMContentLoaded', () => {
 
     let archivoSeleccionado = null;
 
-    // Obtener ID de reserva desde localStorage
     const idReserva = localStorage.getItem('id_reserva');
     if (!idReserva) {
         alert('Error: No se encontró el ID de la reserva');
@@ -17,13 +16,15 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
-    // El label con for="input_foto" abrirá el diálogo automáticamente
+    const totalGuardado = localStorage.getItem('total_reserva');
+    if (totalPagar && totalGuardado) {
+        totalPagar.textContent = `$ ${Number(totalGuardado).toLocaleString('es-CO')}`;
+    }
 
-    // Cuando se selecciona un archivo
     inputFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {
-            // Validar tipo
+
             const esImagen = file.type.startsWith('image/');
             const esPDF = file.type === 'application/pdf';
             
@@ -35,7 +36,6 @@ document.addEventListener('DOMContentLoaded', () => {
                 return;
             }
 
-            // Validar tamaño (máximo 10MB)
             if (file.size > 10 * 1024 * 1024) {
                 alert('El archivo es muy grande. Máximo 10MB.');
                 inputFile.value = '';
@@ -50,7 +50,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // Enviar comprobante
     btnEnviar.addEventListener('click', async () => {
         if (!archivoSeleccionado) {
             alert('Por favor, selecciona un comprobante');

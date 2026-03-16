@@ -1,5 +1,5 @@
-/* ======== CORRECCIÓN DE ESTRUCTURA Y ALTURA ======== */
-/* Importamos la fuente */
+
+
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 * {
@@ -16,17 +16,16 @@ html, body {
 }
 
 main {
-    min-height: 100vh; /* Ocupa toda la pantalla */
+    min-height: 100vh; 
     display: flex;
     flex-direction: column;
     justify-content: flex-start;
     align-items: center;
     background: url('../img/fondo-madera.jpg') center/cover no-repeat;
-    padding-top: 70px; /* espacio para barra superior */
-    padding-bottom: 90px; /* espacio para la barra inferior */
+    padding-top: 70px; 
+    padding-bottom: 90px; 
 }
 
-/* Asegura que el contenido principal (tarjeta) no se corte */
 .plato-detalle {
     width: 90%;
     max-width: 600px;
@@ -36,7 +35,7 @@ main {
     border-radius: 20px;
     border: 1px solid #fff;
     text-align: center;
-    margin: 0 auto; /* centra horizontalmente */
+    margin: 0 auto; 
     flex-shrink: 0;
 }
 h3{ 
@@ -72,7 +71,6 @@ h3{
     z-index: 50;
 }
 
-/* Imagen dentro de la pizza */
 .plato-detalle img {
     width: 200px;
     height: auto;
@@ -80,13 +78,11 @@ h3{
     margin: 15px 0;
 }
 
-/* Ajusta el texto dentro del detalle */
 .info-detalle p {
     font-size: 18px;
     margin-bottom: 15px;
 }
 
-/* Corrige los select y botón precio */
 .seleccion-tamano {
     border:none;
     display: flex;
@@ -109,7 +105,6 @@ option{
     padding:10px;
     border:none;
 
-
 }
 
 .precio-btn {
@@ -122,13 +117,11 @@ option{
     cursor: pointer;
 }
 
-/* Línea divisora más adaptable */
 .division svg {
     width: 100%;
     height: 1px;
 }
 
-/* Centra la sección de adiciones */
 .cont-adiciones {
     margin-top: 15px;
     text-align: center;
@@ -167,7 +160,7 @@ label {
     color:#99181F;
     margin-right: 10px;
 }
-/* Menú inferior fijo sin tapar contenido */
+
 .cont-inferior {
     position: fixed;
     bottom: 0;
@@ -177,7 +170,7 @@ label {
     padding: 8px 0;
     background: rgb(255, 255, 255);
 }
-/* Line 4 */
+
 .division{
     display: flex;
     align-items: center;
@@ -246,11 +239,11 @@ label {
 }
 
 .check {
-  appearance: none; /* quita el estilo por defecto */
+  appearance: none; 
   width: 20px;
   height: 20px;
   border: 2px solid #99181F;
-  border-radius: 4px; /* cambia a 50% si lo quieres redondo */
+  border-radius: 4px; 
   display: flex;
   align-items: center;
   justify-content: center;
@@ -270,7 +263,6 @@ label {
   font-size: 14px;
   font-weight: bold;
 }
-
 
 .cont_btn-mas{
     background: #FFFFFF;

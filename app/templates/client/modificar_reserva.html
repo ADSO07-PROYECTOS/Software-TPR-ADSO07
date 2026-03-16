@@ -2,7 +2,9 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/modificar_reserva.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
@@ -93,7 +95,7 @@
                     </div>
                     <div class="grupo">
                         <label>PERSONAS</label>
-                        <input type="number" name="personas" placeholder="Ej: 4" min="1"
+                        <input type="number" name="personas" placeholder="Ej: 4" maxlength="2" max="40" min="1"
                             value="{{ reserva.cantidad_personas }}">
                     </div>
                 </div>

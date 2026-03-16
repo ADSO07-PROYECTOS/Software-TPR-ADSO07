@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Subir Comprobante De Pago - Domicilio</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/subir_com.css') }}">
+</head>
+<body>
+    <header id="cont_superior">
+        <a href="/menu" class="atras-btn" title="Volver al menú">
+            <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+        </a>
+    </header>
+    <main id="padre_ppal">
+        <h2 class="ttlo">PAGO POR TRANSFERENCIA</h2>
+        <p class="msg">POR FAVOR, REALIZAR LA TRANSFERENCIA CON LOS SIGUIENTES DATOS . . . UNA VEZ HECHA, SUBIR EL COMPROBANTE DE PAGO</p>
+        
+        <div class="cont_hijo">
+            <h3 class="sub_ttlo">DATOS TRANSFERENCIA</h3>
+            <p class="msg_1">BANCO: BANCOLOMBIA</p>
+            <p class="msg_1">TIPO DE CUENTA: AHORROS</p>
+            <p class="msg_1">NOMBRE DEL TITULAR: SABORES UNIDOS</p>
+            <p class="msg_1">C.C/NIT: 900.127.215.20</p>
+        </div>
+
+        <div class="cont_hijo">
+            <h3 id="sub_ttlo">ADVERTENCIA
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+                    <path d="M12 2L1 21H23L12 2Z" fill="#FFCC00" stroke="#FFCC00" stroke-width="2" stroke-linejoin="round"/>
+                    <path d="M12 16V17M12 12V10" stroke="black" stroke-width="2" stroke-linecap="round"/>
+                </svg> 
+            </h3>
+            <p class="msg">UNA VEZ CONFIRMADO EL PEDIDO NO SE HACEN DEVOLUCIONES. EL COMPROBANTE DEBE COINCIDIR CON EL VALOR TOTAL DEL PEDIDO.</p>
+        </div>
+
+        <div class="cont_hijo">
+            <h2 class="ttlo">TOTAL A PAGAR: <span id="total-pagar">-</span></h2>
+            
+            <label for="input_foto" class="caja-subida">
+                📎 SELECCIONAR COMPROBANTE (IMAGEN O PDF)
+            </label>
+            
+            <input type="file" id="input_foto" accept="image/*,.pdf" style="display: none;">
+            <p id="nombre_archivo" class="msg-archivo"></p>
+
+            <button id="enviar" class="btn-enviar">ENVIAR COMPROBANTE</button>
+        </div>
+    </main>
+
+    <script>
+    document.addEventListener('DOMContentLoaded', () => {
+        const inputFile    = document.getElementById('input_foto');
+        const labelCaja    = document.querySelector('.caja-subida');
+        const nombreArchivo = document.getElementById('nombre_archivo');
+        const btnEnviar    = document.getElementById('enviar');
+        const totalPagar   = document.getElementById('total-pagar');
+
+        let archivoSeleccionado = null;
+
+        const idDomicilio = localStorage.getItem('id_domicilio');
+        if (!idDomicilio) {
+            alert('Error: No se encontró el ID del pedido');
+            window.location.href = '/menu';
+            return;
+        }
+
+        const totalGuardado = localStorage.getItem('total_domicilio');
+        if (totalPagar && totalGuardado) {
+            totalPagar.textContent = `$ ${Number(totalGuardado).toLocaleString('es-CO')}`;
+        }
+
+        inputFile.addEventListener('change', (e) => {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const esImagen = file.type.startsWith('image/');
+            const esPDF    = file.type === 'application/pdf';
+
+            if (!esImagen && !esPDF) {
+                alert('Por favor, selecciona una imagen o PDF');
+                inputFile.value = '';
+                nombreArchivo.textContent = '';
+                archivoSeleccionado = null;
+                return;
+            }
+
+            if (file.size > 10 * 1024 * 1024) {
+                alert('El archivo es muy grande. Máximo 10MB.');
+                inputFile.value = '';
+                nombreArchivo.textContent = '';
+                archivoSeleccionado = null;
+                return;
+            }
+
+            archivoSeleccionado = file;
+            nombreArchivo.textContent = `📄 ${file.name} (${(file.size / 1024).toFixed(2)} KB)`;
+            nombreArchivo.style.color = '#38761d';
+        });
+
+        btnEnviar.addEventListener('click', async () => {
+            if (!archivoSeleccionado) {
+                alert('Por favor, selecciona un comprobante');
+                return;
+            }
+
+            btnEnviar.disabled = true;
+            btnEnviar.textContent = 'ENVIANDO...';
+
+            const formData = new FormData();
+            formData.append('archivo', archivoSeleccionado);
+            formData.append('domicilio_id', idDomicilio);
+
+            try {
+                const res  = await fetch('/api/domicilios/comprobante', {
+                    method: 'POST',
+                    body: formData
+                });
+                const data = await res.json();
+
+                if (res.ok && data.success) {
+                    alert('✓ Comprobante enviado correctamente. Tu pedido está en revisión.');
+                    localStorage.removeItem('id_domicilio');
+                    localStorage.removeItem('total_domicilio');
+                    window.location.href = '/exito';
+                } else {
+                    alert('Error: ' + (data.message || 'No se pudo enviar el comprobante'));
+                    btnEnviar.disabled = false;
+                    btnEnviar.textContent = 'ENVIAR COMPROBANTE';
+                }
+            } catch (error) {
+                alert('Error de conexión: ' + error.message);
+                btnEnviar.disabled = false;
+                btnEnviar.textContent = 'ENVIAR COMPROBANTE';
+            }
+        });
+    });
+    </script>
+</body>
+</html>

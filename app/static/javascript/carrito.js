@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // Limpiar items viejos sin campo 'id' (datos anteriores a la versión actual)
+
     const carritoRaw = JSON.parse(localStorage.getItem('carrito') || '[]');
     const carritoLimpio = carritoRaw.filter(item => item.id != null);
     if (carritoLimpio.length !== carritoRaw.length) {
@@ -10,14 +10,12 @@ document.addEventListener('DOMContentLoaded', () => {
     const displayTotalTexto = document.querySelector('.total_valor'); 
     const botonPagar = document.querySelector('.total_btn'); 
 
-    // === Renderizar items desde localStorage ===
     const cargarCarrito = () => {
         const items = JSON.parse(localStorage.getItem('carrito') || '[]');
 
-        // Limpiar tarjetas previas
         document.querySelectorAll('.producto_detalles').forEach(el => el.remove());
 
-        const metodoPago = listaProductos.querySelector('.metodo-pago');
+        const metodoPago = listaProductos.querySelector('.divider');
 
         if (items.length === 0) {
             const vacio = document.createElement('p');
@@ -76,14 +74,13 @@ document.addEventListener('DOMContentLoaded', () => {
         productos.forEach(card => {
             const precioTexto = card.querySelector('.precio').innerText;
             const precioNumerico = parseInt(precioTexto.replace(/[^0-9]/g, '')) || 0;
-            totalGeneral += precioNumerico; // El precio ya es el subtotal del ítem
+            totalGeneral += precioNumerico;
         });
 
         const totalFormateado = totalGeneral.toLocaleString('es-CO');
         displayTotalTexto.innerHTML = `TOTAL: $ ${totalFormateado}`;
         botonPagar.innerText = `IR A PAGAR $ ${totalFormateado}`;
 
-        // Sincronizar cambios de cantidad/eliminación al localStorage
         sincronizarLocalStorage();
     };
 
@@ -99,7 +96,7 @@ document.addEventListener('DOMContentLoaded', () => {
                 cantidad: nuevaCantidad,
                 precio: precioUnitario * nuevaCantidad
             });
-            // Actualizar data-item con la cantidad nueva
+
             card.setAttribute('data-item', JSON.stringify({ ...itemOriginal, cantidad: nuevaCantidad, precio: precioUnitario * nuevaCantidad }));
         });
         localStorage.setItem('carrito', JSON.stringify(carritoActualizado));
@@ -121,7 +118,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         }
 
-        // Actualizar precio mostrado del ítem según nueva cantidad
         if (e.target.innerText === '+' || e.target.innerText === '-') {
             const itemData = JSON.parse(card.getAttribute('data-item') || '{}');
             const precioUnitario = itemData.precio_unitario || 0;
@@ -132,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
         else if (e.target.classList.contains('accion')) {
             card.remove();
             if (document.querySelectorAll('.producto_detalles').length === 0) {
-                const metodoPago = listaProductos.querySelector('.metodo-pago');
+                const metodoPago = listaProductos.querySelector('.divider');
                 const vacio = document.createElement('p');
                 vacio.classList.add('carrito-vacio');
                 vacio.textContent = 'Tu carrito está vacío.';
@@ -143,7 +139,6 @@ document.addEventListener('DOMContentLoaded', () => {
         actualizarTotales();
     });
 
-    // === Modal de selección de servicio ===
     const modal = document.getElementById('modal-servicio');
 
     botonPagar.addEventListener('click', () => {
@@ -160,7 +155,7 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 
     const irAServicio = (tipo) => {
-        // Copiar carrito al key que leen los microservicios
+
         const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
         const carritoTpr = carrito.map(item => ({
             id: item.id,

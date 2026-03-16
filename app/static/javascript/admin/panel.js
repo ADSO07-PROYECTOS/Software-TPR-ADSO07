@@ -1,11 +1,8 @@
-/* ═══════════════════════════════════════════════════════
-   PANEL ADMINISTRACIÓN – TRES PASOS
-   ═══════════════════════════════════════════════════════ */
 
-// ── Control de acceso por rol ────────────────────────────────────────────────
+
 (function aplicarPermisosPorRol() {
     const ROL = document.body.dataset.rol || 'cajero';
-    // Secciones permitidas por rol
+
     const PERMISOS = {
         administrador: ['dashboard', 'productos', 'pedidos', 'reservas', 'tematicas', 'usuarios'],
         cajero:        ['dashboard'],
@@ -19,11 +16,8 @@
         }
     });
 
-    // Sobreescribir cargarSeccion para bloquear acceso directo
     window._rolPermitidas = permitidas;
 })();
-
-// ── Sidebar responsive (hamburguesa) ─────────────────────────────────────────
 
 (function () {
     const btnMenu    = document.getElementById('btn_menu');
@@ -45,25 +39,23 @@
     overlay?.addEventListener('click', cerrarSidebar);
 })();
 
-// ── Navegación entre secciones ────────────────────────────────────────────────
-
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const target = btn.dataset.section;
-        // Activar botón
+
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        // Mostrar sección
+
         document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
         document.getElementById('sec-' + target).classList.add('activa');
-        // En móvil cerrar sidebar al navegar
+
         if (window.innerWidth <= 900) {
             document.getElementById('panel_izq').classList.remove('abierto');
             document.getElementById('sidebar-overlay').classList.remove('visible');
         }
-        // Bloquear si el rol no tiene acceso a la sección
+
         if (window._rolPermitidas && !window._rolPermitidas.includes(target)) return;
-        // Cargar datos de la sección (excepto dashboard que viene del servidor)
+
         if (target !== 'dashboard') cargarSeccion(target);
     });
 });
@@ -77,8 +69,6 @@ function cargarSeccion(nombre) {
         case 'tematicas':  cargarTematicas();  break;
     }
 }
-
-// ── Toast ─────────────────────────────────────────────────────────────────────
 
 function toast(msg, tipo = 'ok') {
     const el = document.getElementById('toast');
@@ -96,8 +86,6 @@ const ROLES_USUARIO = {
 
 let usuariosCache = [];
 
-// ── Helper fetch JSON ─────────────────────────────────────────────────────────
-// ── Formatear hora a 12h AM/PM ────────────────────────────────────────────────
 function formatearHora(fechaStr) {
     if (!fechaStr) return '';
     const fecha = new Date(fechaStr.replace(' ', 'T'));
@@ -117,17 +105,13 @@ async function apiFetch(url, opciones = {}) {
     return data;
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// USUARIOS
-// ══════════════════════════════════════════════════════════════════════════════
-
 let _rolFiltroActual = '';
 
 async function cargarUsuarios() {
     const tbody = document.getElementById('tbody-usuarios');
     tbody.innerHTML = '<tr><td colspan="7" class="cargando">Cargando...</td></tr>';
     try {
-        usuariosCache = await apiFetch('/admin/api/clientes');
+        usuariosCache = await apiFetch('/admin/api/usuarios');
         renderizarUsuarios();
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="7" class="cargando">${esc(e.message)}</td></tr>`;
@@ -146,17 +130,17 @@ function renderizarUsuarios() {
     }
     tbody.innerHTML = lista.map(c => `
         <tr>
-            <td>${c.cliente_id}</td>
-            <td>${esc(c.cc_cliente)}</td>
-            <td>${esc(c.nombre)}</td>
+            <td>${c.usuario_id}</td>
+            <td>${esc(c.cc_usuario)}</td>
+            <td>${esc(c.nombre)} ${esc(c.apellidos || '')}</td>
             <td>${esc(c.email || '')}</td>
             <td>${esc(c.telefono || '')}</td>
             <td><span class="pill ${pillRol(c.rol)}">${esc(formatearRol(c.rol))}</span></td>
             <td>
-                <button class="btn-accion azul" onclick="editarUsuario(${c.cliente_id})">
+                <button class="btn-accion azul" onclick="editarUsuario(${c.usuario_id})">
                     Editar
                 </button>
-                <button class="btn-accion rojo" onclick="eliminarCliente(${c.cliente_id})">
+                <button class="btn-accion rojo" onclick="eliminarUsuario(${c.usuario_id})">
                     Eliminar
                 </button>
             </td>
@@ -187,7 +171,8 @@ function pillRol(rol) {
 function abrirModalUsuario() {
     document.getElementById('form-usuario').reset();
     document.getElementById('fu-id').value = '';
-    document.getElementById('fu-rol').value = 'cliente';
+    document.getElementById('fu-rol').value = 'cajero';
+    document.getElementById('fu-contrasena').required = true;
     document.getElementById('modal-usuario-titulo').textContent = 'Nuevo Usuario';
     document.getElementById('modal-usuario').classList.remove('oculta');
     document.getElementById('fu-cedula').focus();
@@ -198,18 +183,20 @@ function cerrarModalUsuario() {
 }
 
 function editarUsuario(id) {
-    const usuario = usuariosCache.find(item => item.cliente_id === id);
+    const usuario = usuariosCache.find(item => item.usuario_id === id);
     if (!usuario) {
         toast('Usuario no encontrado', 'error');
         return;
     }
-
-    document.getElementById('fu-id').value = usuario.cliente_id;
-    document.getElementById('fu-cedula').value = usuario.cc_cliente || '';
+    document.getElementById('fu-id').value = usuario.usuario_id;
+    document.getElementById('fu-cedula').value = usuario.cc_usuario || '';
     document.getElementById('fu-nombre').value = usuario.nombre || '';
+    document.getElementById('fu-apellidos').value = usuario.apellidos || '';
     document.getElementById('fu-email').value = usuario.email || '';
     document.getElementById('fu-telefono').value = usuario.telefono || '';
-    document.getElementById('fu-rol').value = usuario.rol || 'cliente';
+    document.getElementById('fu-contrasena').value = '';
+    document.getElementById('fu-contrasena').required = false;
+    document.getElementById('fu-rol').value = usuario.rol || 'cajero';
     document.getElementById('modal-usuario-titulo').textContent = 'Editar Usuario';
     document.getElementById('modal-usuario').classList.remove('oculta');
     document.getElementById('fu-nombre').focus();
@@ -217,25 +204,25 @@ function editarUsuario(id) {
 
 async function guardarUsuario(e) {
     e.preventDefault();
-
     const id = document.getElementById('fu-id').value;
     const payload = {
-        cc_cliente: document.getElementById('fu-cedula').value.trim(),
-        nombre: document.getElementById('fu-nombre').value.trim(),
-        email: document.getElementById('fu-email').value.trim(),
-        telefono: document.getElementById('fu-telefono').value.trim(),
-        rol: document.getElementById('fu-rol').value,
+        cc_usuario:  document.getElementById('fu-cedula').value.trim(),
+        nombre:      document.getElementById('fu-nombre').value.trim(),
+        apellidos:   document.getElementById('fu-apellidos').value.trim(),
+        email:       document.getElementById('fu-email').value.trim(),
+        telefono:    document.getElementById('fu-telefono').value.trim(),
+        rol:         document.getElementById('fu-rol').value,
+        contrasena:  document.getElementById('fu-contrasena').value.trim(),
     };
-
     try {
         if (id) {
-            await apiFetch(`/admin/api/clientes/${id}`, {
+            await apiFetch(`/admin/api/usuarios/${id}`, {
                 method: 'PUT',
                 body: JSON.stringify(payload),
             });
             toast('Usuario actualizado');
         } else {
-            await apiFetch('/admin/api/clientes', {
+            await apiFetch('/admin/api/usuarios', {
                 method: 'POST',
                 body: JSON.stringify(payload),
             });
@@ -248,25 +235,21 @@ async function guardarUsuario(e) {
     }
 }
 
-async function eliminarCliente(id) {
-    const usuario = usuariosCache.find(item => item.cliente_id === id);
-    const nombre = usuario ? usuario.nombre : `#${id}`;
-    if (!confirm(`¿Eliminar al cliente "${nombre}"? Esta acción no se puede deshacer.`)) return;
+async function eliminarUsuario(id) {
+    const usuario = usuariosCache.find(item => item.usuario_id === id);
+    const nombre = usuario ? `${usuario.nombre} ${usuario.apellidos || ''}`.trim() : `#${id}`;
+    if (!confirm(`¿Eliminar al usuario "${nombre}"? Esta acción no se puede deshacer.`)) return;
     try {
-        await apiFetch(`/admin/api/clientes/${id}`, { method: 'DELETE' });
-        toast('Cliente eliminado');
+        await apiFetch(`/admin/api/usuarios/${id}`, { method: 'DELETE' });
+        toast('Usuario eliminado');
         cargarUsuarios();
     } catch (e) {
         toast(e.message, 'error');
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// PRODUCTOS – vista por categoría
-// ══════════════════════════════════════════════════════════════════════════════
-
 let _categorias = [];
-let _categActual = null; // { id, nombre }
+let _categActual = null;
 
 async function cargarProductos() {
     document.getElementById('vista-categorias').classList.remove('oculta');
@@ -281,22 +264,35 @@ async function cargarProductos() {
             lista.innerHTML = '<div class="cargando" style="padding:20px;text-align:center;">Sin categorías</div>';
             return;
         }
-        lista.innerHTML = _categorias.map(c => `
-            <div class="cat-fila" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')"> 
-                <span class="cat-fila-nombre">${esc(c.nombre)}</span>
-                <span class="cat-fila-arrow">›</span>
-            </div>`
-        ).join('');
+        lista.innerHTML = _categorias.map(c => {
+            const imgSrc = c.imagen
+                ? (c.imagen.startsWith('/') || c.imagen.startsWith('http') ? c.imagen : `/static/img/${c.imagen}`)
+                : null;
+            const imgHtml = imgSrc
+                ? `<img src="${imgSrc}" alt="" style="width:48px;height:48px;object-fit:cover;border-radius:6px;margin-right:10px;flex-shrink:0;">`
+                : `<span style="width:48px;height:48px;background:rgba(255,255,255,0.08);border-radius:6px;margin-right:10px;flex-shrink:0;display:inline-block;"></span>`;
+            return `
+            <div class="cat-fila" style="display:flex;align-items:center;gap:0;">
+                <div style="display:flex;align-items:center;flex:1;cursor:pointer;" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')">
+                    ${imgHtml}
+                    <span class="cat-fila-nombre">${esc(c.nombre)}</span>
+                </div>
+                <button class="btn-accion azul" style="margin-right:8px;" onclick="editarCategoria(${c.id})">Editar</button>
+                <span class="cat-fila-arrow" onclick="abrirCategoria(${c.id}, '${esc(c.nombre)}')" style="cursor:pointer;">&#8250;</span>
+            </div>`;
+        }).join('');
     } catch (e) {
         lista.innerHTML = `<div class="cargando" style="padding:20px;text-align:center;">${esc(e.message)}</div>`;
         toast(e.message, 'error');
     }
 }
 
-/* ── Modales ─────────────────────────────────────────── */
 function abrirModalCategoria() {
     document.getElementById('form-categoria').reset();
+    document.getElementById('fc-id').value = '';
     document.getElementById('fc-imagen').value = '';
+    document.getElementById('fc-imagen-preview-label').textContent = '';
+    document.getElementById('modal-categoria-titulo').textContent = 'Nueva Categoría';
     document.getElementById('modal-categoria').classList.remove('oculta');
     document.getElementById('fc-nombre').focus();
 }
@@ -317,6 +313,8 @@ function abrirModalProducto() {
     } else {
         document.getElementById('fp-categoria-grupo').style.display = '';
     }
+    const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
+    document.getElementById('fp-stock-grupo').style.display = esAdic ? '' : 'none';
     document.getElementById('modal-producto').classList.remove('oculta');
     document.getElementById('fp-nombre').focus();
 }
@@ -338,8 +336,27 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Alias de compatibilidad (cancelarFormProducto sigue siendo llamado internamente)
 function cancelarFormProducto() { cerrarModalProducto(); }
+
+async function editarCategoria(id) {
+    const cat = _categorias.find(c => c.id === id);
+    if (!cat) return;
+    document.getElementById('fc-id').value = cat.id;
+    document.getElementById('fc-nombre').value = cat.nombre;
+    document.getElementById('fc-imagen').value = cat.imagen || '';
+    document.getElementById('fc-imagen-file').value = '';
+    const label = document.getElementById('fc-imagen-preview-label');
+    if (cat.imagen) {
+        const imgSrc = cat.imagen.startsWith('/') || cat.imagen.startsWith('http')
+            ? cat.imagen : `/static/img/${cat.imagen}`;
+        label.innerHTML = `Imagen actual: <a href="${imgSrc}" target="_blank" style="color:rgba(255,255,255,0.7)">${cat.imagen.split('/').pop()}</a>`;
+    } else {
+        label.textContent = '';
+    }
+    document.getElementById('modal-categoria-titulo').textContent = 'Editar Categoría';
+    document.getElementById('modal-categoria').classList.remove('oculta');
+    document.getElementById('fc-nombre').focus();
+}
 
 async function guardarCategoria(e) {
     e.preventDefault();
@@ -361,9 +378,15 @@ async function guardarCategoria(e) {
         nombre_categoria: document.getElementById('fc-nombre').value.trim(),
         imagen_categoria: document.getElementById('fc-imagen').value.trim() || null,
     };
+    const id = document.getElementById('fc-id').value;
     try {
-        await apiFetch('/admin/api/categorias', { method: 'POST', body: JSON.stringify(payload) });
-        toast('Categoría creada');
+        if (id) {
+            await apiFetch(`/admin/api/categorias/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            toast('Categoría actualizada');
+        } else {
+            await apiFetch('/admin/api/categorias', { method: 'POST', body: JSON.stringify(payload) });
+            toast('Categoría creada');
+        }
         cerrarModalCategoria();
         cargarProductos();
     } catch (err) {
@@ -377,7 +400,10 @@ async function abrirCategoria(catId, catNombre) {
     document.getElementById('vista-categorias').classList.add('oculta');
     document.getElementById('vista-platos').classList.remove('oculta');
     cancelarFormProducto();
-    // preseleccionar categoría en el formulario
+
+    const esAdic = catNombre.toLowerCase() === 'adiciones';
+    document.getElementById('th-stock').style.display = esAdic ? '' : 'none';
+
     llenarSelectCategorias();
     await cargarProductosDeCategoria(catId);
 }
@@ -391,24 +417,27 @@ function volverCategorias() {
 
 async function cargarProductosDeCategoria(catId) {
     const tbody = document.getElementById('tbody-productos');
-    tbody.innerHTML = '<tr><td colspan="5" class="cargando">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="6" class="cargando">Cargando...</td></tr>';
     try {
         const todos = await apiFetch('/admin/api/productos');
-        // Filtrar por categoria_id cuando exista; dejar el nombre como compatibilidad.
+
         const filtrados = todos.filter(p => {
             const cat = _categorias.find(c => c.id === catId);
             if (!cat) return false;
             return Number(p.categoria_id) === Number(catId) || p.nombre_categoria === cat.nombre;
         });
         if (!filtrados.length) {
-            tbody.innerHTML = '<tr><td colspan="5" class="cargando">Sin productos en esta categoría</td></tr>';
+            tbody.innerHTML = '<tr><td colspan="6" class="cargando">Sin productos en esta categoría</td></tr>';
             return;
         }
-        tbody.innerHTML = filtrados.map(p => `
+        tbody.innerHTML = filtrados.map(p => {
+            const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
+            return `
             <tr>
                 <td>${p.producto_id}</td>
                 <td>${esc(p.nombre_producto)}</td>
                 <td>$${Number(p.precio_base).toLocaleString('es-CO')}</td>
+                ${esAdic ? `<td>${p.stock ?? 0}</td>` : ''}
                 <td>
                     <span class="pill ${p.disponibilidad_producto ? 'verde' : 'rojo'}">
                         ${p.disponibilidad_producto ? 'Activo' : 'Inactivo'}
@@ -422,9 +451,10 @@ async function cargarProductosDeCategoria(catId) {
                     </button>
                 </td>
             </tr>
-        `).join('');
+        `;
+        }).join('');
     } catch (e) {
-        tbody.innerHTML = `<tr><td colspan="5" class="cargando">${esc(e.message)}</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="6" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
     }
 }
@@ -452,10 +482,9 @@ function cancelarFormProducto() {
 async function editarProducto(id) {
     try {
         const tbody = document.getElementById('tbody-productos');
-        // Buscar en la tabla actual
+
         const rows = tbody.querySelectorAll('tr');
-        // Necesitamos traer detalles completos; lo buscamos en memoria desde la última carga
-        // Hacemos re-fetch rápido del producto individual
+
         const resp = await fetch(`/api/plato/${id}`);
         if (!resp.ok) throw new Error('No se pudo obtener el producto');
         const p = await resp.json();
@@ -465,7 +494,7 @@ async function editarProducto(id) {
         document.getElementById('fp-precio').value = p.precio || 0;
         document.getElementById('fp-descripcion').value = p.descripcion || '';
         document.getElementById('fp-imagen').value = p.imagen || '';
-        // Mostrar nombre del archivo actual si existe
+
         const label = document.getElementById('fp-imagen-preview-label');
         if (p.imagen) {
             const imgUrl = p.imagen.startsWith('/') || p.imagen.startsWith('http')
@@ -476,6 +505,10 @@ async function editarProducto(id) {
             label.textContent = '';
         }
         document.getElementById('fp-imagen-file').value = '';
+
+        document.getElementById('fp-stock').value = p.stock ?? 0;
+        const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
+        document.getElementById('fp-stock-grupo').style.display = esAdic ? '' : 'none';
 
         llenarSelectCategorias();
         const sel = document.getElementById('fp-categoria');
@@ -503,7 +536,6 @@ async function guardarProducto(e) {
         return;
     }
 
-    // Subir imagen si el usuario seleccionó un archivo
     const fileInput = document.getElementById('fp-imagen-file');
     if (fileInput.files.length > 0) {
         const formData = new FormData();
@@ -526,6 +558,7 @@ async function guardarProducto(e) {
         descripcion_producto:    document.getElementById('fp-descripcion').value.trim(),
         imagen_producto:         document.getElementById('fp-imagen').value.trim() || null,
         disponibilidad_producto: parseInt(document.getElementById('fp-disponibilidad').value),
+        stock:                   parseInt(document.getElementById('fp-stock').value) || 0,
     };
 
     try {
@@ -565,10 +598,6 @@ async function toggleProducto(id, estadoActual) {
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// PEDIDOS (DOMICILIOS)
-// ══════════════════════════════════════════════════════════════════════════════
-
 const ESTADOS_DOMICILIO = ['Pendiente', 'En preparación', 'Listo', 'Entregado', 'Cancelado'];
 
 async function cargarPedidos() {
@@ -580,13 +609,21 @@ async function cargarPedidos() {
             tbody.innerHTML = '<tr><td colspan="8" class="cargando">Sin domicilios registrados</td></tr>';
             return;
         }
-        tbody.innerHTML = domicilios.map(d => `
+        tbody.innerHTML = domicilios.map(d => {
+            const tieneComprobante = Boolean(d.comprobante_transferencia);
+            let pagoCell;
+            if (tieneComprobante) {
+                pagoCell = `<span class="pill amarillo">⏳ EN REVISIÓN</span><br><button class="btn-accion azul" style="margin-top:4px; font-size:0.85rem;" onclick="abrirModalComprobante(${d.domicilio_id}, 'domicilio')">📄 Ver</button>`;
+            } else {
+                pagoCell = d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo';
+            }
+            return `
             <tr>
                 <td>${d.domicilio_id}</td>
                 <td>${esc(d.nombre || '')}<br><small>${esc(d.telefono || '')}</small></td>
                 <td>${esc(d.direccion || '')}</td>
                 <td>$${d.total ? Number(d.total).toLocaleString('es-CO') : '0'}</td>
-                <td>${d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo'}</td>
+                <td>${pagoCell}</td>
                 <td><small>${formatearHora(d.fecha_hora)}</small></td>
                 <td><span class="pill ${pillDom(d.estado_pedido)}">${esc(d.estado_pedido || '')}</span></td>
                 <td>
@@ -597,7 +634,7 @@ async function cargarPedidos() {
                     </select>
                 </td>
             </tr>
-        `).join('');
+        `}).join('');
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="8" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
@@ -623,10 +660,6 @@ async function cambiarEstadoDomicilio(id, nuevoEstado) {
         toast(e.message, 'error');
     }
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// RESERVAS
-// ══════════════════════════════════════════════════════════════════════════════
 
 const ESTADOS_RESERVA = ['en espera', 'confirmada', 'ocupada', 'cancelada', 'finalizada'];
 
@@ -697,41 +730,49 @@ async function cambiarEstadoReserva(id, nuevoEstado) {
     }
 }
 
-// Abrir modal para revisar comprobante
-async function abrirModalComprobante(reservaId) {
+async function abrirModalComprobante(id, tipo = 'reserva') {
     try {
-        const reservas = await apiFetch('/admin/api/reservas');
-        const reserva = reservas.find(r => r.reserva_id === reservaId);
-        
-        if (!reserva || !reserva.comprobante_transferencia) {
+        let registro;
+        if (tipo === 'domicilio') {
+            const domicilios = await apiFetch('/admin/api/domicilios');
+            registro = domicilios.find(d => d.domicilio_id === id);
+        } else {
+            const reservas = await apiFetch('/admin/api/reservas');
+            registro = reservas.find(r => r.reserva_id === id);
+        }
+
+        if (!registro || !registro.comprobante_transferencia) {
             alert('Comprobante no encontrado');
             return;
         }
 
-        const modal = document.getElementById('modal-comprobante');
-        const img = document.getElementById('comprobante-preview');
-        const enlace = document.getElementById('comprobante-enlace');
-        const titulo = document.querySelector('#modal-comprobante .modal-header h2');
+        const modal       = document.getElementById('modal-comprobante');
+        const img         = document.getElementById('comprobante-preview');
+        const enlace      = document.getElementById('comprobante-enlace');
+        const titulo      = document.querySelector('#modal-comprobante .modal-header h2');
         const btnConfirmar = document.getElementById('btn-confirmar-comprobante');
+        const btnRechazar  = document.getElementById('btn-rechazar-comprobante');
 
-        titulo.textContent = `Comprobante Reserva #${reservaId} - ${reserva.cc_cliente}`;
-        
-        const rutaComprobante = `/static/${reserva.comprobante_transferencia}`;
-        
-        // Si es PDF
-        if (reserva.comprobante_transferencia.endsWith('.pdf')) {
+        const label = tipo === 'domicilio' ? `Pedido #${id}` : `Reserva #${id} - ${registro.cc_cliente}`;
+        titulo.textContent = `Comprobante ${label}`;
+
+        const rutaComprobante = `/static/${registro.comprobante_transferencia}`;
+
+        if (registro.comprobante_transferencia.endsWith('.pdf')) {
             img.style.display = 'none';
             enlace.href = rutaComprobante;
             enlace.style.display = 'block';
             enlace.textContent = '📄 Ver PDF en nueva ventana';
         } else {
-            // Si es imagen
             img.src = rutaComprobante;
             img.style.display = 'block';
             enlace.style.display = 'none';
         }
 
-        btnConfirmar.dataset.reservaId = reservaId;
+        btnConfirmar.dataset.reservaId = id;
+        btnConfirmar.dataset.tipo = tipo;
+        btnRechazar.dataset.reservaId  = id;
+        btnRechazar.dataset.tipo  = tipo;
         modal.classList.remove('oculta');
     } catch (e) {
         alert('Error al abrir comprobante: ' + e.message);
@@ -742,35 +783,67 @@ function cerrarModalComprobante() {
     document.getElementById('modal-comprobante').classList.add('oculta');
 }
 
-async function confirmarComprobante(reservaId) {
-    if (!confirm('¿Confirmar este comprobante de transferencia?')) return;
-    
-    try {
-        const btn = event.target;
-        btn.disabled = true;
-        btn.textContent = 'CONFIRMANDO...';
+async function rechazarComprobante(reservaId) {
+    const btn  = document.getElementById('btn-rechazar-comprobante');
+    const tipo = btn.dataset.tipo || 'reserva';
+    if (!confirm('¿Rechazar este comprobante? El pedido/reserva volverá a estado Pendiente.')) return;
 
-        await apiFetch(`/admin/api/reservas/${reservaId}`, {
-            method: 'PUT',
-            body: JSON.stringify({ 
-                estado: 'confirmada',
-                comprobante_validado: true
-            }),
-        });
+    try {
+        btn.disabled = true;
+        btn.textContent = 'RECHAZANDO...';
+
+        if (tipo === 'domicilio') {
+            await apiFetch(`/admin/api/domicilios/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado_pedido: 'Pendiente', comprobante_validado: true }),
+            });
+        } else {
+            await apiFetch(`/admin/api/reservas/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado: 'pendiente', comprobante_validado: true }),
+            });
+        }
 
         cerrarModalComprobante();
-        toast(`✓ Comprobante validado. Reserva confirmada.`);
-        cargarReservas(); // Recargar tabla
+        toast(`✗ Comprobante rechazado. Volvió a Pendiente.`, 'error');
+        tipo === 'domicilio' ? cargarPedidos() : cargarReservas();
     } catch (e) {
         alert('Error: ' + e.message);
-        event.target.disabled = false;
-        event.target.textContent = '✓ CONFIRMAR PAGO';
+        btn.disabled = false;
+        btn.textContent = '✗ RECHAZAR';
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// TEMÁTICAS
-// ══════════════════════════════════════════════════════════════════════════════
+async function confirmarComprobante(reservaId) {
+    const btn  = document.getElementById('btn-confirmar-comprobante');
+    const tipo = btn.dataset.tipo || 'reserva';
+    if (!confirm('¿Confirmar este comprobante de transferencia?')) return;
+    
+    try {
+        btn.disabled = true;
+        btn.textContent = 'CONFIRMANDO...';
+
+        if (tipo === 'domicilio') {
+            await apiFetch(`/admin/api/domicilios/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado_pedido: 'En preparación', comprobante_validado: true }),
+            });
+        } else {
+            await apiFetch(`/admin/api/reservas/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado: 'confirmada', comprobante_validado: true }),
+            });
+        }
+
+        cerrarModalComprobante();
+        toast(`✓ Comprobante validado.`);
+        tipo === 'domicilio' ? cargarPedidos() : cargarReservas();
+    } catch (e) {
+        alert('Error: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = '✓ CONFIRMAR PAGO';
+    }
+}
 
 async function cargarTematicas() {
     const tbody = document.getElementById('tbody-tematicas');
@@ -848,7 +921,6 @@ async function eliminarTematica(id, nombre) {
     }
 }
 
-// ── Utilidad: escapado HTML (previene XSS) ────────────────────────────────────
 function esc(str) {
     if (str === null || str === undefined) return '';
     return String(str)

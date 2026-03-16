@@ -33,7 +33,6 @@ def ver_menu():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/categorias', methods=['POST'])
 def crear_categoria():
     try:
@@ -57,7 +56,6 @@ def crear_categoria():
         return jsonify({"error": "Sin conexión a BD"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/api/platos/<int:id_categoria>', methods=['GET'])
 def ver_platos_por_categoria(id_categoria):
@@ -92,7 +90,6 @@ def ver_platos_por_categoria(id_categoria):
         return jsonify({"error": str(e)}), 500
     
 
-# -- Obtener un solo plato por su ID ---
 @app.route('/api/plato/<int:id_plato>', methods=['GET'])
 def ver_detalle_plato(id_plato):
     try:
@@ -119,7 +116,9 @@ def ver_detalle_plato(id_plato):
                     'descripcion': row.get('descripcion_producto'),
                     'imagen': row.get('imagen_producto'),
                     'categoria_id': row.get('categoria_id'),
-                    'categoria_nombre': row.get('nombre_categoria', '')
+                    'categoria_nombre': row.get('nombre_categoria', ''),
+                    'stock': row.get('stock', 0),
+                    'disponibilidad_producto': row.get('disponibilidad_producto', 1)
                 }
                 return jsonify(plato)
             else:
@@ -129,8 +128,6 @@ def ver_detalle_plato(id_plato):
         print(f"Error buscando plato: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# -- Agregar un nuevo producto --
 @app.route('/api/productos', methods=['POST'])
 def agregar_producto():
     try:
@@ -141,6 +138,7 @@ def agregar_producto():
         precio    = datos.get('precio_base', 0)
         imagen    = datos.get('imagen_producto', None)
         disponibilidad = datos.get('disponibilidad_producto', 1)
+        stock = int(datos.get('stock', 0))
 
         if not nombre or not categoria:
             return jsonify({"error": "nombre_producto y categoria_id son obligatorios"}), 400
@@ -150,10 +148,10 @@ def agregar_producto():
             cursor = conn.cursor()
             query = """
                 INSERT INTO productos
-                    (nombre_producto, categoria_id, descripcion_producto, precio_base, imagen_producto, disponibilidad_producto)
-                VALUES (%s, %s, %s, %s, %s, %s)
+                    (nombre_producto, categoria_id, descripcion_producto, precio_base, imagen_producto, disponibilidad_producto, stock)
+                VALUES (%s, %s, %s, %s, %s, %s, %s)
             """
-            cursor.execute(query, (nombre, categoria, descripcion, precio, imagen, disponibilidad))
+            cursor.execute(query, (nombre, categoria, descripcion, precio, imagen, disponibilidad, stock))
             conn.commit()
             nuevo_id = cursor.lastrowid
             cursor.close()
@@ -166,8 +164,6 @@ def agregar_producto():
         print(f"Error al agregar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# -- Actualizar un producto existente --
 @app.route('/api/productos/<int:id_producto>', methods=['PUT'])
 def actualizar_producto(id_producto):
     try:
@@ -193,6 +189,9 @@ def actualizar_producto(id_producto):
         if 'disponibilidad_producto' in datos:
             campos.append('disponibilidad_producto = %s')
             valores.append(datos['disponibilidad_producto'])
+        if 'stock' in datos:
+            campos.append('stock = %s')
+            valores.append(int(datos['stock']))
 
         if not campos:
             return jsonify({"error": "No hay campos para actualizar"}), 400
@@ -214,9 +213,6 @@ def actualizar_producto(id_producto):
         print(f"Error al actualizar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# -- Desactivar un producto (soft delete) --
-# No se elimina físicamente para preservar el historial de reservas y pedidos.
 @app.route('/api/productos/<int:id_producto>', methods=['DELETE'])
 def eliminar_producto(id_producto):
     try:
@@ -241,7 +237,6 @@ def eliminar_producto(id_producto):
         print(f"Error al desactivar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/extras', methods=['GET'])
 def obtener_extras_configuracion():
     datos = {
@@ -254,8 +249,6 @@ def obtener_extras_configuracion():
         if conn:
             cursor = conn.cursor(dictionary=True)
             
-            # 1. Obtener Tamaños: productos de la categoría "tamano".
-            # limite_sabores se extrae del número en descripcion_producto (ej: "Capacidad: 3 sabores" → 3)
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
@@ -269,8 +262,6 @@ def obtener_extras_configuracion():
             """)
             datos["tamanos"] = cursor.fetchall()
 
-            # 2. Obtener Sabores/Toppings (categoría "Sabores").
-            # No se filtra por disponibilidad porque son toppings, no productos del menú principal.
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
@@ -281,11 +272,11 @@ def obtener_extras_configuracion():
             """)
             datos["sabores"] = cursor.fetchall()
 
-            # 3. Adiciones (toppings extra como queso, piña, etc.)
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
-                       p.precio_base AS precio
+                       p.precio_base AS precio,
+                       p.stock AS stock
                 FROM productos p
                 INNER JOIN categorias c ON p.categoria_id = c.categoria_id
                 WHERE LOWER(c.nombre_categoria) LIKE '%adicion%'
@@ -301,9 +292,6 @@ def obtener_extras_configuracion():
     except Exception as e:
         print(f"Error obteniendo extras: {e}")
         return jsonify({"error": str(e)}), 500
-
-
-
 
 if __name__ == '__main__':
     try:

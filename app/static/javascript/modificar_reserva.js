@@ -1,4 +1,4 @@
-// Establecer mínimo de fecha a mañana
+
 const inputFecha = document.getElementById('input_fecha');
 const hoy = new Date();
 hoy.setHours(0,0,0,0);
@@ -41,11 +41,9 @@ function abrirModalHora() {
     document.getElementById('modal_hora').classList.remove('oculto_hora');
 }
 
-// Abrir el modal de hora automáticamente al cambiar la fecha
 document.querySelector('input[name="fecha"]').addEventListener('change', function() {
     abrirModalHora();
 });
-
 
 function seleccionarHora(h) {
     document.getElementById('hora_valor').value = h;

@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Inicio de sesion</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/login.css') }}">
@@ -12,7 +13,7 @@
             <figure id="marca">
                 <img src="{{ url_for('static', filename='img/sabores-unidos.png') }}" alt="Sabores Unidos">
             </figure>
-            <h2>BIENVENIDO A TRES PASOS</h2>
+            <h2>BIENVENIDO A SABORES UNIDOS</h2>
             <h3>INICIA SESIÓN</h3>
         </section>
         <section>
@@ -24,7 +25,7 @@
                             <path d="M12.0672 2C9.6678 2 7.72266 3.94514 7.72266 6.34459C7.72266 8.74404 9.6678 10.6892 12.0672 10.6892C14.4667 10.6892 16.4118 8.74404 16.4118 6.34459C16.4118 3.94514 14.4667 2 12.0672 2Z" fill="rgb(252,252,252)"/>
                             <path d="M20.25 19.453C20.2421 19.8615 19.9087 20.1895 19.5001 20.1895H4.50013C4.09157 20.1895 3.75818 19.8624 3.75027 19.454L3.75023 19.452L3.75019 19.4493L3.7501 19.4423L3.75 19.4211C3.74999 19.404 3.75015 19.3807 3.75072 19.3516C3.75187 19.2937 3.75468 19.2127 3.76117 19.1119C3.77413 18.9107 3.80189 18.6292 3.86099 18.2937C3.97867 17.6258 4.22374 16.7262 4.73808 15.8194C5.79641 13.9537 7.92408 12.1895 12.0001 12.1895C16.0762 12.1895 18.2038 13.9537 19.2622 15.8194C19.7765 16.7262 20.0216 17.6258 20.1393 18.2937C20.1984 18.6292 20.2261 18.9107 20.2391 19.1119C20.2456 19.2127 20.2484 19.2937 20.2495 19.3516C20.2501 19.3807 20.2503 19.404 20.2503 19.4211L20.2502 19.4423L20.2501 19.4493L20.25 19.452L20.25 19.453Z" fill="rgb(252,252,252)"/>
                         </svg>
-                    <input type="text" id="usuario" name="usuario" maxlength="50" minlength="1" pattern="[0-9a-zA-Z ]{1,50}" title="Parece que ingresaste caracteres no permitidos, intentalo de nuevo." placeholder="Ingrese su nombre." required tabindex="1">
+                    <input type="text" id="usuario" name="usuario" maxlength="50" minlength="1" pattern="[0-9a-zA-Z ]{1,50}" title="Parece que ingresaste caracteres no permitidos, intentalo de nuevo." placeholder="Ingrese su nombre de usuario." required tabindex="1">
                 </div>
                 <div class="cont_campos">
                     <label for="palabra_clave">Contraseña</label>
@@ -32,7 +33,7 @@
                         width="inherit" height="inherit" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg" transform="rotate(0 0 0)">
                         <path d="M7.25 6C7.25 3.37665 9.37665 1.25 12 1.25C14.6234 1.25 16.75 3.37665 16.75 6V8.69562C18.4288 10.071 19.5 12.1604 19.5 14.5C19.5 18.6421 16.1421 22 12 22C7.85786 22 4.5 18.6421 4.5 14.5C4.5 12.1604 5.57125 10.071 7.25 8.69562V6ZM8.75 7.73883C9.73325 7.26533 10.8356 7 12 7C13.1644 7 14.2667 7.26533 15.25 7.73883V6C15.25 4.20507 13.7949 2.75 12 2.75C10.2051 2.75 8.75 4.20507 8.75 6V7.73883ZM12 14.75C11.5858 14.75 11.25 15.0858 11.25 15.5V17.5C11.25 17.9142 11.5858 18.25 12 18.25C12.4142 18.25 12.75 17.9142 12.75 17.5V15.5C12.75 15.0858 12.4142 14.75 12 14.75Z" fill="rgb(252,252,252)"/>
                     </svg>
-                    <input type="text" id="palabra_clave" name="palabra_clave" maxlength="10" inputmode="numeric" minlength="8" pattern="[0-9]{8,10}" title="Parece que ingresaste caracteres no permitidos, intentalo de nuevo." placeholder="Ingrese su numero de documento." required tabindex="2">
+                    <input type="password" id="palabra_clave" name="palabra_clave" maxlength="100" minlength="4" title="Ingrese su contraseña." placeholder="Ingrese su contraseña." required tabindex="2">
                 </div>
                 <button type="submit"><strong>INICIAR SESION</strong></button>
             </form>
@@ -41,5 +42,92 @@
             {% endif %}
         </section>
     </main>
+
+    
+    <button id="btn-devs" onclick="document.getElementById('modal-devs').style.display='flex'" title="Desarrolladores">
+        &lt;/&gt;
+    </button>
+
+    
+    <div id="modal-devs" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(6px);">
+        <div style="background:linear-gradient(160deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%); border:1px solid rgba(153,24,31,0.6); border-radius:24px; padding:36px 28px 28px; text-align:center; width:310px; max-width:92vw; box-shadow:0 8px 40px rgba(0,0,0,0.6); position:relative;">
+            
+            
+            <button onclick="document.getElementById('modal-devs').style.display='none'" style="position:absolute; top:10px; right:12px; background:none; border:none; color:rgba(255,255,255,0.5); font-size:22px; cursor:pointer; line-height:1; transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&times;</button>
+
+            
+            <div style="margin-bottom:16px;">
+                <img src="{{ url_for('static', filename='img/logo-sena.png') }}" alt="SENA" style="height:60px; object-fit:contain;">
+            </div>
+
+            
+            <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:3px; color:rgba(255,255,255,0.45); margin-bottom:20px; text-transform:uppercase;">Equipo de Desarrollo</div>
+
+            
+            <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+                <div style="flex:1; height:1px; background:linear-gradient(to right, transparent, #99181F);"></div>
+                <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 6L2 12L8 18M16 6L22 12L16 18" stroke="#99181F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+                <div style="flex:1; height:1px; background:linear-gradient(to left, transparent, #99181F);"></div>
+            </div>
+
+            
+            <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                    <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">JUAN DAVID GONZALEZ BEDOYA</div>
+                    <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">APRENDIZ SENA</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                    <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">SANTIAGO ALEXANDER MEJIA</div>
+                    <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">APRENDIZ SENA</div>
+                </div>
+                <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                    <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">JUAN CAMILO PEREZ</div>
+                    <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">APERENDIZ SENA</div>
+                </div>
+            </div>
+
+            
+            <div style="background:rgba(153,24,31,0.15); border:1px solid rgba(153,24,31,0.4); border-radius:14px; padding:14px 16px;">
+                <div style="font-size:18px; margin-bottom:6px;">🎓</div>
+                <p style="font-size:12px; color:rgba(255,255,255,0.75); line-height:1.6; margin:0; font-family:Arial,sans-serif;">
+                    Agradecimiento especial a nuestros <strong style="color:#fff;">instructores del SENA</strong> por guiarnos, enseñarnos y motivarnos a lo largo de este proceso de formación. Este proyecto es el fruto de su dedicación.
+                </p>
+            </div>
+
+            <div style="margin-top:16px; font-size:11px; color:rgba(255,255,255,0.2); font-family:Arial,sans-serif;">ADSO 2026</div>
+            <div style="margin-top:16px; font-size:11px; color:rgba(255,255,255,0.2); font-family:Arial,sans-serif;">FICHA: 2996707</div>
+        </div>
+    </div>
+
+    <style>
+        #btn-devs {
+            position: fixed;
+            bottom: 16px;
+            right: 16px;
+            background: rgba(20, 20, 40, 0.85);
+            border: 1px solid rgba(153,24,31,0.7);
+            border-radius: 20px;
+            width: auto;
+            height: 34px;
+            padding: 0 14px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            backdrop-filter: blur(8px);
+            transition: all 0.2s ease;
+            z-index: 100;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+            font-weight: bold;
+            color: #99181F;
+            letter-spacing: 1px;
+        }
+        #btn-devs:hover {
+            background: rgba(153,24,31,0.4);
+            border-color: #99181F;
+            transform: scale(1.1);
+        }
+    </style>
 </body>
 </html>

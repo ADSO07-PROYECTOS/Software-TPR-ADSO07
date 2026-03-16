@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Resumen de Reserva #{{ reserva.reserva_id }}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/resumen_reserva.css') }}">
@@ -9,7 +10,7 @@
 <body>
 <div class="tarjeta">
     <div class="logo-titulo">
-        <h1>🍕 TRES PASOS</h1>
+        <img src="{{ url_for('static', filename='img/sabores-unidos.png') }}" alt="Sabores Unidos" style="width: 150px; margin-bottom: 8px;">
         <p>Resumen de tu reserva</p>
     </div>
 

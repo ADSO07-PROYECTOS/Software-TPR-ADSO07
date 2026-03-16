@@ -69,23 +69,22 @@ main#gran_padre{
     top: 0;
     left: 0;
     border: white 2px solid;
-    width: 280px; /* Un poco más estrecho para móviles */
-    max-width: 90vw; /* Evita que sea más ancho que la pantalla en móviles */
-    height: calc(100vh - 20px); /* Usa 100vh menos el margen */
+    width: 280px; 
+    max-width: 90vw; 
+    height: calc(100vh - 20px); 
     display: flex;
     flex-direction: column;
     align-items: center;
-    padding: 20px 15px; /* Padding lateral para que el contenido no toque el borde */
+    padding: 20px 15px; 
     border-radius: 30px;
     margin: 10px;
     z-index: 1000;
-    overflow-y: auto; /* Permite scroll si hay muchos botones */
+    overflow-y: auto; 
 }
-
 
 #cont_menu {
     width: 100%;
-    flex-grow: 1; /* Empuja la línea inferior hacia abajo */
+    flex-grow: 1; 
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -266,7 +265,6 @@ main#gran_padre{
     box-shadow: 0 4px 8px rgba(0,0,0,0.2);
     font-weight: bold;
     border:2px solid white;
-
 
 }
 

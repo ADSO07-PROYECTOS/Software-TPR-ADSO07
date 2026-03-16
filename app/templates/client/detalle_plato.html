@@ -2,6 +2,7 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
+    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if plato %}{{ plato.nombre }}{% else %}Plato no encontrado{% endif %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
@@ -70,7 +71,7 @@
             <section class="adiciones-lista">
                 <div class="adiciones-box">
                 {% for adicion in adiciones %}
-                <div class="adicion-item" data-precio="{{ adicion.precio }}">
+                <div class="adicion-item" data-precio="{{ adicion.precio }}" data-stock="{{ adicion.stock if adicion.stock is defined else 999 }}">
                     <div class="adicion-nombre">
                         <span>{{ adicion.nombre }}</span>
                     </div>
@@ -193,7 +194,7 @@
             </svg>
         </button>
         
-        <span id="plato-id" data-id="{{ plato.id }}" style="display:none;"></span>
+        <span id="plato-id" data-id="{{ plato.id }}" data-precio="{{ plato.precio }}" style="display:none;"></span>
         <button class="añadir"> AÑADIR </button>
         
         <span class="precio-fn">$ {{ plato.precio }}</span>

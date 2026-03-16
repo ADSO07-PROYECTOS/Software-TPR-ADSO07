@@ -60,6 +60,56 @@ header h1 {
     outline: none;
 }
 
+.grupo-habeas {
+    margin-top: 18px;
+    margin-bottom: 4px;
+    text-align: left;
+}
+
+.habeas-label {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    cursor: pointer;
+    color: rgba(235,235,235,0.8);
+    font-size: 0.78rem;
+    line-height: 1.4;
+}
+
+.habeas-label input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    min-width: 18px;
+    min-height: 18px;
+    border: 2px solid rgba(255,255,255,0.4);
+    border-radius: 5px;
+    background: var(--gris-input);
+    cursor: pointer;
+    position: relative;
+    margin-top: 2px;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+.habeas-label input[type="checkbox"]:checked {
+    background: var(--rojo);
+    border-color: var(--rojo);
+}
+
+.habeas-label input[type="checkbox"]:checked::after {
+    content: '✓';
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+}
+
+.habeas-label input[type="checkbox"]:invalid {
+    border-color: rgba(255,100,100,0.6);
+}
+
 .contenedor-botones {
     display: flex;
     align-items: center;
@@ -156,7 +206,6 @@ header h1 {
     cursor: pointer;
 }
 
-/* ── Modal selector de hora ── */
 .campo-hora-btn {
     background: var(--gris-input);
     border: 1px solid rgba(255,255,255,0.2);

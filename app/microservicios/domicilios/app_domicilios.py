@@ -2,8 +2,8 @@ import sys, os, qrcode, io, base64, threading, requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+from conexion import conectar
 
-# Carga variables de entorno desde .env en la raiz del proyecto
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../..', '.env'))
 
 app = Flask(__name__)
@@ -11,7 +11,7 @@ CORS(app)
 
 BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
-BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Tres Pasos")
+BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Sabores Unidos")
 
 def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
     qr_buf.seek(0)
@@ -39,7 +39,7 @@ def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
             json={
                 "sender": {"name": BREVO_SENDER_NAME, "email": BREVO_SENDER_EMAIL},
                 "to": [{"email": cli['correo']}],
-                "subject": f"Confirmación de Pedido - Tres Pasos #{dom_id}",
+                "subject": f"Confirmación de Pedido - Sabores Unidos #{dom_id}",
                 "htmlContent": cuerpo
             },
             timeout=30
@@ -83,7 +83,7 @@ def crear_domicilio():
         for p in productos:
             prod_id = p.get('id')
             if not prod_id:
-                continue  # Ignorar ítems sin producto_id válido
+                continue
             cursor.execute("""
                 INSERT INTO detalles_domicilios (domicilio_id, producto_id, cantidad, valor_unitario)
                 VALUES (%s, %s, %s, %s)
