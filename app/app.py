@@ -6,12 +6,10 @@ import requests
 import qrcode, io, base64
 import os
 
-# Configuración para Flask-DebugToolbar
 try:
     from flask_debugtoolbar import DebugToolbarExtension
 except ImportError:
     DebugToolbarExtension = None
-
 
 UPLOAD_FOLDER_IMG = os.path.join(os.path.dirname(__file__), 'static', 'img', 'platos')
 UPLOAD_FOLDER_COMPROBANTES = os.path.join(os.path.dirname(__file__), 'static', 'comprobantes')
@@ -28,11 +26,9 @@ DIAS_ES = ['LUNES','MARTES','MIÉRCOLES','JUEVES','VIERNES','SÁBADO','DOMINGO']
 MESES_ES = ['ENERO','FEBRERO','MARZO','ABRIL','MAYO','JUNIO','JULIO',
             'AGOSTO','SEPTIEMBRE','OCTUBRE','NOVIEMBRE','DICIEMBRE']
 
-
 app = Flask(__name__)
 CORS(app)
 
-# Configuración sesión y DebugToolbar
 app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'trespasos_secret_2026')
 app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
 if DebugToolbarExtension:
@@ -40,46 +36,9 @@ if DebugToolbarExtension:
 
 ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
 
-
 def normalizar_rol(valor, predeterminado='cliente'):
     rol = (valor or predeterminado).strip().lower()
     return rol if rol in ROLES_VALIDOS else predeterminado
-
-
-try:
-    conn = conectar()
-    if conn:
-        cursor = conn.cursor()
-        cursor.execute("SHOW COLUMNS FROM reservas LIKE 'comprobante_transferencia'")
-        if not cursor.fetchone():
-            cursor.execute("""
-                ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL
-            """)
-            conn.commit()
-            print("✓ Columna 'comprobante_transferencia' agregada a tabla reservas")
-
-        cursor.execute("SHOW COLUMNS FROM clientes LIKE 'rol'")
-        if not cursor.fetchone():
-            cursor.execute("""
-                ALTER TABLE clientes
-                ADD COLUMN rol VARCHAR(20) NOT NULL DEFAULT 'cliente'
-            """)
-            conn.commit()
-            print("✓ Columna 'rol' agregada a tabla clientes")
-
-        cursor.execute("""
-            UPDATE clientes
-            SET rol = 'cliente'
-            WHERE rol IS NULL OR TRIM(rol) = ''
-        """)
-        conn.commit()
-        cursor.close()
-        conn.close()
-except Exception as e:
-    print(f"Adv: No se pudo verificar migraciones iniciales: {e}")
-
-
-# ─────────────────────────── AUTENTICACIÓN ──────────────────────────────────
 
 @app.route('/login', methods=['GET', 'POST'])
 def login():
@@ -111,12 +70,10 @@ def login():
 
     return render_template('auth/login.html', error=None)
 
-
 @app.route('/logout')
 def logout():
     session.clear()
     return redirect('/login')
-
 
 @app.route('/')
 def inicio():
@@ -239,7 +196,6 @@ def resumen_domicilio(id_domicilio):
 def ver_carrito():
     return render_template('client/carrito.html')
 
-
 @app.route('/menu/<int:id_categoria>')
 def ver_platos(id_categoria):
     mis_platos = []
@@ -335,7 +291,6 @@ def mis_reservas():
     return render_template('client/mis_reservas.html', reservas=reservas,
                            cedula=cedula, buscado=buscado, sin_resultados=sin_resultados)
 
-
 @app.route('/mis_reservas/<int:id_reserva>/eliminar', methods=['POST'])
 def eliminar_reserva(id_reserva):
     try:
@@ -349,7 +304,6 @@ def eliminar_reserva(id_reserva):
         return jsonify({"success": True})
     except Exception as e:
         return jsonify({"success": False, "message": str(e)}), 500
-
 
 @app.route('/mis_reservas/<int:id_reserva>/modificar', methods=['GET', 'POST'])
 def modificar_reserva(id_reserva):
@@ -400,7 +354,6 @@ def modificar_reserva(id_reserva):
         except Exception as e:
             return f"Error: {e}", 500
 
-
 @app.route('/api/tematicas', methods=['GET'])
 def proxy_tematicas():
     errores = []
@@ -442,11 +395,6 @@ def proxy_reservas():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# ─────────────────────────── PANEL ADMINISTRACIÓN ────────────────────────────
-# Toda la lógica de datos vive en el microservicio admin (puerto 5006).
-# app.py solo renderiza la vista y reenvía las llamadas de la API.
-
 ADMIN_MS = 'http://localhost:5006'
 
 @app.route('/admin')
@@ -476,7 +424,6 @@ def panel_admin():
                            rol_usuario=rol,
                            nombre_usuario=session.get('usuario_nombre', ''))
 
-
 def _proxy_admin(metodo, ruta, **kwargs):
     """Reenvía una petición al microservicio admin y devuelve su respuesta."""
     try:
@@ -485,8 +432,6 @@ def _proxy_admin(metodo, ruta, **kwargs):
     except Exception as e:
         return jsonify({"error": str(e)}), 502
 
-
-# Clientes
 @app.route('/admin/api/clientes', methods=['GET'])
 def admin_clientes():
     return _proxy_admin('GET', '/api/admin/clientes')
@@ -507,7 +452,6 @@ def admin_cliente_put(cid):
 def admin_cliente_delete(cid):
     return _proxy_admin('DELETE', f'/api/admin/clientes/{cid}')
 
-# Productos
 @app.route('/admin/api/productos', methods=['GET'])
 def admin_productos_get():
     return _proxy_admin('GET', '/api/admin/productos')
@@ -532,7 +476,6 @@ def admin_categorias_get():
 def admin_categorias_post():
     return _proxy_admin('POST', '/api/admin/categorias', json=request.get_json())
 
-# Domicilios
 @app.route('/admin/api/domicilios', methods=['GET'])
 def admin_domicilios_get():
     return _proxy_admin('GET', '/api/admin/domicilios')
@@ -541,7 +484,6 @@ def admin_domicilios_get():
 def admin_domicilio_put(did):
     return _proxy_admin('PUT', f'/api/admin/domicilios/{did}', json=request.get_json())
 
-# Reservas
 @app.route('/admin/api/reservas', methods=['GET'])
 def admin_reservas_get():
     return _proxy_admin('GET', '/api/admin/reservas')
@@ -550,7 +492,6 @@ def admin_reservas_get():
 def admin_reserva_put(rid):
     return _proxy_admin('PUT', f'/api/admin/reservas/{rid}', json=request.get_json())
 
-# Temáticas
 @app.route('/admin/api/tematicas', methods=['GET'])
 def admin_tematicas_get():
     return _proxy_admin('GET', '/api/admin/tematicas')
@@ -631,8 +572,6 @@ def subir_comprobante_reserva():
                 cursor.execute("ALTER TABLE reservas ADD COLUMN comprobante_transferencia VARCHAR(255) NULL")
                 conn.commit()
             
-            # Actualizar con la ruta del comprobante, marcar el pago como transferencia
-            # y dejar la reserva en espera hasta que admin valide el soporte.
             ruta_relativa = f'comprobantes/{nombre}'
             cursor.execute(
                 "UPDATE reservas SET comprobante_transferencia=%s, pago_transferencia=1, estado='en espera' WHERE reserva_id=%s",
@@ -668,7 +607,6 @@ def proxy_plato_detalle(pid):
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 502
-
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", debug=True, port=5000)

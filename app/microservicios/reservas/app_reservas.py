@@ -4,10 +4,8 @@ from flask_cors import CORS
 import locale
 from dotenv import load_dotenv
 
-# Carga variables de entorno desde .env en la raiz del proyecto
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../..', '.env'))
 
-# Configuración de rutas para importar conexión
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '../../..')))
 from conexion import conectar
 
@@ -71,7 +69,6 @@ def obtener_tematicas():
         cursor.close()
         conn.close()
 
-
 @app.route('/api/reservas', methods=['POST'])
 def crear_reserva():
     datos = request.json
@@ -83,7 +80,7 @@ def crear_reserva():
         return jsonify({"status": "error", "message": "Datos incompletos"}), 400
 
     conn = conectar()
-    cursor = conn.cursor(dictionary=True) # Usamos diccionario para manejar mejor las mesas
+    cursor = conn.cursor(dictionary=True)
     try:
         hora_str = res_data['hor'].split(':')[0] if ':' in res_data['hor'] else res_data['hor']
         hora_limpia = f"{int(hora_str):02d}:00:00"
@@ -106,7 +103,7 @@ def crear_reserva():
             return jsonify({
                 "status": "error", 
                 "message": "Lo sentimos, no hay mesas disponibles en el piso seleccionado para esta hora."
-            }), 409 # Código 409: Conflicto
+            }), 409
 
         id_mesa_asignada = mesa_disponible['mesa_id']
 
@@ -140,7 +137,7 @@ def crear_reserva():
         for p in pedido:
             prod_id = p.get('id')
             if not prod_id:
-                continue  # Ignorar ítems sin producto_id válido
+                continue
             partes = []
             if p.get('tamano'):
                 partes.append(p['tamano'].upper())

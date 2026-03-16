@@ -3,7 +3,6 @@ from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
 
-# Carga variables de entorno desde .env en la raiz del proyecto
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../..', '.env'))
 
 app = Flask(__name__)
@@ -83,7 +82,7 @@ def crear_domicilio():
         for p in productos:
             prod_id = p.get('id')
             if not prod_id:
-                continue  # Ignorar ítems sin producto_id válido
+                continue
             cursor.execute("""
                 INSERT INTO detalles_domicilios (domicilio_id, producto_id, cantidad, valor_unitario)
                 VALUES (%s, %s, %s, %s)

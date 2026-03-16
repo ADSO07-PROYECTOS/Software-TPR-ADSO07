@@ -13,7 +13,7 @@ export function prepararPaso1Domicilio() {
             tel: form.tel.value
         };
         localStorage.setItem('cliente_temporal', JSON.stringify(cliente));
-        // REDIRECCIÓN EXCLUSIVA DE DOMICILIOS
+
         window.location.href = '/direccion_domicilio'; 
     };
 }
@@ -46,7 +46,7 @@ export function prepararPasoDomicilio() {
             if (data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_orden', data.id);
-                // Limpiar carrito
+
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
                 window.location.href = '/exito';

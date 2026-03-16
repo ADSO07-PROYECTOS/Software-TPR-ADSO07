@@ -23,7 +23,7 @@ body,html{
     width: 100%;
     padding: 10px;
     background: rgba(0, 0, 0, 0.4);
-    /* backdrop-filter: blur(10px); */
+    
     z-index: 50;
 }
 #padre_ppal{
@@ -36,7 +36,6 @@ body,html{
     align-items: center;
     margin: 5px;
     font-size: 30px;
-
 
 }
 .msg{

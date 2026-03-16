@@ -1,4 +1,4 @@
-// MODIFICACIÓN EN TU JS:
+
 document.addEventListener("DOMContentLoaded", function() {
     console.log("JS cargado y DOM listo"); 
 
@@ -21,7 +21,6 @@ if (btnNuevoPlato) {
     });
 }
 
-// 2. Función para inyectar el HTML
 function cargarModal() {
     console.log("Clic detectado, intentando cargar el modal...");
 
@@ -43,12 +42,10 @@ function cargarModal() {
         .catch(error => console.error('Error al cargar el modal:', error));
 }
 
-// 3. Función para cerrar
 function cerrarModal() {
     document.getElementById('modal-plato').style.display = 'none';
 }
 
-// 4. Lógica de envío a la Base de Datos
 function activarEnvioFormulario() {
     const formulario = document.getElementById('form-nuevo-plato');
 

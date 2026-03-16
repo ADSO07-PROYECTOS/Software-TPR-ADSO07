@@ -38,17 +38,6 @@ export function seleccionarServicio(tipo) {
     window.location.href = '/datos_cliente';
 }
 
-/* 
-export function seleccionarServicio(tipo) {
-        const carrito = JSON.parse(localStorage.getItem('carrito_tpr')) || JSON.parse(localStorage.getItem('carrito_seleccionado')) || [];
-        if (!carrito || carrito.length === 0) return alert("Selecciona platos primero");
- 
-        localStorage.setItem('tipo_servicio', tipo);
-        localStorage.setItem('carrito_tpr', JSON.stringify(carrito)); 
-        window.location.href = '/datos_cliente';
-    }
- */
-    // Enviar los datos guardados en localStorage al microservicio correspondiente
 export async function enviarAlMicroservicio() {
     const carrito = JSON.parse(localStorage.getItem('carrito_tpr')) || JSON.parse(localStorage.getItem('carrito_seleccionado')) || [];
         if (!carrito || carrito.length === 0) return alert('Selecciona platos primero');
@@ -58,8 +47,8 @@ export async function enviarAlMicroservicio() {
         const detalles = JSON.parse(localStorage.getItem('detalles_servicio')) || {};
 
         const url = tipo === 'reserva'
-            ? 'http://147.182.238.195:5005/api/reservas'
-            : 'http://147.182.238.195:5004/api/domicilios';
+            ? 'http:
+            : 'http:
 
         const payload = tipo === 'reserva'
             ? { cliente: cliente, reserva: detalles, pedido: carrito }

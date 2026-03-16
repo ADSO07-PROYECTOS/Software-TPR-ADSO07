@@ -23,7 +23,6 @@ html, body{
     padding-bottom: 110px;
 }
 
-/* ── Barra superior ── */
 #barra_superior {
     position: fixed;
     top: 0;
@@ -33,7 +32,6 @@ html, body{
     z-index: 100;
 }
 
-/* ── Título ── */
 #titulo{
     font-size: 42px;
     text-align: center;
@@ -41,7 +39,6 @@ html, body{
     letter-spacing: 2px;
 }
 
-/* ── Buscador ── */
 #form_buscar {
     width: 90%;
     max-width: 420px;
@@ -82,7 +79,6 @@ html, body{
     text-align: center;
 }
 
-/* ── Tarjeta de reserva ── */
 .card_reserva {
     width: 90%;
     max-width: 420px;
@@ -157,7 +153,6 @@ html, body{
     padding: 6px;
 }
 
-/* ── Botones dentro de la tarjeta ── */
 .card_botones {
     display: flex;
     width: 100%;
@@ -199,7 +194,6 @@ html, body{
     color: #D9D9D9;
 }
 
-/* ── Modal ── */
 #cubrir_modal {
     position: fixed;
     inset: 0;
@@ -233,7 +227,6 @@ html, body{
 .btn-confirmar { background: #99181F; }
 .btn-cerrar { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.3); }
 
-/* ── Menú inferior ── */
 .menu_inferior {
     position: fixed;
     bottom: 0;
@@ -322,12 +315,6 @@ html, body{
     justify-content: space-between;
 }
 
-
-
-
-
-
-/* Botón Reservar */
 .editar-btn {
     width: 48%;
     position: fixed;
@@ -357,7 +344,6 @@ html, body{
     border-radius: 30px;
 }
 
-/* Menú Inferior */
 .menu_inferior {
     position: fixed;
     bottom: 0;
@@ -376,7 +362,7 @@ html, body{
     border: none;
     cursor: pointer;
 }
-/* Contenedor principal que oscurece el fondo */
+
 #cubrir_modal {
   position: fixed;
   top: 0;
@@ -394,7 +380,7 @@ html, body{
     font-weight: bold;
     margin-top: 10px;
 }
-/* La tarjeta blanca */
+
 .carta_modal {
   background: white;
   border:3px solid #99181F;
@@ -406,7 +392,6 @@ html, body{
   box-shadow: 0 10px 25px rgba(0,0,0,0.2);
 }
 
-/* Estilos de texto */
 #ttlo_modal {
   color: #99181F;
   font-weight: bold;
@@ -424,7 +409,6 @@ html, body{
   line-height: 1.4;
 }
 
-/* Contenedor de botones */
 .accion_modal{
   display: flex;
   justify-content: space-around;

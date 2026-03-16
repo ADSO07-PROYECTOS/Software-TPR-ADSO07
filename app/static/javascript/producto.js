@@ -1,15 +1,15 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // === 1. SELECCIÓN DE ELEMENTOS ===
+
     const selectTamano = document.getElementById('select-tamano');
     const displayPrecioBase = document.querySelector('.precio-btn');
     const displayPrecioFinal = document.querySelector('.precio-fn');
     const displayCantidadTotal = document.querySelector('.cantidad-total');
     
-    // Elementos dinámicos
+
     const itemsAdicionales = document.querySelectorAll('.adicion-item');
     const checkboxesSabores = document.querySelectorAll('.lista-pizzas .check');
     
-    // Botones globales
+
     const btnMasTotal = document.querySelector('.cont_btn-mas');
     const btnMenosTotal = document.querySelector('.cont_btn-menos');
     const botonAnadir = document.querySelector('.añadir');
@@ -18,20 +18,18 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const seccionCombinar = document.querySelector('.combinar');
 
-    // === 2. FUNCIÓN DE VALIDACIÓN (Lee límites de la BD) ===
     function validarCombinaciones(event) {
-        // Obtenemos el límite desde el atributo data-limite que pusimos con Jinja2
+
         const opcion = selectTamano.options[selectTamano.selectedIndex];
-        if (!opcion) return true; // Si no hay opción, no validar aún
+        if (!opcion) return true;
         const limite = parseInt(opcion.getAttribute('data-limite'));
         const nombreTamano = opcion.value;
 
         const seleccionados = document.querySelectorAll('.lista-pizzas .check:checked');
         const cantSeleccionada = seleccionados.length;
 
-        // Validar exceso
         if (cantSeleccionada > limite) {
-            // Solo alertamos si fue una acción directa del usuario (clic en checkbox)
+
             if (event && event.target && event.target.type === 'checkbox') {
                 alert(`El tamaño ${nombreTamano} solo permite combinar ${limite} sabores.`);
                 event.target.checked = false; 
@@ -39,7 +37,6 @@ document.addEventListener('DOMContentLoaded', () => {
             return false;
         }
 
-        // Bloqueo visual (Deshabilitar los no marcados)
         checkboxesSabores.forEach(check => {
             if (!check.checked) {
                 check.disabled = (cantSeleccionada >= limite);
@@ -50,7 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         return true;
     }
 
-    // === 3. FUNCIÓN DE CÁLCULO TOTAL ===
     function calcularTotal(event) {
         let precioUnidad;
 
@@ -62,12 +58,11 @@ document.addEventListener('DOMContentLoaded', () => {
                 displayPrecioBase.textContent = `$ ${precioUnidad.toLocaleString()}`;
             }
         } else {
-            // Producto no-pizza: precio base desde data-precio del span plato-id
+
             const platoSpan = document.getElementById('plato-id');
             precioUnidad = parseFloat(platoSpan.getAttribute('data-precio')) || 0;
         }
 
-        // B. Sumar Adicionales (Precio dinámico desde data-precio)
         itemsAdicionales.forEach(item => {
             const span = item.querySelector('.cantidad');
             const cant = parseInt(span.textContent || span.innerText);
@@ -75,14 +70,13 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (cant > 0) {
                 precioUnidad += (cant * precioIndividual);
-                item.style.backgroundColor = "#fff3cd"; // Feedback visual
+                item.style.backgroundColor = "#fff3cd";
                 item.style.borderRadius = "8px";
             } else {
                 item.style.backgroundColor = "transparent";
             }
         });
 
-        // C. Sumar Sabores (solo para pizzas)
         if (selectTamano) {
             const saboresMarcados = document.querySelectorAll('.lista-pizzas .check:checked');
             saboresMarcados.forEach(check => {
@@ -91,18 +85,14 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         }
 
-        // D. Total Final
         const granTotal = precioUnidad * cantidadDePizzas;
         
-        // E. Renderizar
+
         displayCantidadTotal.textContent = cantidadDePizzas;
         displayPrecioFinal.textContent = `$ ${granTotal.toLocaleString()}`;
         displayPrecioFinal.dataset.precioUnitario = precioUnidad;
     }
 
-    // === 4. EVENTOS ===
-
-    // -- Adicionales (Botones + / -) --
     itemsAdicionales.forEach(item => {
         item.querySelector('.btn-mas').addEventListener('click', () => {
             const span = item.querySelector('.cantidad');
@@ -120,14 +110,12 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // -- Cantidad Pizzas --
     btnMasTotal.addEventListener('click', () => { cantidadDePizzas++; calcularTotal(); });
     btnMenosTotal.addEventListener('click', () => { if(cantidadDePizzas > 1){ cantidadDePizzas--; calcularTotal();} });
 
-    // -- Cambios en select o checkboxes --
     if (selectTamano) {
         selectTamano.addEventListener('change', (e) => {
-            // Reiniciar sabores al cambiar tamaño para evitar conflictos
+
             checkboxesSabores.forEach(c => {c.checked = false; c.disabled = false;});
             gestionarVisibilidadCombinar();
             calcularTotal(e);
@@ -138,7 +126,6 @@ document.addEventListener('DOMContentLoaded', () => {
         check.addEventListener('change', (e) => calcularTotal(e));
     });
 
-    // === 5. BOTÓN AÑADIR (Agregar al carrito y Redirigir) ===
     botonAnadir.addEventListener('click', () => {
         let tamanoNombre = '';
         let precioUnitario;
@@ -152,10 +139,9 @@ document.addEventListener('DOMContentLoaded', () => {
             precioUnitario = parseFloat(displayPrecioFinal.dataset.precioUnitario || platoSpan.getAttribute('data-precio'));
         }
         
-        // Recolectar datos
+
         const nombrePizza = document.querySelector('h2').innerText;
 
-        // Lista Adicionales
         let listaAdicionales = [];
         itemsAdicionales.forEach(item => {
             const cant = parseInt(item.querySelector('.cantidad').innerText);
@@ -166,7 +152,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-        // Lista Sabores
         let listaSabores = [];
         document.querySelectorAll('.lista-pizzas .check:checked').forEach(check => {
             const nombre = check.parentElement.querySelector('label').innerText;
@@ -185,7 +170,6 @@ document.addEventListener('DOMContentLoaded', () => {
             precio: precioUnitario * cantidadDePizzas
         };
 
-        // Agregar al carrito en localStorage (acumulando items)
         const carritoActual = JSON.parse(localStorage.getItem('carrito') || '[]');
         carritoActual.push(pedido);
         localStorage.setItem('carrito', JSON.stringify(carritoActual));
@@ -205,12 +189,11 @@ document.addEventListener('DOMContentLoaded', () => {
             seccionCombinar.style.display = 'block';
         } else {
             seccionCombinar.style.display = 'none';
-            // Desmarcar sabores si se cambia a un tamaño que no permite combinar
+
             checkboxesSabores.forEach(c => { c.checked = false; });
         }
     }
 
-    // Inicializar
     gestionarVisibilidadCombinar();
     calcularTotal();
 });

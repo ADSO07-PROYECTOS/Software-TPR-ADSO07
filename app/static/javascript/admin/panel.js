@@ -1,11 +1,8 @@
-/* ═══════════════════════════════════════════════════════
-   PANEL ADMINISTRACIÓN – TRES PASOS
-   ═══════════════════════════════════════════════════════ */
 
-// ── Control de acceso por rol ────────────────────────────────────────────────
+
 (function aplicarPermisosPorRol() {
     const ROL = document.body.dataset.rol || 'cajero';
-    // Secciones permitidas por rol
+
     const PERMISOS = {
         administrador: ['dashboard', 'productos', 'pedidos', 'reservas', 'tematicas', 'usuarios'],
         cajero:        ['dashboard'],
@@ -19,11 +16,8 @@
         }
     });
 
-    // Sobreescribir cargarSeccion para bloquear acceso directo
     window._rolPermitidas = permitidas;
 })();
-
-// ── Sidebar responsive (hamburguesa) ─────────────────────────────────────────
 
 (function () {
     const btnMenu    = document.getElementById('btn_menu');
@@ -45,25 +39,23 @@
     overlay?.addEventListener('click', cerrarSidebar);
 })();
 
-// ── Navegación entre secciones ────────────────────────────────────────────────
-
 document.querySelectorAll('.nav-btn').forEach(btn => {
     btn.addEventListener('click', () => {
         const target = btn.dataset.section;
-        // Activar botón
+
         document.querySelectorAll('.nav-btn').forEach(b => b.classList.remove('active'));
         btn.classList.add('active');
-        // Mostrar sección
+
         document.querySelectorAll('.seccion').forEach(s => s.classList.remove('activa'));
         document.getElementById('sec-' + target).classList.add('activa');
-        // En móvil cerrar sidebar al navegar
+
         if (window.innerWidth <= 900) {
             document.getElementById('panel_izq').classList.remove('abierto');
             document.getElementById('sidebar-overlay').classList.remove('visible');
         }
-        // Bloquear si el rol no tiene acceso a la sección
+
         if (window._rolPermitidas && !window._rolPermitidas.includes(target)) return;
-        // Cargar datos de la sección (excepto dashboard que viene del servidor)
+
         if (target !== 'dashboard') cargarSeccion(target);
     });
 });
@@ -77,8 +69,6 @@ function cargarSeccion(nombre) {
         case 'tematicas':  cargarTematicas();  break;
     }
 }
-
-// ── Toast ─────────────────────────────────────────────────────────────────────
 
 function toast(msg, tipo = 'ok') {
     const el = document.getElementById('toast');
@@ -96,8 +86,6 @@ const ROLES_USUARIO = {
 
 let usuariosCache = [];
 
-// ── Helper fetch JSON ─────────────────────────────────────────────────────────
-// ── Formatear hora a 12h AM/PM ────────────────────────────────────────────────
 function formatearHora(fechaStr) {
     if (!fechaStr) return '';
     const fecha = new Date(fechaStr.replace(' ', 'T'));
@@ -116,10 +104,6 @@ async function apiFetch(url, opciones = {}) {
     if (!resp.ok) throw new Error(data.error || 'Error en la petición');
     return data;
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// USUARIOS
-// ══════════════════════════════════════════════════════════════════════════════
 
 let _rolFiltroActual = '';
 
@@ -261,12 +245,8 @@ async function eliminarCliente(id) {
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// PRODUCTOS – vista por categoría
-// ══════════════════════════════════════════════════════════════════════════════
-
 let _categorias = [];
-let _categActual = null; // { id, nombre }
+let _categActual = null;
 
 async function cargarProductos() {
     document.getElementById('vista-categorias').classList.remove('oculta');
@@ -293,7 +273,6 @@ async function cargarProductos() {
     }
 }
 
-/* ── Modales ─────────────────────────────────────────── */
 function abrirModalCategoria() {
     document.getElementById('form-categoria').reset();
     document.getElementById('fc-imagen').value = '';
@@ -338,7 +317,6 @@ document.addEventListener('keydown', e => {
     }
 });
 
-// Alias de compatibilidad (cancelarFormProducto sigue siendo llamado internamente)
 function cancelarFormProducto() { cerrarModalProducto(); }
 
 async function guardarCategoria(e) {
@@ -377,7 +355,7 @@ async function abrirCategoria(catId, catNombre) {
     document.getElementById('vista-categorias').classList.add('oculta');
     document.getElementById('vista-platos').classList.remove('oculta');
     cancelarFormProducto();
-    // preseleccionar categoría en el formulario
+
     llenarSelectCategorias();
     await cargarProductosDeCategoria(catId);
 }
@@ -394,7 +372,7 @@ async function cargarProductosDeCategoria(catId) {
     tbody.innerHTML = '<tr><td colspan="5" class="cargando">Cargando...</td></tr>';
     try {
         const todos = await apiFetch('/admin/api/productos');
-        // Filtrar por categoria_id cuando exista; dejar el nombre como compatibilidad.
+
         const filtrados = todos.filter(p => {
             const cat = _categorias.find(c => c.id === catId);
             if (!cat) return false;
@@ -452,10 +430,9 @@ function cancelarFormProducto() {
 async function editarProducto(id) {
     try {
         const tbody = document.getElementById('tbody-productos');
-        // Buscar en la tabla actual
+
         const rows = tbody.querySelectorAll('tr');
-        // Necesitamos traer detalles completos; lo buscamos en memoria desde la última carga
-        // Hacemos re-fetch rápido del producto individual
+
         const resp = await fetch(`/api/plato/${id}`);
         if (!resp.ok) throw new Error('No se pudo obtener el producto');
         const p = await resp.json();
@@ -465,7 +442,7 @@ async function editarProducto(id) {
         document.getElementById('fp-precio').value = p.precio || 0;
         document.getElementById('fp-descripcion').value = p.descripcion || '';
         document.getElementById('fp-imagen').value = p.imagen || '';
-        // Mostrar nombre del archivo actual si existe
+
         const label = document.getElementById('fp-imagen-preview-label');
         if (p.imagen) {
             const imgUrl = p.imagen.startsWith('/') || p.imagen.startsWith('http')
@@ -503,7 +480,6 @@ async function guardarProducto(e) {
         return;
     }
 
-    // Subir imagen si el usuario seleccionó un archivo
     const fileInput = document.getElementById('fp-imagen-file');
     if (fileInput.files.length > 0) {
         const formData = new FormData();
@@ -565,10 +541,6 @@ async function toggleProducto(id, estadoActual) {
     }
 }
 
-// ══════════════════════════════════════════════════════════════════════════════
-// PEDIDOS (DOMICILIOS)
-// ══════════════════════════════════════════════════════════════════════════════
-
 const ESTADOS_DOMICILIO = ['Pendiente', 'En preparación', 'Listo', 'Entregado', 'Cancelado'];
 
 async function cargarPedidos() {
@@ -623,10 +595,6 @@ async function cambiarEstadoDomicilio(id, nuevoEstado) {
         toast(e.message, 'error');
     }
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// RESERVAS
-// ══════════════════════════════════════════════════════════════════════════════
 
 const ESTADOS_RESERVA = ['en espera', 'confirmada', 'ocupada', 'cancelada', 'finalizada'];
 
@@ -697,7 +665,6 @@ async function cambiarEstadoReserva(id, nuevoEstado) {
     }
 }
 
-// Abrir modal para revisar comprobante
 async function abrirModalComprobante(reservaId) {
     try {
         const reservas = await apiFetch('/admin/api/reservas');
@@ -718,14 +685,14 @@ async function abrirModalComprobante(reservaId) {
         
         const rutaComprobante = `/static/${reserva.comprobante_transferencia}`;
         
-        // Si es PDF
+
         if (reserva.comprobante_transferencia.endsWith('.pdf')) {
             img.style.display = 'none';
             enlace.href = rutaComprobante;
             enlace.style.display = 'block';
             enlace.textContent = '📄 Ver PDF en nueva ventana';
         } else {
-            // Si es imagen
+
             img.src = rutaComprobante;
             img.style.display = 'block';
             enlace.style.display = 'none';
@@ -760,17 +727,13 @@ async function confirmarComprobante(reservaId) {
 
         cerrarModalComprobante();
         toast(`✓ Comprobante validado. Reserva confirmada.`);
-        cargarReservas(); // Recargar tabla
+        cargarReservas();
     } catch (e) {
         alert('Error: ' + e.message);
         event.target.disabled = false;
         event.target.textContent = '✓ CONFIRMAR PAGO';
     }
 }
-
-// ══════════════════════════════════════════════════════════════════════════════
-// TEMÁTICAS
-// ══════════════════════════════════════════════════════════════════════════════
 
 async function cargarTematicas() {
     const tbody = document.getElementById('tbody-tematicas');
@@ -848,7 +811,6 @@ async function eliminarTematica(id, nombre) {
     }
 }
 
-// ── Utilidad: escapado HTML (previene XSS) ────────────────────────────────────
 function esc(str) {
     if (str === null || str === undefined) return '';
     return String(str)

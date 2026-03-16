@@ -15,11 +15,9 @@ CORS(app)
 
 ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
 
-
 def normalizar_rol(valor, predeterminado='cliente'):
     rol = (valor or predeterminado).strip().lower()
     return rol if rol in ROLES_VALIDOS else predeterminado
-
 
 def asegurar_columna_rol():
     conn = conectar()
@@ -46,11 +44,7 @@ def asegurar_columna_rol():
         cursor.close()
         conn.close()
 
-
 asegurar_columna_rol()
-
-
-# ── Dashboard Stats ──────────────────────────────────────────────────────────
 
 @app.route('/api/admin/stats', methods=['GET'])
 def admin_stats():
@@ -124,9 +118,6 @@ def admin_stats():
         'mesas_por_piso': mesas_por_piso,
         'pedidos_recientes': pedidos_recientes,
     })
-
-
-# ── Clientes ─────────────────────────────────────────────────────────────────
 
 @app.route('/api/admin/clientes', methods=['GET'])
 def admin_listar_clientes():
@@ -264,9 +255,6 @@ def admin_eliminar_cliente(cliente_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# ── Productos (proxy → microservicio menu :5001) ──────────────────────────────
-
 @app.route('/api/admin/productos', methods=['GET'])
 def admin_listar_productos():
     try:
@@ -322,7 +310,6 @@ def admin_listar_categorias():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/admin/categorias', methods=['POST'])
 def admin_crear_categoria():
     try:
@@ -331,9 +318,6 @@ def admin_crear_categoria():
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
-
-# ── Domicilios ────────────────────────────────────────────────────────────────
 
 @app.route('/api/admin/domicilios', methods=['GET'])
 def admin_listar_domicilios():
@@ -382,9 +366,6 @@ def admin_actualizar_domicilio(domicilio_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# ── Reservas ──────────────────────────────────────────────────────────────────
-
 @app.route('/api/admin/reservas', methods=['GET'])
 def admin_listar_reservas():
     try:
@@ -423,7 +404,6 @@ def admin_actualizar_reserva(reserva_id):
         conn = conectar()
         cursor = conn.cursor()
         
-        # Si se confirma el comprobante, limpiar el campo
         if comprobante_validado:
             cursor.execute(
                 "UPDATE reservas SET estado = %s, comprobante_transferencia = NULL WHERE reserva_id = %s",
@@ -440,9 +420,6 @@ def admin_actualizar_reserva(reserva_id):
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
-# ── Temáticas ─────────────────────────────────────────────────────────────────
-
 @app.route('/api/admin/tematicas', methods=['GET'])
 def admin_listar_tematicas():
     try:
@@ -453,7 +430,6 @@ def admin_listar_tematicas():
                 "SELECT tematica_id, nombre_tematica, activo FROM tematicas ORDER BY nombre_tematica"
             )
         except Exception:
-            # La columna 'activo' no existe aún — la creamos automáticamente
             cursor.execute("ALTER TABLE tematicas ADD COLUMN activo TINYINT(1) NOT NULL DEFAULT 1")
             conn.commit()
             cursor.execute(
@@ -464,7 +440,6 @@ def admin_listar_tematicas():
         return jsonify(tematicas)
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/api/admin/tematicas/<int:tematica_id>', methods=['PUT'])
 def admin_toggle_tematica(tematica_id):
@@ -514,7 +489,6 @@ def admin_eliminar_tematica(tematica_id):
         return jsonify({"mensaje": "Temática eliminada"})
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5006)

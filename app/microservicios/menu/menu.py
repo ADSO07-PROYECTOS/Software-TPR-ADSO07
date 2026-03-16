@@ -33,7 +33,6 @@ def ver_menu():
     except Exception as e:
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/categorias', methods=['POST'])
 def crear_categoria():
     try:
@@ -57,7 +56,6 @@ def crear_categoria():
         return jsonify({"error": "Sin conexión a BD"}), 500
     except Exception as e:
         return jsonify({"error": str(e)}), 500
-
 
 @app.route('/api/platos/<int:id_categoria>', methods=['GET'])
 def ver_platos_por_categoria(id_categoria):
@@ -92,7 +90,6 @@ def ver_platos_por_categoria(id_categoria):
         return jsonify({"error": str(e)}), 500
     
 
-# -- Obtener un solo plato por su ID ---
 @app.route('/api/plato/<int:id_plato>', methods=['GET'])
 def ver_detalle_plato(id_plato):
     try:
@@ -129,8 +126,6 @@ def ver_detalle_plato(id_plato):
         print(f"Error buscando plato: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# -- Agregar un nuevo producto --
 @app.route('/api/productos', methods=['POST'])
 def agregar_producto():
     try:
@@ -166,8 +161,6 @@ def agregar_producto():
         print(f"Error al agregar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# -- Actualizar un producto existente --
 @app.route('/api/productos/<int:id_producto>', methods=['PUT'])
 def actualizar_producto(id_producto):
     try:
@@ -214,9 +207,6 @@ def actualizar_producto(id_producto):
         print(f"Error al actualizar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-
-# -- Desactivar un producto (soft delete) --
-# No se elimina físicamente para preservar el historial de reservas y pedidos.
 @app.route('/api/productos/<int:id_producto>', methods=['DELETE'])
 def eliminar_producto(id_producto):
     try:
@@ -241,7 +231,6 @@ def eliminar_producto(id_producto):
         print(f"Error al desactivar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-
 @app.route('/api/extras', methods=['GET'])
 def obtener_extras_configuracion():
     datos = {
@@ -254,8 +243,6 @@ def obtener_extras_configuracion():
         if conn:
             cursor = conn.cursor(dictionary=True)
             
-            # 1. Obtener Tamaños: productos de la categoría "tamano".
-            # limite_sabores se extrae del número en descripcion_producto (ej: "Capacidad: 3 sabores" → 3)
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
@@ -269,8 +256,6 @@ def obtener_extras_configuracion():
             """)
             datos["tamanos"] = cursor.fetchall()
 
-            # 2. Obtener Sabores/Toppings (categoría "Sabores").
-            # No se filtra por disponibilidad porque son toppings, no productos del menú principal.
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
@@ -281,7 +266,6 @@ def obtener_extras_configuracion():
             """)
             datos["sabores"] = cursor.fetchall()
 
-            # 3. Adiciones (toppings extra como queso, piña, etc.)
             cursor.execute("""
                 SELECT p.producto_id AS id,
                        p.nombre_producto AS nombre,
@@ -301,9 +285,6 @@ def obtener_extras_configuracion():
     except Exception as e:
         print(f"Error obteniendo extras: {e}")
         return jsonify({"error": str(e)}), 500
-
-
-
 
 if __name__ == '__main__':
     try:

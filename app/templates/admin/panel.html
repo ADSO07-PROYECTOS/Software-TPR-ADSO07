@@ -8,7 +8,6 @@
 </head>
 <body data-rol="{{ rol_usuario }}">
 
-<!-- Botón hamburguesa (visible solo en móvil) -->
 <button id="btn_menu" aria-label="Abrir menú">
     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round">
         <line x1="3" y1="6"  x2="21" y2="6"/>
@@ -17,15 +16,14 @@
     </svg>
 </button>
 
-<!-- Overlay para cerrar sidebar en móvil -->
 <div id="sidebar-overlay"></div>
 
 <main id="gran_padre">
 
-    <!-- SIDEBAR -->
+    
     <header id="panel_izq">
 
-        <!-- Bloque de usuario -->
+        
         <div id="usuario-info">
             <div id="usuario-avatar">{{ nombre_usuario[0] | upper if nombre_usuario else 'U' }}</div>
             <div id="usuario-texto">
@@ -42,7 +40,7 @@
             <div id="tipo_operacion">
 
                 <button class="nav-btn active" data-section="dashboard">
-                    <!-- Casa / Dashboard -->
+                    
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
                         <polyline points="9 21 9 12 15 12 15 21"/>
@@ -51,7 +49,7 @@
                 </button>
 
                 <button class="nav-btn" data-section="productos" data-requiere-rol="administrador">
-                    <!-- Cubiertos / Menú -->
+                    
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M18 2v7a2 2 0 0 1-2 2h-1v11h-2V11h-1a2 2 0 0 1-2-2V2h2v6h1V2h2v6h1V2h2z"/>
                         <path d="M6 2v4c0 1.1.9 2 2 2v14H6V8a2 2 0 0 1-2-2V2h2z"/>
@@ -60,7 +58,7 @@
                 </button>
 
                 <button class="nav-btn" data-section="pedidos" data-requiere-rol="administrador">
-                    <!-- Clipboard lista / Pedidos -->
+                    
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
                         <rect x="8" y="2" width="8" height="4" rx="1"/>
@@ -71,7 +69,7 @@
                 </button>
 
                 <button class="nav-btn" data-section="reservas" data-requiere-rol="administrador">
-                    <!-- Calendario / Reservas -->
+                    
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="4" width="18" height="18" rx="2"/>
                         <line x1="16" y1="2" x2="16" y2="6"/>
@@ -84,7 +82,7 @@
                 </button>
 
                 <button class="nav-btn" data-section="tematicas" data-requiere-rol="administrador">
-                    <!-- Estrella / Temáticas -->
+                    
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
                     </svg>
@@ -92,7 +90,7 @@
                 </button>
 
                 <button class="nav-btn" data-section="usuarios" data-requiere-rol="administrador">
-                    <!-- Usuario / Usuarios -->
+                    
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="8" r="4"/>
                         <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
@@ -109,8 +107,8 @@
                     <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H9V2H2V16H9V18H2ZM13 14L11.625 12.55L14.175 10H6V8H14.175L11.625 5.45L13 4L18 9L13 14Z" fill="white"/>
                 </svg>
             </a>
-            <!-- Ícono desarrolladores -->
-            <span id="btn_devs" title="Desarrolladores ADSO07" class="dev-icon">
+            
+            <span id="btn_devs" title="Desarrolladores ADSO07" class="dev-icon" onclick="document.getElementById('modal-devs').style.display='flex'" style="cursor:pointer;">
                 <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="16 18 22 12 16 6"/>
                     <polyline points="8 6 2 12 8 18"/>
@@ -121,10 +119,10 @@
         </div>
     </header>
 
-    <!-- CONTENIDO PRINCIPAL -->
+    
     <div id="contenido_principal">
 
-        <!-- DASHBOARD -->
+        
         <div id="sec-dashboard" class="seccion activa">
             <div id="layout_dashboard">
 
@@ -192,7 +190,7 @@
             </div>
         </div>
 
-        <!-- USUARIOS -->
+        
         <div id="sec-usuarios" class="seccion">
             <div class="seccion-header">
                 <h1>Gestión de Usuarios</h1>
@@ -224,10 +222,10 @@
             </div>
         </div>
 
-        <!-- PRODUCTOS (MENÚ) -->
+        
         <div id="sec-productos" class="seccion">
 
-            <!-- Vista: categorías -->
+            
             <div id="vista-categorias">
                 <div class="seccion-header">
                     <h1>Gestión de Menú</h1>
@@ -238,7 +236,7 @@
                 </div>
             </div>
 
-            <!-- Vista: platos de una categoría -->
+            
             <div id="vista-platos" class="oculta">
                 <div class="seccion-header">
                     <div style="display:flex;align-items:center;gap:12px;">
@@ -268,7 +266,7 @@
 
         </div>
 
-        <!-- PEDIDOS (DOMICILIOS) -->
+        
         <div id="sec-pedidos" class="seccion">
             <div class="seccion-header">
                 <h1>Gestión de Pedidos</h1>
@@ -294,7 +292,7 @@
             </div>
         </div>
 
-        <!-- RESERVAS -->
+        
         <div id="sec-reservas" class="seccion">
             <div class="seccion-header">
                 <h1>Gestión de Reservas</h1>
@@ -322,7 +320,7 @@
             </div>
         </div>
 
-        <!-- TEMÁTICAS -->
+        
         <div id="sec-tematicas" class="seccion">
             <div class="seccion-header">
                 <h1>Gestión de Temáticas</h1>
@@ -360,16 +358,12 @@
             </div>
         </div>
 
-    </div><!-- /contenido_principal -->
+    </div>
 
 </main>
 
-<!-- Toast de notificaciones -->
 <div id="toast" class="toast oculta"></div>
 
-<!-- ══════════════════════════════════════════════════════
-     MODAL: Nueva Categoría
-     ══════════════════════════════════════════════════════ -->
 <div id="modal-categoria" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-categoria')">
     <div class="modal-caja">
         <div class="modal-header">
@@ -396,9 +390,6 @@
     </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     MODAL: Nuevo / Editar Producto
-     ══════════════════════════════════════════════════════ -->
 <div id="modal-producto" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-producto')">
     <div class="modal-caja modal-caja-lg">
         <div class="modal-header">
@@ -450,7 +441,6 @@
     </div>
 </div>
 
-<!-- Modal: Ver Comprobante de Transferencia -->
 <div id="modal-comprobante" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event, 'modal-comprobante')">
     <div class="modal-caja modal-caja-lg">
         <div class="modal-header">
@@ -468,9 +458,6 @@
     </div>
 </div>
 
-<!-- ══════════════════════════════════════════════════════
-     MODAL: Nuevo / Editar Usuario
-     ══════════════════════════════════════════════════════ -->
 <div id="modal-usuario" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-usuario')">
     <div class="modal-caja">
         <div class="modal-header">
@@ -516,5 +503,55 @@
 </div>
 
 <script src="{{ url_for('static', filename='javascript/admin/panel.js') }}"></script>
+
+<div id="modal-devs" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(6px);">
+    <div style="background:linear-gradient(160deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%); border:1px solid rgba(153,24,31,0.6); border-radius:24px; padding:36px 28px 28px; text-align:center; width:310px; max-width:92vw; box-shadow:0 8px 40px rgba(0,0,0,0.6); position:relative;">
+
+        
+        <button onclick="document.getElementById('modal-devs').style.display='none'" style="position:absolute; top:10px; right:12px; background:none; border:none; color:rgba(255,255,255,0.5); font-size:22px; cursor:pointer; line-height:1; transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&times;</button>
+
+        
+        <div style="margin-bottom:16px;">
+            <img src="{{ url_for('static', filename='img/logo-sena.png') }}" alt="SENA" style="height:60px; object-fit:contain;">
+        </div>
+
+        
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:3px; color:rgba(255,255,255,0.45); margin-bottom:20px; text-transform:uppercase;">Equipo de Desarrollo</div>
+
+        
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+            <div style="flex:1; height:1px; background:linear-gradient(to right, transparent, #99181F);"></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 6L2 12L8 18M16 6L22 12L16 18" stroke="#99181F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div style="flex:1; height:1px; background:linear-gradient(to left, transparent, #99181F);"></div>
+        </div>
+
+        
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">JUAN DAVID GONZALEZ BEDOYA</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">Aprendiz SENA</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">SANTIAGO ALEXANDER MEJIA</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">Aprendiz SENA</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">JUAN CAMILO PEREZ</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">Aprendiz SENA</div>
+            </div>
+        </div>
+
+        
+        <div style="background:rgba(153,24,31,0.15); border:1px solid rgba(153,24,31,0.4); border-radius:14px; padding:14px 16px;">
+            <div style="font-size:18px; margin-bottom:6px;">🎓</div>
+            <p style="font-size:12px; color:rgba(255,255,255,0.75); line-height:1.6; margin:0; font-family:Arial,sans-serif;">
+                Agradecimiento especial a nuestros <strong style="color:#fff;">instructores del SENA</strong> por guiarnos, enseñarnos y motivarnos a lo largo de este proceso de formación. Este proyecto es el fruto de su dedicación.
+            </p>
+        </div>
+
+        <div style="margin-top:16px; font-size:11px; color:rgba(255,255,255,0.2); font-family:Arial,sans-serif;">ADSO · 2026</div>
+    </div>
+</div>
+
 </body>
 </html>

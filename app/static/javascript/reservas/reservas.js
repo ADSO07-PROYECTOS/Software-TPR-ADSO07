@@ -1,4 +1,4 @@
-const API_RESERVAS = 'http://147.182.238.195:5005/api/';
+const API_RESERVAS = 'http:
 
 export async function inicio() { window.location.href = '/menu'; }
 
@@ -164,7 +164,7 @@ export function prepararPaso2() {
             if (res.ok && data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
-                // Limpiar carrito
+
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
 

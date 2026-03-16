@@ -1,13 +1,11 @@
 document.addEventListener('DOMContentLoaded', () => {
-    // 1. Datos del producto (Esto podría venir de una base de datos)
-    // Por ahora, lo pondremos manual para probar
+
     const productoInfo = {
         nombre: "Hamburguesa Especial",
         precioBase: 18000,
         imagen: "../static/images/hamburguesa.png"
     };
 
-    // 2. Elementos
     const precioUnitarioTxt = document.getElementById('precio-unitario');
     const totalFinalTxt = document.getElementById('total-final');
     const cantTotalSpan = document.querySelector('.cantidad-total');
@@ -16,16 +14,13 @@ document.addEventListener('DOMContentLoaded', () => {
     let cantidadProductos = 1;
     const VALOR_ADICIONAL = 3000;
 
-    // 3. Función de Cálculo
     function actualizarPrecio() {
         let precioPorUnidad = productoInfo.precioBase;
 
-        // Sumar adicionales
         itemsAdicionales.forEach(item => {
             const cant = parseInt(item.querySelector('.cantidad').textContent);
             precioPorUnidad += cant * VALOR_ADICIONAL;
 
-            // Cambio de color visual
             if (cant > 0) {
                 item.classList.add('seleccionado');
                 
@@ -38,13 +33,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
         const granTotal = precioPorUnidad * cantidadProductos;
         
-        // Mostrar en pantalla
+
         precioUnitarioTxt.textContent = `$${productoInfo.precioBase.toLocaleString()}`;
         totalFinalTxt.textContent = `$${granTotal.toLocaleString()}`;
         cantTotalSpan.textContent = cantidadProductos;
     }
 
-    // 4. Eventos de los botones de adicionales
     itemsAdicionales.forEach(item => {
         item.querySelector('.btn-mas').addEventListener('click', () => {
             const span = item.querySelector('.cantidad');
@@ -65,7 +59,6 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     });
 
-    // 5. Cantidad de productos (Footer)
     document.querySelector('.cont_btn-mas').addEventListener('click', () => {
         cantidadProductos++;
         actualizarPrecio();
@@ -78,7 +71,6 @@ document.addEventListener('DOMContentLoaded', () => {
         }
     });
 
-    // 6. Botón Añadir (Mensaje final)
     document.querySelector('.añadir').addEventListener('click', () => {
         let adicionalesElegidos = [];
         itemsAdicionales.forEach(item => {
@@ -91,6 +83,5 @@ document.addEventListener('DOMContentLoaded', () => {
         alert("¡Pedido agregado!\n\n" + resumen);
     });
 
-    // Iniciar
     actualizarPrecio();
 });

@@ -1,7 +1,6 @@
-/* Importamos la fuente */
+
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
-/* Reinicio básico */
 * {
     color: white;
     margin: 0;
@@ -27,10 +26,10 @@ body {
     display: flex;
     background: rgba(0, 0, 0, 0.4);
     justify-content: space-between;
-    /*backdrop-filter: blur(10px);*/
+    
     z-index: 50;
 }
-/* BOTÓN MENÚ */
+
 #menu_btn {
     background: none;
     border: none;
@@ -100,8 +99,6 @@ button {
 
 }
 
-
-/* Botones superiores */
 .atras-btn, .menu-btn {
     background: none;
     border: none;
@@ -109,8 +106,6 @@ button {
     cursor: pointer;
     padding: 5px;
 }
-
-/* Platos*/
 
 .plato-cont {
     margin: 10px 0;
@@ -129,7 +124,6 @@ button {
     transform: scale(1.03);
 }
 
-/* Imagen pequeña a la izquierda */
 .plato-cont img {
     display: flex;
     align-items: left;
@@ -140,7 +134,6 @@ button {
     border-radius: 6px;
 }
 
-/* Contenedor del texto */
 .info {
     margin: 0 0 0 15px;
     display: flex;
@@ -149,7 +142,6 @@ button {
     flex: 1;
 }
 
-/* Título y descripción */
 .info h3 {
     font-size: 26px;
     margin: 0;
@@ -164,7 +156,6 @@ button {
     line-height: 1.2;
 }
 
-/* Botón Seleccionar */
 .info .seleccionar-btn {
     background-color: #99181F;
     color: white;
@@ -180,7 +171,6 @@ button {
     background-color: #b9232c;
 }
 
-/* Botón Reservar */
 .reservar-btn {
     width: 48%;
     position: fixed;
@@ -210,7 +200,6 @@ button {
     border-radius: 30px;
 }
 
-/* Menú Inferior */
 .menu_inferior {
     position: fixed;
     bottom: 0;
