@@ -515,6 +515,22 @@ def admin_tematica_delete(tid):
 def admin_tematicas_put(tid):
     return _proxy_admin('PUT', f'/api/admin/tematicas/{tid}', json=request.get_json())
 
+@app.route('/admin/api/mesas', methods=['GET'])
+def admin_mesas_get():
+    return _proxy_admin('GET', '/api/admin/mesas')
+
+@app.route('/admin/api/mesas', methods=['POST'])
+def admin_mesas_post():
+    return _proxy_admin('POST', '/api/admin/mesas', json=request.get_json())
+
+@app.route('/admin/api/mesas/<int:mid>', methods=['PUT'])
+def admin_mesa_put(mid):
+    return _proxy_admin('PUT', f'/api/admin/mesas/{mid}', json=request.get_json())
+
+@app.route('/admin/api/mesas/<int:mid>', methods=['DELETE'])
+def admin_mesa_delete(mid):
+    return _proxy_admin('DELETE', f'/api/admin/mesas/{mid}')
+
 @app.route('/admin/api/usuarios', methods=['GET'])
 def admin_usuarios_get():
     return _proxy_admin('GET', '/api/admin/usuarios')

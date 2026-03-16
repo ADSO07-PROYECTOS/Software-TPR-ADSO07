@@ -84,6 +84,16 @@
                     <span class="nav-lbl">Reservas</span>
                 </button>
 
+                <button class="nav-btn" data-section="mesas" data-requiere-rol="administrador">
+                    
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <rect x="3" y="8" width="18" height="8" rx="2"/>
+                        <line x1="7" y1="16" x2="7" y2="20"/>
+                        <line x1="17" y1="16" x2="17" y2="20"/>
+                    </svg>
+                    <span class="nav-lbl">Mesas</span>
+                </button>
+
                 <button class="nav-btn" data-section="tematicas" data-requiere-rol="administrador">
                     
                     <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -324,6 +334,34 @@
         </div>
 
         
+        <div id="sec-mesas" class="seccion">
+            <div class="seccion-header">
+                <h1>Gestión de Mesas</h1>
+                <button class="btn-accion verde" onclick="abrirModalMesa()">+ Nueva Mesa</button>
+            </div>
+            <div class="filtro-roles" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+                <button class="btn-filtro-piso activo" data-piso="" onclick="filtrarMesasPorPiso(this)">Todos los pisos</button>
+                <button class="btn-filtro-piso" data-piso="1" onclick="filtrarMesasPorPiso(this)">Piso 1</button>
+                <button class="btn-filtro-piso" data-piso="2" onclick="filtrarMesasPorPiso(this)">Piso 2</button>
+            </div>
+            <div class="tabla-wrapper">
+                <table class="tabla-admin">
+                    <thead>
+                        <tr>
+                            <th>#</th>
+                            <th>N° Mesa</th>
+                            <th>Piso</th>
+                            <th>Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody id="tbody-mesas">
+                        <tr><td colspan="4" class="cargando">Cargando...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </div>
+
+        
         <div id="sec-tematicas" class="seccion">
             <div class="seccion-header">
                 <h1>Gestión de Temáticas</h1>
@@ -465,6 +503,37 @@
             <button type="button" class="btn-accion rojo" id="btn-rechazar-comprobante" onclick="rechazarComprobante(this.dataset.reservaId)">✗ RECHAZAR</button>
             <button type="button" class="btn-accion verde" id="btn-confirmar-comprobante" onclick="confirmarComprobante(this.dataset.reservaId)">✓ CONFIRMAR PAGO</button>
         </div>
+    </div>
+</div>
+
+<div id="modal-mesa" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-mesa')">
+    <div class="modal-caja">
+        <div class="modal-header">
+            <h2 id="modal-mesa-titulo">Nueva Mesa</h2>
+            <button class="modal-cerrar" onclick="cerrarModalMesa()">&times;</button>
+        </div>
+        <form id="form-mesa" onsubmit="guardarMesa(event)">
+            <input type="hidden" id="fm-id">
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-grupo">
+                        <label>Número de mesa</label>
+                        <input type="number" id="fm-numero" required min="1" placeholder="Ej: 1, 2, 3...">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Piso</label>
+                        <select id="fm-piso" required>
+                            <option value="1">Piso 1</option>
+                            <option value="2">Piso 2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion gris" onclick="cerrarModalMesa()">Cancelar</button>
+                <button type="submit" class="btn-accion verde">Guardar mesa</button>
+            </div>
+        </form>
     </div>
 </div>
 
