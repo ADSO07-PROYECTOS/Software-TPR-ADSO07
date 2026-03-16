@@ -16,6 +16,11 @@ document.addEventListener('DOMContentLoaded', () => {
         return;
     }
 
+    const totalGuardado = localStorage.getItem('total_reserva');
+    if (totalPagar && totalGuardado) {
+        totalPagar.textContent = `$ ${Number(totalGuardado).toLocaleString('es-CO')}`;
+    }
+
     inputFile.addEventListener('change', (e) => {
         const file = e.target.files[0];
         if (file) {

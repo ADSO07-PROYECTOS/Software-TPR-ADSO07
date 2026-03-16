@@ -165,6 +165,10 @@ export function prepararPaso2() {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
 
+                const carritoItems = JSON.parse(localStorage.getItem('carrito_tpr')) || [];
+                const totalReserva = carritoItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                localStorage.setItem('total_reserva', totalReserva);
+
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
 
