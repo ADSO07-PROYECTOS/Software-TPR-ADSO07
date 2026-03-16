@@ -20,10 +20,12 @@ document.addEventListener('DOMContentLoaded', () => {
 
 export function seleccionarServicio(tipo) {
     const carrito = JSON.parse(localStorage.getItem('carrito') || '[]');
-    if (carrito.length === 0) {
-        alert('Agrega platos al carrito primero.');
+    
+    if (tipo === 'domicilio' && carrito.length === 0) {
+        alert('Agrega platos al carrito primero para solicitar un domicilio.');
         return;
     }
+    
     const carritoTpr = carrito.map(item => ({
         id: item.id,
         nombre: item.producto,
@@ -33,6 +35,7 @@ export function seleccionarServicio(tipo) {
         adicionales: item.adicionales || [],
         sabores: item.sabores || []
     }));
+    
     localStorage.setItem('carrito_tpr', JSON.stringify(carritoTpr));
     localStorage.setItem('tipo_servicio', tipo);
     window.location.href = '/datos_cliente';
