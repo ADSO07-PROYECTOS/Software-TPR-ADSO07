@@ -459,6 +459,7 @@
         </div>
         <div class="modal-footer">
             <button type="button" class="btn-accion gris" onclick="cerrarModalComprobante()">Cerrar</button>
+            <button type="button" class="btn-accion rojo" id="btn-rechazar-comprobante" onclick="rechazarComprobante(this.dataset.reservaId)">✗ RECHAZAR</button>
             <button type="button" class="btn-accion verde" id="btn-confirmar-comprobante" onclick="confirmarComprobante(this.dataset.reservaId)">✓ CONFIRMAR PAGO</button>
         </div>
     </div>

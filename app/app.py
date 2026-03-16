@@ -126,6 +126,10 @@ def vista_exito():
 def subir_comprobante():
     return render_template('client/subir_com.html')
 
+@app.route('/subir_comprobante_domicilio')
+def subir_comprobante_domicilio():
+    return render_template('client/subir_com_domicilio.html')
+
 @app.route('/resumen/reserva/<int:id_reserva>')
 def resumen_reserva(id_reserva):
     try:
@@ -619,6 +623,67 @@ def proxy_crear_domicilio():
         return jsonify(resp.json()), resp.status_code
     except Exception as e:
         return jsonify({"status": "error", "message": str(e)}), 502
+
+@app.route('/api/domicilios/comprobante', methods=['POST'])
+def api_subir_comprobante_domicilio():
+    try:
+        domicilio_id = request.form.get('domicilio_id')
+        if not domicilio_id:
+            return jsonify({'success': False, 'message': 'ID de pedido no proporcionado'}), 400
+
+        if 'archivo' not in request.files:
+            return jsonify({'success': False, 'message': 'No se envió ningún archivo'}), 400
+
+        archivo = request.files['archivo']
+        if archivo.filename == '':
+            return jsonify({'success': False, 'message': 'Nombre de archivo vacío'}), 400
+
+        if not allowed_file(archivo.filename, ALLOWED_EXT_COMPROBANTE):
+            return jsonify({'success': False, 'message': 'Formato no permitido. Usa PNG, JPG o PDF'}), 400
+
+        conn = conectar()
+        if not conn:
+            return jsonify({'success': False, 'message': 'Error de conexión a base de datos'}), 500
+
+        cursor = conn.cursor(dictionary=True)
+        try:
+            cursor.execute("""
+                SELECT c.cc_cliente
+                FROM domicilios d
+                JOIN clientes c ON d.cliente_id = c.cliente_id
+                WHERE d.domicilio_id = %s
+            """, (domicilio_id,))
+            resultado = cursor.fetchone()
+
+            if not resultado:
+                cursor.close(); conn.close()
+                return jsonify({'success': False, 'message': f'Pedido #{domicilio_id} no encontrado'}), 404
+
+            cedula = resultado['cc_cliente']
+            ext    = archivo.filename.rsplit('.', 1)[1].lower()
+            nombre = f"comprobante_dom_{cedula}.{ext}"
+            ruta   = os.path.join(UPLOAD_FOLDER_COMPROBANTES, nombre)
+            archivo.save(ruta)
+
+            cursor.execute("SHOW COLUMNS FROM domicilios LIKE 'comprobante_transferencia'")
+            if not cursor.fetchone():
+                cursor.execute("ALTER TABLE domicilios ADD COLUMN comprobante_transferencia VARCHAR(255) NULL")
+                conn.commit()
+
+            ruta_relativa = f'comprobantes/{nombre}'
+            cursor.execute(
+                "UPDATE domicilios SET comprobante_transferencia=%s, estado_pedido='En revisión' WHERE domicilio_id=%s",
+                (ruta_relativa, domicilio_id)
+            )
+            conn.commit()
+            cursor.close(); conn.close()
+            return jsonify({'success': True, 'message': 'Comprobante recibido correctamente'}), 200
+        except Exception as e:
+            cursor.close(); conn.close()
+            return jsonify({'success': False, 'message': f'Error: {str(e)}'}), 500
+    except Exception as e:
+        return jsonify({'success': False, 'message': str(e)}), 500
+
 
 @app.route('/api/plato/<int:pid>', methods=['GET'])
 def proxy_plato_detalle(pid):

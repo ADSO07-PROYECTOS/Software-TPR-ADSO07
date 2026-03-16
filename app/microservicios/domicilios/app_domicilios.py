@@ -2,6 +2,7 @@ import sys, os, qrcode, io, base64, threading, requests
 from flask import Flask, request, jsonify
 from flask_cors import CORS
 from dotenv import load_dotenv
+from conexion import conectar
 
 load_dotenv(os.path.join(os.path.dirname(__file__), '../../..', '.env'))
 

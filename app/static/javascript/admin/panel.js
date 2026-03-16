@@ -609,13 +609,21 @@ async function cargarPedidos() {
             tbody.innerHTML = '<tr><td colspan="8" class="cargando">Sin domicilios registrados</td></tr>';
             return;
         }
-        tbody.innerHTML = domicilios.map(d => `
+        tbody.innerHTML = domicilios.map(d => {
+            const tieneComprobante = Boolean(d.comprobante_transferencia);
+            let pagoCell;
+            if (tieneComprobante) {
+                pagoCell = `<span class="pill amarillo">⏳ EN REVISIÓN</span><br><button class="btn-accion azul" style="margin-top:4px; font-size:0.85rem;" onclick="abrirModalComprobante(${d.domicilio_id}, 'domicilio')">📄 Ver</button>`;
+            } else {
+                pagoCell = d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo';
+            }
+            return `
             <tr>
                 <td>${d.domicilio_id}</td>
                 <td>${esc(d.nombre || '')}<br><small>${esc(d.telefono || '')}</small></td>
                 <td>${esc(d.direccion || '')}</td>
                 <td>$${d.total ? Number(d.total).toLocaleString('es-CO') : '0'}</td>
-                <td>${d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo'}</td>
+                <td>${pagoCell}</td>
                 <td><small>${formatearHora(d.fecha_hora)}</small></td>
                 <td><span class="pill ${pillDom(d.estado_pedido)}">${esc(d.estado_pedido || '')}</span></td>
                 <td>
@@ -626,7 +634,7 @@ async function cargarPedidos() {
                     </select>
                 </td>
             </tr>
-        `).join('');
+        `}).join('');
     } catch (e) {
         tbody.innerHTML = `<tr><td colspan="8" class="cargando">${esc(e.message)}</td></tr>`;
         toast(e.message, 'error');
@@ -722,40 +730,49 @@ async function cambiarEstadoReserva(id, nuevoEstado) {
     }
 }
 
-async function abrirModalComprobante(reservaId) {
+async function abrirModalComprobante(id, tipo = 'reserva') {
     try {
-        const reservas = await apiFetch('/admin/api/reservas');
-        const reserva = reservas.find(r => r.reserva_id === reservaId);
-        
-        if (!reserva || !reserva.comprobante_transferencia) {
+        let registro;
+        if (tipo === 'domicilio') {
+            const domicilios = await apiFetch('/admin/api/domicilios');
+            registro = domicilios.find(d => d.domicilio_id === id);
+        } else {
+            const reservas = await apiFetch('/admin/api/reservas');
+            registro = reservas.find(r => r.reserva_id === id);
+        }
+
+        if (!registro || !registro.comprobante_transferencia) {
             alert('Comprobante no encontrado');
             return;
         }
 
-        const modal = document.getElementById('modal-comprobante');
-        const img = document.getElementById('comprobante-preview');
-        const enlace = document.getElementById('comprobante-enlace');
-        const titulo = document.querySelector('#modal-comprobante .modal-header h2');
+        const modal       = document.getElementById('modal-comprobante');
+        const img         = document.getElementById('comprobante-preview');
+        const enlace      = document.getElementById('comprobante-enlace');
+        const titulo      = document.querySelector('#modal-comprobante .modal-header h2');
         const btnConfirmar = document.getElementById('btn-confirmar-comprobante');
+        const btnRechazar  = document.getElementById('btn-rechazar-comprobante');
 
-        titulo.textContent = `Comprobante Reserva #${reservaId} - ${reserva.cc_cliente}`;
-        
-        const rutaComprobante = `/static/${reserva.comprobante_transferencia}`;
-        
+        const label = tipo === 'domicilio' ? `Pedido #${id}` : `Reserva #${id} - ${registro.cc_cliente}`;
+        titulo.textContent = `Comprobante ${label}`;
 
-        if (reserva.comprobante_transferencia.endsWith('.pdf')) {
+        const rutaComprobante = `/static/${registro.comprobante_transferencia}`;
+
+        if (registro.comprobante_transferencia.endsWith('.pdf')) {
             img.style.display = 'none';
             enlace.href = rutaComprobante;
             enlace.style.display = 'block';
             enlace.textContent = '📄 Ver PDF en nueva ventana';
         } else {
-
             img.src = rutaComprobante;
             img.style.display = 'block';
             enlace.style.display = 'none';
         }
 
-        btnConfirmar.dataset.reservaId = reservaId;
+        btnConfirmar.dataset.reservaId = id;
+        btnConfirmar.dataset.tipo = tipo;
+        btnRechazar.dataset.reservaId  = id;
+        btnRechazar.dataset.tipo  = tipo;
         modal.classList.remove('oculta');
     } catch (e) {
         alert('Error al abrir comprobante: ' + e.message);
@@ -766,29 +783,65 @@ function cerrarModalComprobante() {
     document.getElementById('modal-comprobante').classList.add('oculta');
 }
 
+async function rechazarComprobante(reservaId) {
+    const btn  = document.getElementById('btn-rechazar-comprobante');
+    const tipo = btn.dataset.tipo || 'reserva';
+    if (!confirm('¿Rechazar este comprobante? El pedido/reserva volverá a estado Pendiente.')) return;
+
+    try {
+        btn.disabled = true;
+        btn.textContent = 'RECHAZANDO...';
+
+        if (tipo === 'domicilio') {
+            await apiFetch(`/admin/api/domicilios/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado_pedido: 'Pendiente', comprobante_validado: true }),
+            });
+        } else {
+            await apiFetch(`/admin/api/reservas/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado: 'pendiente', comprobante_validado: true }),
+            });
+        }
+
+        cerrarModalComprobante();
+        toast(`✗ Comprobante rechazado. Volvió a Pendiente.`, 'error');
+        tipo === 'domicilio' ? cargarPedidos() : cargarReservas();
+    } catch (e) {
+        alert('Error: ' + e.message);
+        btn.disabled = false;
+        btn.textContent = '✗ RECHAZAR';
+    }
+}
+
 async function confirmarComprobante(reservaId) {
+    const btn  = document.getElementById('btn-confirmar-comprobante');
+    const tipo = btn.dataset.tipo || 'reserva';
     if (!confirm('¿Confirmar este comprobante de transferencia?')) return;
     
     try {
-        const btn = event.target;
         btn.disabled = true;
         btn.textContent = 'CONFIRMANDO...';
 
-        await apiFetch(`/admin/api/reservas/${reservaId}`, {
-            method: 'PUT',
-            body: JSON.stringify({ 
-                estado: 'confirmada',
-                comprobante_validado: true
-            }),
-        });
+        if (tipo === 'domicilio') {
+            await apiFetch(`/admin/api/domicilios/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado_pedido: 'En preparación', comprobante_validado: true }),
+            });
+        } else {
+            await apiFetch(`/admin/api/reservas/${reservaId}`, {
+                method: 'PUT',
+                body: JSON.stringify({ estado: 'confirmada', comprobante_validado: true }),
+            });
+        }
 
         cerrarModalComprobante();
-        toast(`✓ Comprobante validado. Reserva confirmada.`);
-        cargarReservas();
+        toast(`✓ Comprobante validado.`);
+        tipo === 'domicilio' ? cargarPedidos() : cargarReservas();
     } catch (e) {
         alert('Error: ' + e.message);
-        event.target.disabled = false;
-        event.target.textContent = '✓ CONFIRMAR PAGO';
+        btn.disabled = false;
+        btn.textContent = '✓ CONFIRMAR PAGO';
     }
 }
 

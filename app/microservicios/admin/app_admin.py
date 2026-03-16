@@ -357,6 +357,7 @@ def admin_listar_domicilios():
         cursor.execute("""
             SELECT d.domicilio_id, d.direccion, d.estado_pedido,
                    d.pago_transferencia, d.fecha_hora,
+                   d.comprobante_transferencia,
                    c.nombre, c.telefono, c.email,
                    SUM(dd.cantidad * dd.valor_unitario) AS total
             FROM domicilios d
@@ -382,14 +383,21 @@ def admin_actualizar_domicilio(domicilio_id):
     try:
         datos = request.get_json()
         nuevo_estado = datos.get('estado_pedido')
+        comprobante_validado = datos.get('comprobante_validado')
         if not nuevo_estado:
             return jsonify({"error": "estado_pedido requerido"}), 400
         conn = conectar()
         cursor = conn.cursor()
-        cursor.execute(
-            "UPDATE domicilios SET estado_pedido = %s WHERE domicilio_id = %s",
-            (nuevo_estado, domicilio_id)
-        )
+        if comprobante_validado:
+            cursor.execute(
+                "UPDATE domicilios SET estado_pedido = %s, comprobante_transferencia = NULL WHERE domicilio_id = %s",
+                (nuevo_estado, domicilio_id)
+            )
+        else:
+            cursor.execute(
+                "UPDATE domicilios SET estado_pedido = %s WHERE domicilio_id = %s",
+                (nuevo_estado, domicilio_id)
+            )
         conn.commit()
         cursor.close(); conn.close()
         return jsonify({"mensaje": "Estado actualizado"})
