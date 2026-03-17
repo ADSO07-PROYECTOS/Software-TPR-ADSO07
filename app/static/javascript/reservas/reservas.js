@@ -15,7 +15,8 @@ export function prepararPaso1Reserva() {
             tel: form.tel.value
         };
         localStorage.setItem('cliente_temporal', JSON.stringify(cliente));
-        window.location.href = '/detalles_reserva';
+        
+        window.location.replace('/detalles_reserva'); 
     };
 }
 
@@ -113,7 +114,6 @@ export async function cargarTematicas() {
 export function prepararPaso2() {
     const form = document.getElementById('form-reserva');
     if (!form) return;
-    
     form.onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn-submit');
@@ -156,22 +156,28 @@ export function prepararPaso2() {
             });
 
             let data = {};
-            try { data = await res.json(); } catch (_e) { data = {}; }
+            try {
+                data = await res.json();
+            } catch (_e) {
+                data = {};
+            }
 
             if (res.ok && data.status === 'success') {
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
 
-                localStorage.removeItem('cliente_temporal');
+                const carritoItems = JSON.parse(localStorage.getItem('carrito_tpr')) || [];
+                const totalReserva = carritoItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
+                localStorage.setItem('total_reserva', totalReserva);
+
+                localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
-                localStorage.removeItem('carrito'); 
 
                 const metodo_pago = payload.reserva.metodo_pago;
-                
                 if (metodo_pago === '1') {
-                    window.location.replace('/subir_comprobante');
+                    window.location.href = '/subir_comprobante';
                 } else {
-                    window.location.replace('/exito');
+                    window.location.href = '/exito';
                 }
             } else {
                 const mensaje = data.message || data.msg || data.error || 'No fue posible procesar la reserva.';
