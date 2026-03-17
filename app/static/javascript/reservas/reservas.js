@@ -6,6 +6,19 @@ export function prepararPaso1Reserva() {
     const form = document.getElementById('form-paso1');
     if (!form) return;
 
+    const datosGuardados = localStorage.getItem('cliente_temporal');
+    if (datosGuardados) {
+        try {
+            const cliente = JSON.parse(datosGuardados);
+            if (form.nom) form.nom.value = cliente.nom || '';
+            if (form.doc) form.doc.value = cliente.doc || '';
+            if (form.correo) form.correo.value = cliente.correo || '';
+            if (form.tel) form.tel.value = cliente.tel || '';
+        } catch (e) {
+            console.error("Error leyendo datos del cliente:", e);
+        }
+    }
+
     form.onsubmit = (e) => {
         e.preventDefault();
         const cliente = {
@@ -15,8 +28,7 @@ export function prepararPaso1Reserva() {
             tel: form.tel.value
         };
         localStorage.setItem('cliente_temporal', JSON.stringify(cliente));
-        
-        window.location.replace('/detalles_reserva'); 
+        window.location.replace('/detalles_reserva');
     };
 }
 

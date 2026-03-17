@@ -26,11 +26,27 @@ export function prepararPasoDomicilio() {
         e.preventDefault();
         const btn = document.getElementById('btn-submit-dom');
         btn.disabled = true;
+        btn.innerText = "PROCESANDO..."; // Le damos feedback visual al usuario
+
+        // 1. VALIDACIÓN DE SEGURIDAD: Verificar que los datos del cliente aún existan
+        let clienteTemporal = null;
+        try {
+            clienteTemporal = JSON.parse(localStorage.getItem('cliente_temporal') || 'null');
+        } catch (_e) {
+            clienteTemporal = null;
+        }
+
+        if (!clienteTemporal || !clienteTemporal.doc || !clienteTemporal.nom) {
+            alert('No se encontraron los datos del cliente. Vuelve al paso anterior e inténtalo de nuevo.');
+            btn.disabled = false;
+            btn.innerText = 'ENVIAR PEDIDO'; // Ajusta este texto al que tenga tu botón
+            return;
+        }
 
         const payload = {
-            cliente: JSON.parse(localStorage.getItem('cliente_temporal')),
+            cliente: clienteTemporal,
             domicilio: {
-                direccion: form.direccion.value+', '+form.referencia.value,
+                direccion: form.direccion.value + ', ' + form.referencia.value,
                 metodo_pago: form.metodo_pago.value
             },
             productos: JSON.parse(localStorage.getItem('carrito_tpr')) || []
@@ -43,28 +59,34 @@ export function prepararPasoDomicilio() {
                 body: JSON.stringify(payload)
             });
             const data = await res.json();
+            
             if (data.status === 'success') {
-                localStorage.setItem('qr_reserva', data.qr);
+                localStorage.setItem('qr_reserva', data.qr); // El exito.html usa esta variable para la imagen
                 localStorage.setItem('id_orden', data.id);
 
+                // 2. TÁCTICA DE SEGURIDAD: Borramos el cliente temporal además del carrito
+                localStorage.removeItem('cliente_temporal');
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
 
+                // 3. TÁCTICA DE HISTORIAL: Usamos replace() en lugar de href
                 if (payload.domicilio.metodo_pago === 'transferencia') {
                     localStorage.setItem('id_domicilio', data.id);
                     const total = payload.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
                     localStorage.setItem('total_domicilio', total);
-                    window.location.href = '/subir_comprobante_domicilio';
+                    window.location.replace('/subir_comprobante_domicilio');
                 } else {
-                    window.location.href = '/exito';
+                    window.location.replace('/exito');
                 }
             } else {
                 alert("Error: " + data.message);
                 btn.disabled = false;
+                btn.innerText = 'ENVIAR PEDIDO';
             }
         } catch (error) {
             alert("Error al conectar con el servicio de domicilios");
             btn.disabled = false;
+            btn.innerText = 'ENVIAR PEDIDO';
         }
     };
 }
