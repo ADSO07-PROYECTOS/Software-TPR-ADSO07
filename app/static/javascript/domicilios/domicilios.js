@@ -96,3 +96,4 @@ export function mostrarResultadoFinal() {
     const qrData = localStorage.getItem('qr_reserva');
     if (img && qrData) img.src = `data:image/png;base64,${qrData}`;
 }
+
