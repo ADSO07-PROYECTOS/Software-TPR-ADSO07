@@ -126,6 +126,7 @@ export async function cargarTematicas() {
 export function prepararPaso2() {
     const form = document.getElementById('form-reserva');
     if (!form) return;
+    
     form.onsubmit = async (e) => {
         e.preventDefault();
         const btn = document.getElementById('btn-submit');
@@ -168,30 +169,29 @@ export function prepararPaso2() {
             });
 
             let data = {};
-            try {
-                data = await res.json();
-            } catch (_e) {
-                data = {};
-            }
+            try { data = await res.json(); } catch (_e) { data = {}; }
 
+            // --- AQUÍ EMPIEZAN LOS CAMBIOS CLAVE ---
             if (res.ok && data.status === 'success') {
+                // 1. Guardar los datos para la pantalla de éxito
                 localStorage.setItem('qr_reserva', data.qr);
                 localStorage.setItem('id_reserva', data.id);
 
-                const carritoItems = JSON.parse(localStorage.getItem('carrito_tpr')) || [];
-                const totalReserva = carritoItems.reduce((sum, item) => sum + (item.precio * item.cantidad), 0);
-                localStorage.setItem('total_reserva', totalReserva);
-
-                localStorage.removeItem('carrito');
+                // 2. TÁCTICA DE SEGURIDAD: Borrar los datos temporales
+                localStorage.removeItem('cliente_temporal');
                 localStorage.removeItem('carrito_tpr');
+                localStorage.removeItem('carrito'); // Vaciamos el carrito principal también
 
                 const metodo_pago = payload.reserva.metodo_pago;
+                
+                // 3. TÁCTICA DE HISTORIAL: Usar replace() en vez de href
                 if (metodo_pago === '1') {
-                    window.location.href = '/subir_comprobante';
+                    window.location.replace('/subir_comprobante');
                 } else {
-                    window.location.href = '/exito';
+                    window.location.replace('/exito');
                 }
             } else {
+            // --- FIN DE LOS CAMBIOS ---
                 const mensaje = data.message || data.msg || data.error || 'No fue posible procesar la reserva.';
                 alert('Error: ' + mensaje);
                 btn.disabled = false;

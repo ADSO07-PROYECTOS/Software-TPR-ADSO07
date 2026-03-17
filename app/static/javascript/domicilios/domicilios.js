@@ -61,15 +61,13 @@ export function prepararPasoDomicilio() {
             const data = await res.json();
             
             if (data.status === 'success') {
-                localStorage.setItem('qr_reserva', data.qr); // El exito.html usa esta variable para la imagen
+                localStorage.setItem('qr_reserva', data.qr); 
                 localStorage.setItem('id_orden', data.id);
 
-                // 2. TÁCTICA DE SEGURIDAD: Borramos el cliente temporal además del carrito
                 localStorage.removeItem('cliente_temporal');
                 localStorage.removeItem('carrito');
                 localStorage.removeItem('carrito_tpr');
 
-                // 3. TÁCTICA DE HISTORIAL: Usamos replace() en lugar de href
                 if (payload.domicilio.metodo_pago === 'transferencia') {
                     localStorage.setItem('id_domicilio', data.id);
                     const total = payload.productos.reduce((acc, p) => acc + p.precio * p.cantidad, 0);
