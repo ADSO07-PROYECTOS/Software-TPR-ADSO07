@@ -4,6 +4,19 @@ export function prepararPaso1Domicilio() {
     const form = document.getElementById('form-paso1');
     if (!form) return;
 
+    const datosGuardados = localStorage.getItem('cliente_temporal');
+    if (datosGuardados) {
+        try {
+            const cliente = JSON.parse(datosGuardados);
+            if (form.nom) form.nom.value = cliente.nom || '';
+            if (form.doc) form.doc.value = cliente.doc || '';
+            if (form.correo) form.correo.value = cliente.correo || '';
+            if (form.tel) form.tel.value = cliente.tel || '';
+        } catch (e) {
+            console.error("Error leyendo datos del cliente:", e);
+        }
+    }
+
     form.onsubmit = (e) => {
         e.preventDefault();
         const cliente = {
@@ -14,7 +27,7 @@ export function prepararPaso1Domicilio() {
         };
         localStorage.setItem('cliente_temporal', JSON.stringify(cliente));
 
-        window.location.href = '/direccion_domicilio'; 
+        window.location.replace('/direccion_domicilio'); 
     };
 }
 
@@ -26,9 +39,8 @@ export function prepararPasoDomicilio() {
         e.preventDefault();
         const btn = document.getElementById('btn-submit-dom');
         btn.disabled = true;
-        btn.innerText = "PROCESANDO..."; // Le damos feedback visual al usuario
+        btn.innerText = "PROCESANDO..."; 
 
-        // 1. VALIDACIÓN DE SEGURIDAD: Verificar que los datos del cliente aún existan
         let clienteTemporal = null;
         try {
             clienteTemporal = JSON.parse(localStorage.getItem('cliente_temporal') || 'null');
@@ -39,7 +51,7 @@ export function prepararPasoDomicilio() {
         if (!clienteTemporal || !clienteTemporal.doc || !clienteTemporal.nom) {
             alert('No se encontraron los datos del cliente. Vuelve al paso anterior e inténtalo de nuevo.');
             btn.disabled = false;
-            btn.innerText = 'ENVIAR PEDIDO'; // Ajusta este texto al que tenga tu botón
+            btn.innerText = 'ENVIAR PEDIDO'; 
             return;
         }
 
@@ -94,4 +106,3 @@ export function mostrarResultadoFinal() {
     const qrData = localStorage.getItem('qr_reserva');
     if (img && qrData) img.src = `data:image/png;base64,${qrData}`;
 }
-
