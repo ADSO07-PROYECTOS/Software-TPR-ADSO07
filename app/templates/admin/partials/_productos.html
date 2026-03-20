@@ -1,0 +1,43 @@
+<div id="sec-productos" class="seccion">
+
+    
+    <div id="vista-categorias">
+        <div class="seccion-header">
+            <h1>Gestión de Menú</h1>
+            <button class="btn-accion verde" onclick="abrirModalCategoria()">+ Nueva Categoría</button>
+        </div>
+        <div id="lista-categorias" class="cat-lista">
+            <div class="cargando" style="padding:20px;text-align:center;">Cargando categorías...</div>
+        </div>
+    </div>
+
+    
+    <div id="vista-platos" class="oculta">
+        <div class="seccion-header">
+            <div style="display:flex;align-items:center;gap:12px;">
+                <button class="btn-accion gris" onclick="volverCategorias()">&larr; Categorías</button>
+                <h1 id="titulo-categoria"></h1>
+            </div>
+            <button class="btn-accion verde" onclick="abrirModalProducto()">+ Nuevo Producto</button>
+        </div>
+
+        <div class="tabla-wrapper">
+            <table class="tabla-admin">
+                <thead>
+                    <tr>
+                        <th>#</th>
+                        <th>Nombre</th>
+                        <th>Precio</th>
+                        <th id="th-stock" style="display:none">Stock</th>
+                        <th>Estado</th>
+                        <th>Acciones</th>
+                    </tr>
+                </thead>
+                <tbody id="tbody-productos">
+                    <tr><td colspan="6" class="cargando">Cargando...</td></tr>
+                </tbody>
+            </table>
+        </div>
+    </div>
+
+</div>

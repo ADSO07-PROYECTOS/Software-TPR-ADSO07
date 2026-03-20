@@ -6,6 +6,8 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if plato %}{{ plato.nombre }}{% else %}Plato no encontrado{% endif %}</title>
     <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
+    <script type="module" src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
+    <script defer src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
 </head>
 <body>
     <header class="cont-superior">
@@ -202,8 +204,6 @@
 
     
 
-    <script type="module" src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
-    <script src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
     {% else %}
     <main style="justify-content: center; text-align: center;">
         <h2 style="color: white;">Plato no encontrado o Error de conexión</h2>

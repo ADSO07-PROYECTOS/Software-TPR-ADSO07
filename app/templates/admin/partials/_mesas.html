@@ -1,0 +1,26 @@
+<div id="sec-mesas" class="seccion">
+    <div class="seccion-header">
+        <h1>Gestión de Mesas</h1>
+        <button class="btn-accion verde" onclick="abrirModalMesa()">+ Nueva Mesa</button>
+    </div>
+    <div class="filtro-roles" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-filtro-piso activo" data-piso="" onclick="filtrarMesasPorPiso(this)">Todos los pisos</button>
+        <button class="btn-filtro-piso" data-piso="1" onclick="filtrarMesasPorPiso(this)">Piso 1</button>
+        <button class="btn-filtro-piso" data-piso="2" onclick="filtrarMesasPorPiso(this)">Piso 2</button>
+    </div>
+    <div class="tabla-wrapper">
+        <table class="tabla-admin">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>N° Mesa</th>
+                    <th>Piso</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-mesas">
+                <tr><td colspan="4" class="cargando">Cargando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

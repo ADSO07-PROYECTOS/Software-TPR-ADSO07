@@ -1,0 +1,227 @@
+/* ===== SIDEBAR / NAVEGACIÓN LATERAL ===== */
+
+#usuario-info {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    width: 85%;
+    padding: 7px 10px;
+    background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.18);
+    border-radius: 12px;
+    margin-bottom: 2px;
+    flex-shrink: 0;
+}
+#usuario-avatar {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    background: #990000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 0.95rem;
+    font-weight: 700;
+    color: #fff;
+    flex-shrink: 0;
+    text-transform: uppercase;
+}
+#usuario-texto {
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+#usuario-nombre {
+    font-size: 0.78rem;
+    font-weight: 700;
+    color: #fff;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+#usuario-rol {
+    font-size: 0.64rem;
+    color: rgba(255,255,255,0.5);
+    text-transform: capitalize;
+}
+
+#marca {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    width: 100%;
+    padding: 12px 0 12px;
+    margin: 0;
+    flex-shrink: 0;
+}
+#marca img {
+    width: 140px;
+    height: 140px;
+    object-fit: contain;
+    display: block;
+}
+
+#btn_menu{
+    display: none;
+}
+
+#panel_izq {
+    background: #080808c5;
+    position: fixed;
+    top: 0;
+    left: 0;
+    border:white 2px solid;
+    width: 300px;
+    height: 100vh;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    padding: 12px 0 10px;
+    border-radius:30px;
+    margin: 10px;
+    z-index: 1000;
+    transition: transform 0.28s ease;
+    overflow: hidden;
+}
+
+#cont_menu {
+    flex: 1;
+    width: 100%;
+    overflow-y: auto;
+    overflow-x: hidden;
+    display: flex;
+    flex-direction: column;
+    justify-content: flex-start;
+    scrollbar-width: thin;
+    scrollbar-color: rgba(255,255,255,0.2) transparent;
+}
+
+#tipo_operación {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 12px;
+}
+
+#tipo_operación a {
+    border: 2px solid white ;
+    text-decoration: none;
+    border-radius: 12px;
+    width: 85%;
+    padding: 12px 20px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 1.1rem;
+    display: flex;
+    align-items: center;
+    justify-content: flex-start;
+    gap: 15px;
+}
+
+#tipo_operación a svg {
+    width: 24px;
+    height: 24px;
+    flex-shrink: 0;
+}
+
+#linea {
+    justify-content: space-between;
+    display: flex;
+    width: 70%;
+    margin: 10px 0 4px;
+    flex-shrink: 0;
+}
+
+#tipo_operacion {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    align-items: center;
+    gap: 7px;
+    margin-top: 4px;
+    padding-bottom: 6px;
+}
+
+.nav-btn {
+    background: white;
+    color: black;
+    border: none;
+    border-radius: 12px;
+    width: 90%;
+    padding: 10px 12px;
+    font-weight: bold;
+    cursor: pointer;
+    font-size: 0.92rem;
+    text-align: left;
+    font-family: inherit;
+    transition: all 0.3s;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    flex-shrink: 0;
+}
+.nav-btn svg {
+    flex-shrink: 0;
+    width: 20px;
+    height: 20px;
+}
+.nav-lbl {
+    flex: 1;
+    white-space: nowrap;
+}
+.nav-btn:hover  { background: #e0e0e0; }
+.nav-btn.active { background: #990000; color: white; }
+
+.dev-icon {
+    position: relative;
+    display: flex;
+    align-items: center;
+    cursor: default;
+    opacity: 0.7;
+    transition: opacity 0.2s;
+}
+.dev-icon:hover { opacity: 1; }
+.dev-tooltip {
+    position: absolute;
+    bottom: 130%;
+    right: 0;
+    background: rgba(0,0,0,0.85);
+    color: white;
+    font-size: 0.75rem;
+    padding: 5px 10px;
+    border-radius: 8px;
+    white-space: nowrap;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 0.2s;
+    border: 1px solid rgba(255,255,255,0.2);
+}
+.dev-icon:hover .dev-tooltip { opacity: 1; }
+
+/* Versión responsive del botón menú */
+#btn_menu {
+    display: none;
+    position: fixed;
+    top: 14px;
+    left: 14px;
+    z-index: 1100;
+    background: #990000;
+    border: 2px solid rgba(255,255,255,0.3);
+    border-radius: 10px;
+    padding: 9px 11px;
+    cursor: pointer;
+    color: white;
+    line-height: 0;
+}
+#btn_menu:hover { background: #bb0000; }
+
+#sidebar-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(0,0,0,0.55);
+    z-index: 1040;
+}
+#sidebar-overlay.visible { display: block; }

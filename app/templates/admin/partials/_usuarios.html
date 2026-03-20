@@ -1,0 +1,29 @@
+<div id="sec-usuarios" class="seccion">
+    <div class="seccion-header">
+        <h1>Gestión de Usuarios</h1>
+        <button class="btn-accion verde" onclick="abrirModalUsuario()">+ Nuevo Usuario</button>
+    </div>
+    <div class="filtro-roles" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:14px;">
+        <button class="btn-filtro-rol activo" data-rol="" onclick="filtrarPorRol(this)">Todos</button>
+        <button class="btn-filtro-rol" data-rol="administrador" onclick="filtrarPorRol(this)">Administradores</button>
+        <button class="btn-filtro-rol" data-rol="cajero" onclick="filtrarPorRol(this)">Cajeros</button>
+    </div>
+    <div class="tabla-wrapper">
+        <table class="tabla-admin">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Cédula</th>
+                    <th>Nombre</th>
+                    <th>Email</th>
+                    <th>Teléfono</th>
+                    <th>Rol</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-usuarios">
+                <tr><td colspan="7" class="cargando">Cargando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>
