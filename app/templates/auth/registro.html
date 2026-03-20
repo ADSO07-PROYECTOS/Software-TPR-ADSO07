@@ -8,6 +8,7 @@
     <title>Registro - Sabores Unidos</title>
     <link rel="stylesheet" href="/app/statics/registro.css">
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;600&display=swap" rel="stylesheet">
+    <script defer src="{{ url_for('static', filename='javascript/auth/registro.js') }}"></script>
 </head>
 
 <body>
@@ -49,13 +50,6 @@
         </div>
     </div>
 
-    
-    <script>
-        document.getElementById('registroForm').addEventListener('submit', (e) => {
-            e.preventDefault();
-            alert('✅ Registro exitoso. Los datos han sido enviados correctamente.');
-        });
-    </script>
 </body>
 
 </html>

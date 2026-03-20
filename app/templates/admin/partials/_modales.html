@@ -1,0 +1,237 @@
+<!-- Modal Categoría -->
+<div id="modal-categoria" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-categoria')">
+    <div class="modal-caja">
+        <div class="modal-header">
+            <h2 id="modal-categoria-titulo">Nueva Categoría</h2>
+            <button class="modal-cerrar" onclick="cerrarModalCategoria()">&times;</button>
+        </div>
+        <form id="form-categoria" onsubmit="guardarCategoria(event)">
+            <input type="hidden" id="fc-id">
+            <div class="modal-body">
+                <div class="form-grupo">
+                    <label>Nombre de la categoría</label>
+                    <input type="text" id="fc-nombre" required placeholder="Ej: Entradas">
+                </div>
+                <div class="form-grupo">
+                    <label>Imagen (PNG / JPG)</label>
+                    <input type="file" id="fc-imagen-file" accept=".png,.jpg,.jpeg,.webp">
+                    <small id="fc-imagen-preview-label" style="opacity:0.6;margin-top:4px;"></small>
+                    <input type="hidden" id="fc-imagen">
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion gris" onclick="cerrarModalCategoria()">Cancelar</button>
+                <button type="submit" class="btn-accion verde">Guardar categoría</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Producto -->
+<div id="modal-producto" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-producto')">
+    <div class="modal-caja modal-caja-lg">
+        <div class="modal-header">
+            <h2 id="modal-producto-titulo">Nuevo Producto</h2>
+            <button class="modal-cerrar" onclick="cerrarModalProducto()">&times;</button>
+        </div>
+        <form id="form-producto" onsubmit="guardarProducto(event)">
+            <input type="hidden" id="fp-id">
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-grupo">
+                        <label>Nombre</label>
+                        <input type="text" id="fp-nombre" required placeholder="Nombre del producto">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Precio</label>
+                        <input type="number" id="fp-precio" required min="0" step="100" placeholder="0">
+                    </div>
+                    <div class="form-grupo" id="fp-categoria-grupo">
+                        <label>Categoría</label>
+                        <select id="fp-categoria" required>
+                            <option value="">-- Selecciona --</option>
+                        </select>
+                    </div>
+                    <div class="form-grupo">
+                        <label>Disponibilidad</label>
+                        <select id="fp-disponibilidad">
+                            <option value="1">Activo</option>
+                            <option value="0">Inactivo</option>
+                        </select>
+                    </div>
+                    <div class="form-grupo" id="fp-stock-grupo" style="display:none">
+                        <label>Stock</label>
+                        <input type="number" id="fp-stock" min="0" step="1" value="0" placeholder="0">
+                    </div>
+                    <div class="form-grupo full-width">
+                        <label>Descripción</label>
+                        <textarea id="fp-descripcion" rows="3" placeholder="Descripción del producto"></textarea>
+                    </div>
+                    <div class="form-grupo full-width">
+                        <label>Imagen (PNG / JPG)</label>
+                        <input type="file" id="fp-imagen-file" accept=".png,.jpg,.jpeg,.webp">
+                        <small id="fp-imagen-preview-label" style="opacity:0.6;margin-top:4px;"></small>
+                        <input type="hidden" id="fp-imagen">
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion gris" onclick="cerrarModalProducto()">Cancelar</button>
+                <button type="submit" class="btn-accion verde">Guardar producto</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Comprobante -->
+<div id="modal-comprobante" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event, 'modal-comprobante')">
+    <div class="modal-caja modal-caja-lg">
+        <div class="modal-header">
+            <h2>Revisar Comprobante</h2>
+            <button class="modal-cerrar" onclick="cerrarModalComprobante()">&times;</button>
+        </div>
+        <div class="modal-body" style="flex-direction: column; align-items: center; gap: 20px;">
+            <img id="comprobante-preview" src="" style="max-width: 100%; max-height: 400px; display: none; border: 1px solid #fff; border-radius: 8px;">
+            <a id="comprobante-enlace" href="#" target="_blank" style="display: none; color: #3d85c6; font-weight: bold;">📄 Ver comprobante PDF</a>
+        </div>
+        <div class="modal-footer">
+            <button type="button" class="btn-accion gris" onclick="cerrarModalComprobante()">Cerrar</button>
+            <button type="button" class="btn-accion rojo" id="btn-rechazar-comprobante" onclick="rechazarComprobante(this.dataset.reservaId)">✗ RECHAZAR</button>
+            <button type="button" class="btn-accion verde" id="btn-confirmar-comprobante" onclick="confirmarComprobante(this.dataset.reservaId)">✓ CONFIRMAR PAGO</button>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Mesa -->
+<div id="modal-mesa" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-mesa')">
+    <div class="modal-caja">
+        <div class="modal-header">
+            <h2 id="modal-mesa-titulo">Nueva Mesa</h2>
+            <button class="modal-cerrar" onclick="cerrarModalMesa()">&times;</button>
+        </div>
+        <form id="form-mesa" onsubmit="guardarMesa(event)">
+            <input type="hidden" id="fm-id">
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-grupo">
+                        <label>Número de mesa</label>
+                        <input type="number" id="fm-numero" required min="1" placeholder="Ej: 1, 2, 3...">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Piso</label>
+                        <select id="fm-piso" required>
+                            <option value="1">Piso 1</option>
+                            <option value="2">Piso 2</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion gris" onclick="cerrarModalMesa()">Cancelar</button>
+                <button type="submit" class="btn-accion verde">Guardar mesa</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Usuario -->
+<div id="modal-usuario" class="modal-overlay oculta" onclick="_cerrarModalPorOverlay(event,'modal-usuario')">
+    <div class="modal-caja">
+        <div class="modal-header">
+            <h2 id="modal-usuario-titulo">Nuevo Usuario</h2>
+            <button class="modal-cerrar" onclick="cerrarModalUsuario()">&times;</button>
+        </div>
+        <form id="form-usuario" onsubmit="guardarUsuario(event)">
+            <input type="hidden" id="fu-id">
+            <div class="modal-body">
+                <div class="form-grid">
+                    <div class="form-grupo">
+                        <label>Cédula</label>
+                        <input type="text" id="fu-cedula" required maxlength="10" placeholder="Número de documento">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Nombre</label>
+                        <input type="text" id="fu-nombre" required maxlength="40" placeholder="Nombres del usuario">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Apellidos</label>
+                        <input type="text" id="fu-apellidos" maxlength="40" placeholder="Apellidos del usuario">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Correo</label>
+                        <input type="email" id="fu-email" maxlength="120" placeholder="correo@ejemplo.com">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Teléfono</label>
+                        <input type="text" id="fu-telefono" maxlength="10" placeholder="Número de contacto">
+                    </div>
+                    <div class="form-grupo">
+                        <label>Contraseña <span style="font-size:11px;color:rgba(255,255,255,0.4);">(dejar vacío para no cambiar)</span></label>
+                        <input type="password" id="fu-contrasena" maxlength="100" placeholder="Contraseña de acceso">
+                    </div>
+                    <div class="form-grupo full-width">
+                        <label>Rol</label>
+                        <select id="fu-rol" required>
+                            <option value="cajero">Cajero</option>
+                            <option value="administrador">Administrador</option>
+                        </select>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn-accion gris" onclick="cerrarModalUsuario()">Cancelar</button>
+                <button type="submit" class="btn-accion verde">Guardar usuario</button>
+            </div>
+        </form>
+    </div>
+</div>
+
+<!-- Modal Desarrolladores -->
+<div id="modal-devs" style="display:none; position:fixed; inset:0; background:rgba(0,0,0,0.75); z-index:9999; justify-content:center; align-items:center; backdrop-filter:blur(6px);">
+    <div style="background:linear-gradient(160deg,#1a1a2e 0%,#16213e 60%,#0f3460 100%); border:1px solid rgba(153,24,31,0.6); border-radius:24px; padding:36px 28px 28px; text-align:center; width:310px; max-width:92vw; box-shadow:0 8px 40px rgba(0,0,0,0.6); position:relative;">
+
+        
+        <button onclick="document.getElementById('modal-devs').style.display='none'" style="position:absolute; top:10px; right:12px; background:none; border:none; color:rgba(255,255,255,0.5); font-size:22px; cursor:pointer; line-height:1; transition:color 0.2s;" onmouseover="this.style.color='#fff'" onmouseout="this.style.color='rgba(255,255,255,0.5)'">&times;</button>
+
+        
+        <div style="margin-bottom:16px;">
+            <img src="{{ url_for('static', filename='img/logo-sena.png') }}" alt="SENA" style="height:60px; object-fit:contain;">
+        </div>
+
+        
+        <div style="font-family:'Bebas Neue',sans-serif; font-size:13px; letter-spacing:3px; color:rgba(255,255,255,0.45); margin-bottom:20px; text-transform:uppercase;">Equipo de Desarrollo</div>
+
+        
+        <div style="display:flex; align-items:center; gap:10px; margin-bottom:20px;">
+            <div style="flex:1; height:1px; background:linear-gradient(to right, transparent, #99181F);"></div>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none"><path d="M8 6L2 12L8 18M16 6L22 12L16 18" stroke="#99181F" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"/></svg>
+            <div style="flex:1; height:1px; background:linear-gradient(to left, transparent, #99181F);"></div>
+        </div>
+
+        
+        <div style="display:flex; flex-direction:column; gap:12px; margin-bottom:24px;">
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">JUAN DAVID GONZALEZ BEDOYA</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">Aprendiz SENA</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">SANTIAGO ALEXANDER MEJIA</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">Aprendiz SENA</div>
+            </div>
+            <div style="background:rgba(255,255,255,0.05); border:1px solid rgba(153,24,31,0.35); border-radius:12px; padding:10px 16px;">
+                <div style="font-family:'Bebas Neue',sans-serif; font-size:16px; color:#fff; letter-spacing:1px;">JUAN CAMILO PEREZ</div>
+                <div style="font-size:11px; color:rgba(255,255,255,0.4); margin-top:2px;">Aprendiz SENA</div>
+            </div>
+        </div>
+
+        
+        <div style="background:rgba(153,24,31,0.15); border:1px solid rgba(153,24,31,0.4); border-radius:14px; padding:14px 16px;">
+            <div style="font-size:18px; margin-bottom:6px;">🎓</div>
+            <p style="font-size:12px; color:rgba(255,255,255,0.75); line-height:1.6; margin:0; font-family:Arial,sans-serif;">
+                Agradecimiento especial a nuestros <strong style="color:#fff;">instructores del SENA</strong> por guiarnos, enseñarnos y motivarnos a lo largo de este proceso de formación. Este proyecto es el fruto de su dedicación.
+            </p>
+        </div>
+
+        <div style="margin-top:16px; font-size:11px; color:rgba(255,255,255,0.2); font-family:Arial,sans-serif;">ADSO · 2026</div>
+    </div>
+</div>

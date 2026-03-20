@@ -1,0 +1,36 @@
+<div id="sec-tematicas" class="seccion">
+    <div class="seccion-header">
+        <h1>Gestión de Temáticas</h1>
+    </div>
+
+    <div class="form-panel">
+        <h2>Nueva Temática</h2>
+        <form onsubmit="agregarTematica(event)">
+            <div class="form-grid">
+                <div class="form-grupo">
+                    <label>Nombre de la temática</label>
+                    <input type="text" id="ft-nombre" required placeholder="Ej: Romántica, Medieval...">
+                </div>
+            </div>
+            <div class="form-acciones">
+                <button type="submit" class="btn-accion verde">Agregar</button>
+            </div>
+        </form>
+    </div>
+
+    <div class="tabla-wrapper">
+        <table class="tabla-admin">
+            <thead>
+                <tr>
+                    <th>#</th>
+                    <th>Nombre</th>
+                    <th>Estado</th>
+                    <th>Acciones</th>
+                </tr>
+            </thead>
+            <tbody id="tbody-tematicas">
+                <tr><td colspan="4" class="cargando">Cargando...</td></tr>
+            </tbody>
+        </table>
+    </div>
+</div>

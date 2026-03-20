@@ -1,0 +1,72 @@
+/* ===== FORMULARIOS ===== */
+
+.form-panel {
+    background: rgba(12,12,12,0.75);
+    border: 2px solid rgba(255,255,255,0.2);
+    border-radius: 16px;
+    padding: 20px 24px;
+    margin-bottom: 24px;
+}
+.form-panel h2 {
+    margin: 0 0 16px 0;
+    font-size: 1.1rem;
+}
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 14px;
+}
+.form-grupo {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.form-grupo.full-width { grid-column: 1 / -1; }
+.form-grupo label {
+    font-size: 0.8rem;
+    opacity: 0.7;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+}
+.form-grupo input,
+.form-grupo select,
+.form-grupo textarea {
+    background: rgba(255,255,255,0.1);
+    border: 1px solid rgba(255,255,255,0.25);
+    border-radius: 8px;
+    padding: 8px 12px;
+    color: white;
+    font-size: 0.9rem;
+    font-family: inherit;
+}
+.form-grupo input:focus,
+.form-grupo select:focus,
+.form-grupo textarea:focus {
+    outline: none;
+    border-color: rgba(255,255,255,0.6);
+}
+.form-grupo select option { background: #111; color: white; }
+.form-grupo input[type="file"] {
+    padding: 6px 10px;
+    cursor: pointer;
+    color: rgba(255,255,255,0.75);
+}
+.form-grupo input[type="file"]::file-selector-button {
+    background: rgba(255,255,255,0.15);
+    border: 1px solid rgba(255,255,255,0.3);
+    border-radius: 6px;
+    color: white;
+    padding: 4px 12px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    margin-right: 10px;
+    transition: background 0.2s;
+}
+.form-grupo input[type="file"]::file-selector-button:hover {
+    background: rgba(255,255,255,0.25);
+}
+.form-acciones {
+    display: flex;
+    gap: 12px;
+    margin-top: 16px;
+}

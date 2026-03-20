@@ -1,0 +1,208 @@
+/* ===== DASHBOARD: tarjetas, mesas, recientes ===== */
+
+#panel_cen {
+    margin-left: 320px;
+    display: grid;
+    grid-template-columns:350px;
+    gap: 20px;
+    align-items: start;
+}
+.hijo_izq{
+    border-radius: 20px;
+    width: 100%;
+    margin-top: 5px;
+}
+
+.hijos_izq {
+    border: white 2px  solid;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #0c0c0cc5;
+    border-radius: 20px;
+    margin-bottom: 20px;
+    padding: 15px 0;
+    gap: 4px;
+}
+
+.hijos_izq h2, .hijos_izq div {
+    margin: 0;
+}
+#disponibles, #ocupadas, #reservadas {
+    width: 80%;
+    height: 25px;
+    border-radius: 50px;
+    margin: 5px 0;
+    display: block;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    font-size: 20px;
+    padding: 20px;
+}
+
+#disponibles {
+    background-color: var(--verde);
+}
+
+#ocupadas {
+    background-color: var(--rojo);
+}
+
+#reservadas {
+    background-color:var(--azul);
+}
+
+.hijo_arriba {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 15px;
+    width: 100%;
+}
+
+#hijos, #hijos_centro {
+    min-width: 180px;
+    padding: 20px;
+    border-radius: 15px;
+    width: 32%;
+    text-align: center;
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+}
+
+#gran_padre {
+    display: flex;
+    width: 100%;
+    min-height: 100vh;
+}
+
+#panel_der {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+#recientes {
+    background-color: #333333;
+    color: white;
+    padding: 14px;
+    border-radius: 25px;
+    margin-top: 9px;
+    border: 2px solid white;
+    margin-left: 23px;
+    margin-right: 10px;
+    display: flex;
+    flex-direction: column;
+    width: 96%;
+}
+.contenedor-tarjetas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    margin-left: 15px;
+    margin-right: 10px;
+    gap: 15px;
+    padding: 10px;
+}
+
+.contenedor-tarjeta2 {
+    margin-left: 15px;
+    margin-right: 10px;
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 15px;
+    padding: 10px;
+}
+
+.tarjeta1{
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    height: 220px;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    font-weight: bold;
+    border:2px solid white;
+}
+
+.tarjeta {
+    border-radius: 15px;
+    padding: 20px;
+    text-align: center;
+    color: white;
+    font-family: sans-serif;
+    font-weight: bold;
+    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+    border:2px solid white;
+}
+
+.tarjeta p {
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.tarjeta h3 {
+    font-size: 40px;
+    margin: 0;
+}
+.tarjeta1 p {
+    font-size: 20px;
+    margin-bottom: 10px;
+    text-transform: uppercase;
+}
+
+.tarjeta1 h3 {
+    font-size: 50px;
+    margin: 0;
+}
+.naranja { background-color: #e69138; }
+.amarilla { background-color: #f1c232; }
+.verde   { background-color: #38761d; }
+.roja    { background-color: #990000; }
+.azul    { background-color: #3d85c6; }
+
+/* -- Dashboard layout -- */
+#layout_dashboard {
+    display: flex;
+    gap: 20px;
+    align-items: flex-start;
+    flex-wrap: wrap;
+}
+#layout_dashboard #panel_cen {
+    margin-left: 0;
+    flex-shrink: 0;
+}
+#layout_dashboard #panel_der {
+    flex: 1;
+    min-width: 300px;
+}
+
+.estado-mesa {
+    width: 80%;
+    border-radius: 50px;
+    margin: 5px 0;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    font-size: 16px;
+    padding: 10px 20px;
+    font-weight: bold;
+}
+.estado-mesa.disponibles { background-color: #38761d; }
+.estado-mesa.ocupadas    { background-color: var(--rojo);  }
+.estado-mesa.reservadas  { background-color: var(--azul);  }
+
+.badge-estado {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 20px;
+    font-size: 0.75rem;
+    font-weight: bold;
+    margin-left: 6px;
+}
+.badge-estado.estado-pendiente       { background: #f1c232; color: #000; }
+.badge-estado.estado-en_preparación,
+.badge-estado.estado-en_preparacion  { background: #3d85c6; color: #fff; }
+.badge-estado.estado-listo           { background: #990000; color: #fff; }
+.badge-estado.estado-entregado       { background: #525055; color: #fff; }
