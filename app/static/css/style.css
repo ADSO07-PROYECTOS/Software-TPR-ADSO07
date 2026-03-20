@@ -151,60 +151,111 @@ html, body {
     border-radius: 30px;
 }
 
+/* --- ESTILOS BASE (MÓVIL PRIMERO) --- */
+
+.logo-contenedor {
+    display: none; /* Oculto en móvil */
+}
+
 .menu_inferior {
     position: fixed;
     bottom: 0;
-    right: 0;
     width: 100%;
     display: flex;
     justify-content: space-around;
-    padding: 8px 0;
-    background: rgb(255, 255, 255);
-    
+    padding: 11px;
+    background: white;
+    z-index: 1000;
+}
+
+.nav_btn_cont {
+    display: flex;
+    width: 100%; 
+    justify-content: space-around; 
 }
 
 .nav-btn {
-    font-size: 26px;
     background: none;
     border: none;
     cursor: pointer;
+    display: flex; 
 }
 
+.nav-btn svg {
+    width: 28px; 
+    height: 28px;
+}
+
+/* --- ESTILOS PARA PC (MIN-WIDTH: 1000PX) --- */
 @media (min-width: 1000px) {
-    .menu-contenedor {
-        padding: 80px;
-        margin: 50px;
-        background-color:rgba(46, 43, 48, 0.459);
 
-    } 
-    .categoria img {
-        height: 400px;
-        width: 700px;
-        object-fit: cover;
-        image-rendering: -webkit-optimize-contrast;
+    body {
+        display: flex;
+        flex-direction: column;
     }
-    .categoria{
-        margin:15px;
 
+    .menu_inferior {
+        position: sticky;
+        top: 0;
+        bottom: auto;
+        order: -1;
+        z-index: 1000;
+        padding: 10px 50px; 
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between; 
+        align-items: center;           
+        width: 100%;
     }
-    .categoria a {
-        font-size: 50px;
-    }   
+
+    /* Ahora estos sí están DENTRO del media query */
+    .logo-contenedor {
+        display: flex; 
+    }
+
+    .logo-empresa {
+        height: 50px; 
+        width: 50px;  
+        object-fit: contain;
+        display: block; /* Aseguramos que se vea */
+    }
+
+    .nav_btn_cont {
+        display: flex;
+        width: auto; /* IMPORTANTE: En PC no debe ser 100% */
+        gap: 80px;
+        justify-content: flex-end;
+    }
+
+    #padre_ppal {
+        order: 1;
+        margin-top: 20px;
+    }
+
     #tlo {
         font-size: 70px;
+        margin-top: 20px; 
     }
 
-    .domicilio-btn {
-        font-size: 60px;
-        width: 45%;
-        left: 52%;
-
+    .menu-contenedor {
+        padding: 40px;
+        margin: 20px 50px;
+        grid-template-columns: repeat(3, 1fr);
     }
-    .reservar-btn {
-        font-size: 60px;
-        width: 45%;
-        left: 3%;
 
+    #reservar-btn, #domicilio-btn {
+        position: static;  
+        width: 40%;
+        margin: 10px 1%;
+        display: inline-block;
+        font-size: 40px;
     }
-    
+/* gola */
+    #botones {
+        order: 2;         
+        text-align: center;
+        padding-bottom: 40px;
+    }
 }
