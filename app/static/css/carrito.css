@@ -235,10 +235,9 @@ body {
     .nav_btn_cont {
         display: flex;
         width: auto; 
+        gap: 80px;
         justify-content: flex-end;
     }
-
-    
 
     #tlo {
         font-size: 70px;
@@ -257,22 +256,6 @@ body {
         margin: 10px 1%;
         display: inline-block;
         font-size: 40px;
-    }
-.editar-btn, .eliminar-btn {
-        position: static; /* Quita el fixed si lo tenían */
-        width: 100%; 
-        height: 80px;
-        margin: 10px;
-        display: inline-flex;
-        justify-content: center;
-        align-items: center;
-        border-radius: 15px;
-        cursor: pointer;
-        transition: transform 0.2s;
-    }
-
-    .editar-btn:hover, .eliminar-btn:hover {
-        transform: scale(1.1);
     }
 
     #botones {
