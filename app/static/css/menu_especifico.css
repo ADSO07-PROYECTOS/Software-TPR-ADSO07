@@ -183,12 +183,11 @@ button {
     box-sizing: border-box;
 }
 
-/* Corrección: position relative en lugar de fixed */
 .reservar-btn, .domicilio-btn {
     position: relative;
     width: 48%;
     padding: 10px;
-    font-size: 24px; /* Un poco más pequeño para evitar desborde en pantallas estrechas */
+    font-size: 24px; 
     border: none;
     cursor: pointer;
     border-radius: 30px;
@@ -202,7 +201,6 @@ button {
 .domicilio-btn {
     background-color: #ffffff;
     color: #99181F;
-    border: 2px solid #99181F; /* Borde para resaltarlo si el fondo es claro */
 }
 
 /* --- ESTILOS BASE (MÓVIL PRIMERO) --- */
@@ -239,7 +237,6 @@ button {
     height: 28px;
 }
 
-/* --- ESTILOS PARA PC (MIN-WIDTH: 1000PX) --- */
 @media (min-width: 1000px) {
     
     header, #barra_superior { 
@@ -307,10 +304,43 @@ button {
     .menu-contenedor {
         padding: 40px;
         width: 100%;
-        max-width: 1200px;
+        max-width: 1200px; 
         display: grid;
-        grid-template-columns: repeat(3, 1fr);
-        gap: 20px;
+        grid-template-columns: repeat(3, 1fr); 
+        gap: 25px; 
+        }
+
+    .plato-cont {
+        flex-direction: column; 
+        align-items: center;
+        padding: 0; 
+        overflow: hidden; 
+        height: 100%; 
+    }
+
+    .plato-cont img {
+        width: 100%; 
+        height: 200px; 
+        object-fit: cover; 
+        border-radius: 15px 15px 0 0; 
+    }
+
+    .info {
+        margin: 0; 
+        padding: 20px; 
+        text-align: center;
+        align-items: center; 
+        width: 100%;
+        box-sizing: border-box;
+    }
+
+    .info h3 {
+        font-size: 28px;
+    }
+
+    .info p {
+        font-size: 16px;
+        margin-bottom: 20px;
     }
 
     #reservar-btn, #domicilio-btn {
