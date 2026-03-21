@@ -1,0 +1,66 @@
+<div id="sec-dashboard" class="seccion activa">
+    <div id="layout_dashboard">
+
+        <section id="panel_cen">
+            <article class="hijo_izq">
+                {% for piso in mesas_por_piso %}
+                <div class="hijos_izq">
+                    <h2>PISO {{ piso.piso }}</h2>
+                    <p class="estado-mesa disponibles">{{ piso.disponibles }} Disponibles</p>
+                    <p class="estado-mesa ocupadas">{{ piso.ocupadas }} Ocupadas</p>
+                    <p class="estado-mesa reservadas">{{ piso.reservadas }} Reservadas</p>
+                </div>
+                {% else %}
+                <div class="hijos_izq">
+                    <p>Sin datos de mesas</p>
+                </div>
+                {% endfor %}
+            </article>
+        </section>
+
+        <div id="panel_der">
+            <article class="hijo_centro">
+                <div id="recientes">
+                    <h1>Pedidos recientes</h1>
+                    {% for p in pedidos_recientes %}
+                    <p>
+                        Pedido #{{ p.domicilio_id }} &ndash;
+                        {{ p.nombre or 'Cliente' }} &ndash;
+                        <span class="badge-estado estado-{{ p.estado_pedido | lower | replace(' ', '_') }}">{{ p.estado_pedido }}</span>
+                    </p>
+                    {% else %}
+                    <p>Sin pedidos recientes</p>
+                    {% endfor %}
+                </div>
+            </article>
+
+            <article class="hijo_centro">
+                <div class="contenedor-tarjetas">
+                    <div class="tarjeta1 naranja">
+                        <p>DOMICILIOS HOY</p>
+                        <h3>{{ stats.domicilios_hoy }}</h3>
+                    </div>
+                    <div class="tarjeta1 amarilla">
+                        <p>DOMICILIOS PENDIENTES</p>
+                        <h3>{{ stats.domicilios_pendientes }}</h3>
+                    </div>
+                </div>
+                <div class="contenedor-tarjeta2">
+                    <div class="tarjeta verde">
+                        <p>MESAS DISPONIBLES</p>
+                        <h3>{{ stats.mesas_disponibles }}</h3>
+                    </div>
+                    <div class="tarjeta roja">
+                        <p>MESAS OCUPADAS</p>
+                        <h3>{{ stats.mesas_ocupadas }}</h3>
+                    </div>
+                    <div class="tarjeta azul">
+                        <p>MESAS RESERVADAS</p>
+                        <h3>{{ stats.mesas_reservadas }}</h3>
+                    </div>
+                </div>
+            </article>
+        </div>
+
+    </div>
+</div>

@@ -1,0 +1,107 @@
+<header id="panel_izq">
+
+    
+    <div id="usuario-info">
+        <div id="usuario-avatar">{{ nombre_usuario[0] | upper if nombre_usuario else 'U' }}</div>
+        <div id="usuario-texto">
+            <span id="usuario-nombre">{{ nombre_usuario }}</span>
+            <span id="usuario-rol">{{ rol_usuario | capitalize }}</span>
+        </div>
+    </div>
+
+    <figure id="marca">
+        <img src="{{ url_for('static', filename='img/sabores-unidos.png') }}" alt="Sabores Unidos">
+    </figure>
+
+    <nav id="cont_menu">
+        <div id="tipo_operacion">
+
+            <button class="nav-btn active" data-section="dashboard">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M3 9.5L12 3l9 6.5V20a1 1 0 0 1-1 1H4a1 1 0 0 1-1-1V9.5z"/>
+                    <polyline points="9 21 9 12 15 12 15 21"/>
+                </svg>
+                <span class="nav-lbl">Principal</span>
+            </button>
+
+            <button class="nav-btn" data-section="productos" data-requiere-rol="administrador">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M18 2v7a2 2 0 0 1-2 2h-1v11h-2V11h-1a2 2 0 0 1-2-2V2h2v6h1V2h2v6h1V2h2z"/>
+                    <path d="M6 2v4c0 1.1.9 2 2 2v14H6V8a2 2 0 0 1-2-2V2h2z"/>
+                </svg>
+                <span class="nav-lbl">Menú</span>
+            </button>
+
+            <button class="nav-btn" data-section="pedidos" data-requiere-rol="administrador">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 4h2a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V6a2 2 0 0 1 2-2h2"/>
+                    <rect x="8" y="2" width="8" height="4" rx="1"/>
+                    <line x1="8" y1="11" x2="16" y2="11"/>
+                    <line x1="8" y1="15" x2="14" y2="15"/>
+                </svg>
+                <span class="nav-lbl">Pedidos</span>
+            </button>
+
+            <button class="nav-btn" data-section="reservas" data-requiere-rol="administrador">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="4" width="18" height="18" rx="2"/>
+                    <line x1="16" y1="2" x2="16" y2="6"/>
+                    <line x1="8" y1="2" x2="8" y2="6"/>
+                    <line x1="3" y1="10" x2="21" y2="10"/>
+                    <line x1="8" y1="14" x2="8.01" y2="14"/>
+                    <line x1="12" y1="14" x2="12.01" y2="14"/>
+                </svg>
+                <span class="nav-lbl">Reservas</span>
+            </button>
+
+            <button class="nav-btn" data-section="mesas" data-requiere-rol="administrador">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="8" width="18" height="8" rx="2"/>
+                    <line x1="7" y1="16" x2="7" y2="20"/>
+                    <line x1="17" y1="16" x2="17" y2="20"/>
+                </svg>
+                <span class="nav-lbl">Mesas</span>
+            </button>
+
+            <button class="nav-btn" data-section="tematicas" data-requiere-rol="administrador">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polygon points="12 2 15.09 8.26 22 9.27 17 14.14 18.18 21.02 12 17.77 5.82 21.02 7 14.14 2 9.27 8.91 8.26 12 2"/>
+                </svg>
+                <span class="nav-lbl">Temáticas</span>
+            </button>
+
+            <button class="nav-btn" data-section="usuarios" data-requiere-rol="administrador">
+                
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="8" r="4"/>
+                    <path d="M4 20c0-4 3.6-7 8-7s8 3 8 7"/>
+                </svg>
+                <span class="nav-lbl">Usuarios</span>
+            </button>
+
+        </div>
+    </nav>
+
+    <div id="linea">
+        <a href="/logout" id="btn_cerrar_sesion" title="Salir">  
+            <svg width="18" height="18" viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M2 18C1.45 18 0.979167 17.8042 0.5875 17.4125C0.195833 17.0208 0 16.55 0 16V2C0 1.45 0.195833 0.979167 0.5875 0.5875C0.979167 0.195833 1.45 0 2 0H9V2H2V16H9V18H2ZM13 14L11.625 12.55L14.175 10H6V8H14.175L11.625 5.45L13 4L18 9L13 14Z" fill="white"/>
+            </svg>
+        </a>
+        
+        <span id="btn_devs" title="Desarrolladores ADSO07" class="dev-icon" onclick="document.getElementById('modal-devs').style.display='flex'" style="cursor:pointer;">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="16 18 22 12 16 6"/>
+                <polyline points="8 6 2 12 8 18"/>
+                <line x1="12" y1="2" x2="12" y2="22" opacity="0.4"/>
+            </svg>
+            <span class="dev-tooltip">ADSO07 &bull; 2025–2026</span>
+        </span>
+    </div>
+</header>
