@@ -163,4 +163,114 @@ body {
     background: none;
     border: none;
     cursor: pointer;
+    display: flex; 
+}
+
+.nav-btn svg {
+    width: 28px; 
+    height: 28px;
+}
+@media (min-width: 1000px) {
+    
+    header, #barra_superior { 
+        display: none !important; 
+        position: absolute;
+        height: 0;
+        width: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+    }
+    #padre_ppal {
+        height: 100vh;
+        margin-top: 0; 
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+
+    }
+
+    .menu_inferior {
+        position: sticky;
+        top: 0;
+        bottom: auto;
+        order: -1;
+        z-index: 1000;
+        padding: 10px 50px; 
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between; 
+        align-items: center;           
+        width: 100%;
+    }
+
+    .logo-contenedor {
+        display: flex; 
+    }
+
+    .logo-empresa {
+        height: 50px; 
+        width: 50px;  
+        object-fit: contain;
+        display: block; 
+    }
+
+    .nav_btn_cont {
+        display: flex;
+        width: auto; 
+        gap: 80px;
+        justify-content: flex-end;
+    }
+
+    #tlo {
+        font-size: 70px;
+        margin-top: 20px; 
+    }
+
+    .menu-contenedor {
+        padding: 40px;
+        margin: 20px 50px;
+        grid-template-columns: repeat(3, 1fr);
+    }
+
+    #reservar-btn, #domicilio-btn {
+        position: static;  
+        width: 40%;
+        margin: 10px 1%;
+        display: inline-block;
+        font-size: 40px;
+    }
+
+    #botones {
+        order: 3; 
+        display: flex;
+        margin-top: 60px;  
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+    
+    }
+    #titulo {
+        order: 1;
+        margin-top:20px;
+        font-size: 50px;
+        text-align: center;
+    }
+
+    #contenedor_reservas {
+        order: 2;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        padding: 20px 50px;
+    }
+    
 }

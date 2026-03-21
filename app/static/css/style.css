@@ -187,24 +187,67 @@ html, body {
         margin:15px;
 
     }
-    .categoria a {
-        font-size: 50px;
-    }   
+
+    .logo-contenedor {
+        display: flex; 
+    }
+
+    .logo-empresa {
+        height: 50px; 
+        width: 50px;  
+        object-fit: contain;
+        display: block; 
+    }
+
+    .nav_btn_cont {
+        display: flex;
+        width: auto; 
+        gap: 80px;
+        justify-content: flex-end;
+    }
+
+    #padre_ppal {
+        order: 1;
+        margin-top: 20px;
+    }
+
     #tlo {
         font-size: 70px;
     }
 
-    .domicilio-btn {
-        font-size: 60px;
-        width: 45%;
-        left: 52%;
+    .menu-contenedor {
+        padding: 40px;
+        margin: 20px 50px;
+        grid-template-columns: repeat(3, 1fr);
+    }
+    .categoria {
+        height: 40vh;
+        
+    }
+
+    a {
+        text-decoration: none;   
+    }
+
+.categoria img {
+    width: 100%;
+    height: 120px;
+    object-fit: cover;
+}
+
+.categoria:hover {
+    transform: scale(1.05);
+}
+
+.categoria a {
+    font-size: 30px;
+}
 
     }
-    .reservar-btn {
-        font-size: 60px;
-        width: 45%;
-        left: 3%;
-
+    #botones {
+        order: 2;         
+        text-align: center;
+        padding-bottom: 40px;
     }
     
 }

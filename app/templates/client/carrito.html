@@ -56,6 +56,10 @@
         </div>
     </div>
     <footer class="menu_inferior">
+            <div class="logo-contenedor">
+                <img class="logo-empresa" src="{{ url_for('static', filename='img/sabores-unidos.png') }}" alt="Logo del restaurante">
+            </div>
+            <div class="nav_btn_cont">
                 <a class="nav-btn" href="{{ url_for('ver_menu') }}">
                     <svg width="23" height="24" viewBox="0 0 40 44" fill="none" xmlns="http://www.w3.org/2000/svg">
                     <path d="M14 42V22H26V42M2 16L20 2L38 16V38C38 39.0609 37.5786 40.0783 36.8284 40.8284C36.0783 41.5786 35.0609 42 34 42H6C4.93913 42 3.92172 41.5786 3.17157 40.8284C2.42143 40.0783 2 39.0609 2 38V16Z" stroke="#99181F" stroke-width="4" stroke-linecap="round" stroke-linejoin="round"/>
@@ -71,6 +75,7 @@
                     <path fill="#921B1E" d="M19 4h-1V2h-2v2H8V2H6v2H5c-1.11 0-1.99.9-1.99 2L3 20c0 1.1.89 2 2 2h14c1.1 0 2-.9 2-2V6c0-1.1-.9-2-2-2zm0 16H5V10h14v10zM15.03 13.03l-1.41-1.41-4.24 4.25-2.12-2.12-1.41 1.41 3.53 3.54 5.65-5.67z"/>
                     </svg>
                 </a>
+            </div>
         </footer>
 </body>
 </html>

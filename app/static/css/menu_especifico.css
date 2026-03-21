@@ -95,8 +95,8 @@ button {
     justify-content: center;
     background-color: rgb(82, 80, 85, 0.6);
     border-radius: 20px;
-    padding-bottom: 130px;
-
+    /* Reduje el padding bottom ya que los botones ahora están en el flujo normal */
+    padding-bottom: 30px; 
 }
 
 .atras-btn, .menu-btn {
@@ -165,39 +165,49 @@ button {
     font-size: 18px;
     letter-spacing: 1px;
     cursor: pointer;
-    text-align: center;}
+    text-align: center;
+}
 
 .info .seleccionar-btn:hover {
     background-color: #b9232c;
 }
 
-.reservar-btn {
+/* Corrección: Contenedor flex para los botones en versión móvil */
+#botones {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 420px;
+    margin: 10px auto 90px auto; /* 90px abajo para que el footer no los tape */
+    padding: 0 20px;
+    box-sizing: border-box;
+}
+
+/* Corrección: position relative en lugar de fixed */
+.reservar-btn, .domicilio-btn {
+    position: relative;
     width: 48%;
-    position: fixed;
-    bottom: 0;
-    left:1%;
     padding: 10px;
-    font-size: 30px;
+    font-size: 24px; /* Un poco más pequeño para evitar desborde en pantallas estrechas */
     border: none;
+    cursor: pointer;
+    border-radius: 30px;
+}
+
+.reservar-btn {
     background-color: #99181F;
     color: white;
-    margin-bottom: 70px;
-    cursor: pointer;
-    border-radius: 30px;
 } 
+
 .domicilio-btn {
-    position: fixed;
-    width: 49%;
-    bottom: 0;
-    left: 50%;
-    padding: 10px;
-    font-size: 30px;
-    border: none;
     background-color: #ffffff;
     color: #99181F;
-    margin-bottom: 70px;
-    cursor: pointer;
-    border-radius: 30px;
+    border: 2px solid #99181F; /* Borde para resaltarlo si el fondo es claro */
+}
+
+/* --- ESTILOS BASE (MÓVIL PRIMERO) --- */
+.logo-contenedor {
+    display: none; 
 }
 
 .menu_inferior {
@@ -217,4 +227,117 @@ button {
     background: none;
     border: none;
     cursor: pointer;
+    display: flex; 
+}
+
+.nav-btn svg {
+    width: 28px; 
+    height: 28px;
+}
+
+/* --- ESTILOS PARA PC (MIN-WIDTH: 1000PX) --- */
+@media (min-width: 1000px) {
+    
+    header, #barra_superior { 
+        display: none !important; 
+        position: absolute;
+        height: 0;
+        width: 0;
+        margin: 0;
+        padding: 0;
+    }
+
+    body {
+        display: flex;
+        flex-direction: column;
+        margin: 0;
+        padding: 0;
+    }
+    #padre_ppal {
+        height: 100vh;
+        margin-top: 0; 
+        padding-top: 0;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .menu_inferior {
+        position: sticky;
+        top: 0;
+        bottom: auto;
+        order: -1;
+        z-index: 1000;
+        padding: 10px 50px; 
+        background: rgba(255, 255, 255, 0.95);
+        backdrop-filter: blur(5px);
+        box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        display: flex;
+        justify-content: space-between; 
+        align-items: center;           
+        width: 100%;
+    }
+
+    .logo-contenedor {
+        display: flex; 
+    }
+
+    .logo-empresa {
+        height: 50px; 
+        width: 50px;  
+        object-fit: contain;
+        display: block; 
+    }
+
+    .nav_btn_cont {
+        display: flex;
+        width: auto; 
+        gap: 80px;
+        justify-content: flex-end;
+    }
+
+    #tlo {
+        font-size: 70px;
+        margin-top: 20px; 
+    }
+
+    .menu-contenedor {
+        padding: 40px;
+        width: 100%;
+        max-width: 1200px;
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 20px;
+    }
+
+    #reservar-btn, #domicilio-btn {
+        width: 40%;
+        margin: 10px 1%;
+        display: inline-block;
+        font-size: 40px;
+    }
+
+    #botones {
+        order: 3; 
+        display: flex;
+        margin-top: 60px;  
+        justify-content: center;
+        gap: 20px;
+        width: 100%;
+        max-width: none;
+    }
+
+    #titulo {
+        order: 1;
+        margin-top:20px;
+        font-size: 50px;
+        text-align: center;
+    }
+
+    #contenedor_reservas {
+        order: 2;
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(400px, 1fr));
+        gap: 30px;
+        padding: 20px 50px;
+    }
 }
