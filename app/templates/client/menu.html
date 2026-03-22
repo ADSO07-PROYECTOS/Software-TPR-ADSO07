@@ -20,14 +20,14 @@
 
         {% for i in lista_categorias%}
             <div class="categoria">
-                <a href="{{ url_for('ver_platos', id_categoria=i.id) }}" class="card-pizza">
+                <a href="{{ url_for('cliente.ver_platos', id_categoria=i.id) }}" class="card-pizza">
                     <img src="{{ url_for('static', filename='img/' + i.imagen) }}" 
                          alt="{{ i.nombre }}">
                     {{ i.nombre }}
                 </a>
             </div>
             <div class="categoria">
-                <a href="{{ url_for('ver_platos', id_categoria=i.id) }}" class="card-pizza">
+                <a href="{{ url_for('cliente.ver_platos', id_categoria=i.id) }}" class="card-pizza">
                     <img src="/app/static/img/picadas.jpg" 
                          alt="PIZZA">
                     pizza
