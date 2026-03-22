@@ -26,7 +26,7 @@
         <div class="info">
           <h3>{{ pizza.nombre }}</h3>
           <p>{{ pizza.descripcion }}</p>
-          <a href="{{ url_for('template','detalle_producto', producto_id=pizza.id) }}" class="seleccionar-btn">SELECCIONAR</a>
+          <a href="{{ url_for('cliente.detalle_plato', id_plato=pizza.id) }}" class="seleccionar-btn">SELECCIONAR</a>
         </div>
       </div>
       {% endfor %}
