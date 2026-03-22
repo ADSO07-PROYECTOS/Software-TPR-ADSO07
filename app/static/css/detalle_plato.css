@@ -1,5 +1,3 @@
-
-
 @import url('https://fonts.googleapis.com/css2?family=Bebas+Neue&display=swap');
 
 * {
@@ -9,6 +7,7 @@
     box-sizing: border-box;
     font-family: 'Bebas Neue', sans-serif;
 }
+
 html, body {
     height: 100%;
     margin: 0;
@@ -26,6 +25,7 @@ main {
     padding-bottom: 90px; 
 }
 
+/* --- CONTENEDOR PRINCIPAL DEL PLATO --- */
 .plato-detalle {
     width: 90%;
     max-width: 600px;
@@ -38,18 +38,21 @@ main {
     margin: 0 auto; 
     flex-shrink: 0;
 }
-h3{ 
+
+h3 { 
     text-align: center;
-    color: var(--blanco);
+    color: white;
     font-size: 40px;
-   
 }
-#adicion{
+
+#adicion {
     text-align: center;
-    color: var(--blanco);
+    color: white;
     font-size: 20px;
     margin-top: 20px;
 }
+
+/* --- BOTONES DE NAVEGACIÓN --- */
 .atras-btn, .menu-btn, .nav-btn {
     background: none;
     border: none;
@@ -57,7 +60,8 @@ h3{
     cursor: pointer;
     padding: 5px;
 }
-.cont-superior{
+
+.cont-superior {
     position: fixed;
     top: 0;
     width: 100%;
@@ -71,6 +75,7 @@ h3{
     z-index: 50;
 }
 
+/* --- IMAGEN Y DESCRIPCIÓN --- */
 .plato-detalle img {
     width: 200px;
     height: auto;
@@ -83,8 +88,9 @@ h3{
     margin-bottom: 15px;
 }
 
+/* --- SELECCIÓN DE TAMAÑO --- */
 .seleccion-tamano {
-    border:none;
+    border: none;
     display: flex;
     gap: 10px;
     justify-content: center;
@@ -99,12 +105,12 @@ h3{
     padding: 8px 15px;
     border-radius: 10px;
     font-size: 18px;
-    outline:none;
+    outline: none;
 }
-option{
-    padding:10px;
-    border:none;
 
+option {
+    padding: 10px;
+    border: none;
 }
 
 .precio-btn {
@@ -117,176 +123,211 @@ option{
     cursor: pointer;
 }
 
+.division {
+    display: flex;
+    align-items: center;
+    width: 100%;
+    height: 0px;
+    border: 1px solid #FFFFFF;
+    margin: 20px 0;
+}
+
 .division svg {
     width: 100%;
     height: 1px;
 }
 
+/* --- ADICIONES (Efecto Cristal) --- */
 .cont-adiciones {
     margin-top: 15px;
     text-align: center;
-    
 }
+
 .adiciones-lista {
     margin-top: 10px;
-    background-color: #fff;
+    background-color: rgba(255, 255, 255, 0.15); 
+    backdrop-filter: blur(8px); 
     padding: 10px;
     box-sizing: border-box;
     border-radius: 10px;
-    border: 2px solid #99181F;
+    border: 1px solid rgba(255, 255, 255, 0.3); 
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+}
+
+.adiciones-box {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
 }
 
 .adicion-item {
     display: grid;
+    grid-template-columns: 1.5fr 1fr 1fr;
+    align-items: center;
+    background: transparent; 
+    border-radius: 10px;
+    padding: 4px 0;
+}
+
+.adicion-nombre span {
+    color: #ffffff; 
+    font-size: 18px;
+    font-weight: normal;
+}
+
+.seleccionar-btn {
+    background: #99181F;
+    color: #fff;
+    border-radius: 20px;
+    border: none;
+    padding: 4px 16px;
+    font-size: 18px;
+    font-weight: bold;
+    width: 90px;
+    text-align: center;
+    margin: 2px auto;
+}
+
+/* --- COMBINAR PIZZAS (Efecto Cristal) --- */
+.combinar {
+    margin-top: 20px;
+}
+
+.lista-pizzas {
+    background-color: rgba(255, 255, 255, 0.15);
+    backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.3);
+    display: flex;
+    flex-direction: column;
+    border-radius: 10px;
+    padding: 10px;
+    width: 100%;
+    max-width: 400px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-top: 10px;
+}
+
+.pizza-item {
+    display: grid;
     grid-template-columns: 1fr auto auto; 
     align-items: center;
-    gap: 15px;
+    gap: 30px;
+    padding: 4px 0;
 }
 
-.contador{
-    box-sizing: border-box;
+.pizza-item label {
+    font-size: 18px;
+    color: #ffffff; 
+    text-align: left;
+}
+
+.precio {
+    width: 80px;
+    background: #99181F;
+    margin: 2px;
+    color: #FFFFFF;
+    border-radius: 20px;
+    padding: 4px;
+    text-align: center;
+}
+
+.check {
+    appearance: none; 
+    width: 20px;
+    height: 20px;
+    border: 2px solid #ffffff; 
+    background-color: transparent;
+    border-radius: 4px; 
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    gap:19px;
+    justify-content: center;
+    cursor: pointer;
+    transition: all 0.2s ease;
 }
 
-.cantidad{
-    font-size:20px;
-    color:#99181F
+.check:checked {
+    background-color: #99181F;
+    border-color: #99181F;
+    box-shadow: 0 0 0 3px rgba(153, 24, 31, 0.2);
 }
-label {
+
+.check:checked::after {
+    content: "✓";
+    color: white;
     font-size: 14px;
-    color:#99181F;
-    margin-right: 10px;
+    font-weight: bold;
 }
 
+/* --- CONTADORES Y BOTONES MÁS/MENOS --- */
+.contador {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+}
+
+.cantidad {
+    color: #ffffff; 
+    font-size: 18px;
+    font-weight: bold;
+}
+
+.btn-menos, .btn-mas {
+    background: transparent; 
+    border: 1px solid #ffffff; 
+    border-radius: 20px;
+    width: 22px;
+    height: 22px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+.btn-menos svg path, .btn-mas svg path {
+    fill: #ffffff; 
+    fill-opacity: 1;
+}
+
+/* --- FOOTER INFERIOR (AÑADIR AL CARRITO) --- */
 .cont-inferior {
     position: fixed;
     bottom: 0;
     width: 100%;
     display: flex;
     justify-content: space-around;
+    align-items: center;
     padding: 8px 0;
     background: rgb(255, 255, 255);
+    z-index: 50;
 }
 
-.division{
-    display: flex;
-    align-items: center;
-    width: 100%;
-    height: 0px;
-    left: 31px;
-    top: 347px;
-    border: 1px solid #FFFFFF;
-}
-.contador{
+.cont_btn-mas, .cont_btn-menos {
+    background: #FFFFFF;
+    box-sizing: border-box;
+    width: 30px;
+    height: 30px;
+    border-radius: 20px;
     display: flex;
     align-items: center;
     justify-content: center;
-    gap: 15px;
-    width: fit-content;
-
+    cursor: pointer;
 }
 
-.btn-menos, .btn-mas{
-    background: #FFFFFF;
-    box-sizing: border-box;
-    width: 16px;
-    height: 16px;
-    left: 125px;
-    top: 403px;
+.cont_btn-mas {
     border: 1px solid #99181F;
-    border-radius: 20px;
 }
 
-.seleccionar-btn{
-    width:80px;
-    margin: 2px;
-    background: #99181F;
-    border-radius: 20px;
-    border:none;
-    padding: 4px;
-} 
-.lista-pizzas {
-    border: 2px solid #99181F;
-    display: flex;
-    flex-direction: column;
-    background-color: white;
-    border-radius: 10px;
-    padding: 10px;
-}
-
-.pizza-item {
-  display: grid;
-  grid-template-columns: 1fr auto auto; 
-  align-items: center;
-  gap: 30px;
-}
-
-label {
-  font-size: 18px;
-  color: #99181F;
-}
-
-.precio {
-    width: 80px;
-    background: #99181F;
-    margin:2px;
-    color: #FFFFFF;
-    border-radius: 20px;
-    padding: 4px;
-}
-
-.check {
-  appearance: none; 
-  width: 20px;
-  height: 20px;
-  border: 2px solid #99181F;
-  border-radius: 4px; 
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  cursor: pointer;
-  transition: all 0.2s ease;
-}
-
-.check:checked {
-  background-color: #99181F;
-  border-color: #99181F;
-  box-shadow: 0 0 0 3px rgba(153, 24, 31, 0.2);
-}
-
-.check:checked::after {
-  content: "✓";
-  color: white;
-  font-size: 14px;
-  font-weight: bold;
-}
-
-.cont_btn-mas{
-    background: #FFFFFF;
-    box-sizing: border-box;
-    width: 30px;
-    height: 30px;
-    left: 125px;
-    top: 403px;
-    border: 1px solid #99181F;
-    border-radius: 20px;
-}
-.cont_btn-menos{
-    background: #FFFFFF;
-    box-sizing: border-box;
-    width: 30px;
-    color:#858383;
-    height: 30px;
-    left: 125px;
-    top: 403px;
+.cont_btn-menos {
+    color: #858383;
     border: 1px solid #858383;
-    border-radius: 20px;
-
 }
-.añadir{
+
+.añadir {
     width: 100px;
     height: 40px;
     background: #99181F;
@@ -294,16 +335,17 @@ label {
     border: none;
     color: white;
     font-size: 20px;
+    cursor: pointer;
 }
 
-.precio-fn{
-    margin-top:3px;
-    font-size:24px;
+.precio-fn {
+    font-size: 24px;
     color: #99181F;
+    font-weight: bold;
 }
 
-.cantidad-total{
-    font-size:24px;
-    color:#99181F;
-    
+.cantidad-total {
+    font-size: 24px;
+    color: #99181F;
+    font-weight: bold;
 }

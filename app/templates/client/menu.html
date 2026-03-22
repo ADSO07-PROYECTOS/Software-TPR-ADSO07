@@ -26,6 +26,13 @@
                     {{ i.nombre }}
                 </a>
             </div>
+            <div class="categoria">
+                <a href="{{ url_for('ver_platos', id_categoria=i.id) }}" class="card-pizza">
+                    <img src="/app/static/img/picadas.jpg" 
+                         alt="PIZZA">
+                    pizza
+                </a>
+            </div>
             {% else %}
                 <p>No se encontraron categorías cargadas.</p>
             {% endfor %}
