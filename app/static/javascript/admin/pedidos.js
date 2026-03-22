@@ -17,7 +17,7 @@ async function cargarPedidos() {
             if (tieneComprobante) {
                 pagoCell = `<span class="pill amarillo">⏳ EN REVISIÓN</span><br><button class="btn-accion azul" style="margin-top:4px; font-size:0.85rem;" onclick="abrirModalComprobante(${d.domicilio_id}, 'domicilio')">📄 Ver</button>`;
             } else {
-                pagoCell = d.pago_transferencia ? '🏦 Transferencia' : '💵 Efectivo';
+                pagoCell = d.pago_transferencia ? 'Transferencia' : 'Efectivo';
             }
             return `
             <tr>
