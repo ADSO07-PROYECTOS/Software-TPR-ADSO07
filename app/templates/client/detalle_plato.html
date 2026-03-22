@@ -2,10 +2,12 @@
 <html lang="es">
 <head>
     <meta charset="UTF-8">
-    <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
+    <link rel="icon" href="{{ url_for('static', filename='img/sabores-unidos.png') }}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>{% if plato %}{{ plato.nombre }}{% else %}Plato no encontrado{% endif %}</title>
+    <link rel="stylesheet" href="/app/static/css/detalle_plato.css">
     <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
+
     <script type="module" src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
     <script defer src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
 </head>
@@ -33,34 +35,28 @@
         <h3>Menú</h3>
         <section class="plato-detalle">
             <h2>{{ plato.nombre }}</h2>
-            
             <img src="{{ url_for('static', filename='img/' + (plato.imagen if plato.imagen else 'default.png')) }}" alt="{{ plato.nombre }}">
 
             <div class="info-detalle">
                 <p>{{ plato.descripcion }}</p>
             </div>
-            
+
             {% if es_pizza %}
             <div class="seleccion-tamano">
-            <select class="tamano-pizza" id="select-tamano">
-                {% for tam in tamanos %}
-                <option value="{{ tam.nombre }}" 
-                        data-precio="{{ tam.precio }}" 
-                        data-limite="{{ tam.limite_sabores }}">
-                    {{ tam.nombre }} 
-                </option>
-                {% endfor %}
-            </select>
-            <button class="precio-btn">$ 0</button>
-        </div>
+                <select class="tamano-pizza" id="select-tamano">
+                    {% for tam in tamanos %}
+                    <option value="{{ tam.nombre }}" data-precio="{{ tam.precio }}" data-limite="{{ tam.limite_sabores }}">
+                        {{ tam.nombre }} 
+                    </option>
+                    {% endfor %}
+                </select>
+                <button class="precio-btn">$ 0</button>
+            </div>
             {% endif %}
-            
+
             <div class="division">
                 <hr>
             </div>
-        
-            {% if es_pizza %}
-            {% endif %}
 
             {% if adiciones %}
             <section class="cont-adiciones">
@@ -72,124 +68,54 @@
 
             <section class="adiciones-lista">
                 <div class="adiciones-box">
-                {% for adicion in adiciones %}
-                <div class="adicion-item" data-precio="{{ adicion.precio }}" data-stock="{{ adicion.stock if adicion.stock is defined else 999 }}">
-                    <div class="adicion-nombre">
-                        <span>{{ adicion.nombre }}</span>
+                    {% for adicion in adiciones %}
+                    <div class="adicion-item" data-precio="{{ adicion.precio }}" data-stock="{{ adicion.stock if adicion.stock is defined else 999 }}">
+                        <div class="adicion-nombre">
+                            <span>{{ adicion.nombre }}</span>
+                        </div>
+                        <div class="contador">
+                            <button class="btn-menos">
+                                <svg width="10" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H7L3.5 5L0 0Z" fill="black" fill-opacity="0.5"/></svg>
+                            </button>
+                            <span class="cantidad">0</span>
+                            <button class="btn-mas">
+                                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H0V4H4V0H6V4H10V6H6V10H4V6Z" fill="#99181F"/></svg>
+                            </button>
+                        </div>
+                        <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
                     </div>
-                    <div class="contador">
-                        <button class="btn-menos">
-                            <svg width="10" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H7L3.5 5L0 0Z" fill="black" fill-opacity="0.5"/></svg>
-                        </button>
-                        <span class="cantidad">0</span>
-                        <button class="btn-mas">
-                            <svg width="10" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H0V4H4V0H6V4H10V6H6V10H4V6Z" fill="#99181F"/></svg>
-                        </button>
-                    </div>
-                    <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
-                </div>
-                {% endfor %}
+                    {% endfor %}
                 </div>
             </section>
-            <style>
-            .adiciones-lista {
-                margin-top: 10px;
-                background-color: #fff;
-                padding: 10px;
-                box-sizing: border-box;
-                border-radius: 10px;
-                border: 2px solid #99181F;
-                width: 100%;
-                max-width: 400px;
-                margin-left: auto;
-                margin-right: auto;
-            }
-            .adiciones-box {
-                display: flex;
-                flex-direction: column;
-                gap: 8px;
-            }
-            .adicion-item {
-                display: grid;
-                grid-template-columns: 1.5fr 1fr 1fr;
-                align-items: center;
-                background: #fff;
-                border-radius: 10px;
-                padding: 4px 0;
-                color: #99181F;
-                font-size: 18px;
-            }
-            .adicion-nombre span {
-                color: #99181F;
-                font-size: 18px;
-                font-weight: normal;
-            }
-            .contador {
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                gap: 10px;
-            }
-            .btn-menos, .btn-mas {
-                background: #fff;
-                border: 1px solid #99181F;
-                border-radius: 20px;
-                width: 22px;
-                height: 22px;
-                display: flex;
-                align-items: center;
-                justify-content: center;
-                cursor: pointer;
-            }
-            .cantidad {
-                color: #99181F;
-                font-size: 18px;
-                font-weight: normal;
-            }
-            .seleccionar-btn {
-                background: #99181F;
-                color: #fff;
-                border-radius: 20px;
-                border: none;
-                padding: 4px 16px;
-                font-size: 18px;
-                font-weight: bold;
-                width: 90px;
-                text-align: center;
-            }
-            </style>
             {% endif %}
-                
-            
 
             {% if es_pizza %}
             <section class="combinar">
                 <div class="combinar-pizza">
                     <h2 id="adicion">¿DESEAS ADICIONAR OTRO SABOR A TU PIZZA?</h2>
-                    <p>solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
+                    <p>Solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
                 </div>
                 <div class="lista-pizzas">
-                {% for sabor in sabores %}
-                <div class="pizza-item">
-                    <label>{{ sabor.nombre }}</label>
-                    <input type="checkbox" class="check" data-precio="{{ sabor.precio }}">
-                    <div class="precio">$ {{ "{:,.0f}".format(sabor.precio|float) }}</div>
-                </div>
-                {% endfor %}
+                    {% for sabor in sabores %}
+                    <div class="pizza-item">
+                        <label>{{ sabor.nombre }}</label>
+                        <input type="checkbox" class="check" data-precio="{{ sabor.precio }}">
+                        <div class="precio">$ {{ "{:,.0f}".format(sabor.precio|float) }}</div>
+                    </div>
+                    {% endfor %}
                 </div>
             </section>
             {% endif %}
+        </section>
     </main>
-    
+
     <footer class="cont-inferior">
         <button class="cont_btn-menos"> 
             <svg width="7" height="6" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
             </svg>
         </button>
-        
         <span class="cantidad-total"> 1 </span>
-        
         <button class="cont_btn-mas"> 
             <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
                 <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
@@ -198,11 +124,8 @@
         
         <span id="plato-id" data-id="{{ plato.id }}" data-precio="{{ plato.precio }}" style="display:none;"></span>
         <button class="añadir"> AÑADIR </button>
-        
         <span class="precio-fn">$ {{ plato.precio }}</span>
     </footer>
-
-    
 
     {% else %}
     <main style="justify-content: center; text-align: center;">
