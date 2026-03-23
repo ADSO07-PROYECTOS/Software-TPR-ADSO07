@@ -13,6 +13,7 @@ os.makedirs(CARPETA_COMPROBANTES, exist_ok=True)
 # ─── Extensiones permitidas ──────────────────────────────────────────
 EXTENSIONES_IMAGEN = {'png', 'jpg', 'jpeg', 'webp'}
 EXTENSIONES_COMPROBANTE = {'png', 'jpg', 'jpeg', 'pdf'}
+MAX_TAMANO_COMPROBANTE = 5 * 1024 * 1024  # 5 MB
 
 # ─── Roles ───────────────────────────────────────────────────────────
 ROLES_VALIDOS = {'cliente', 'cajero', 'administrador'}
