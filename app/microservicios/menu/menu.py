@@ -43,7 +43,14 @@ def crear_categoria():
             return jsonify({"error": "nombre_categoria es obligatorio"}), 400
         conn = conectar()
         if conn:
-            cursor = conn.cursor()
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute(
+                "SELECT categoria_id FROM categorias WHERE LOWER(nombre_categoria) = LOWER(%s)",
+                (nombre,)
+            )
+            if cursor.fetchone():
+                cursor.close(); conn.close()
+                return jsonify({"error": "Ya existe una categoría con ese nombre"}), 409
             cursor.execute(
                 "INSERT INTO categorias (nombre_categoria, imagen_categoria) VALUES (%s, %s)",
                 (nombre, imagen)
