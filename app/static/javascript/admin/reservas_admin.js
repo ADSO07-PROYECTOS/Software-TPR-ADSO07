@@ -23,7 +23,7 @@ async function cargarReservas() {
                 <td>${r.cantidad_personas}</td>
                 <td>${r.piso || '—'}</td>
                 <td>${esc(r.nombre_tematica || '—')}</td>
-                <td>${esTransferencia ? '🏦 Transfer.' : '💵 Efectivo'}</td>
+                <td>${esTransferencia ? 'Transfer.' : 'Efectivo'}</td>
                 <td>
                     ${tienePendiente 
                         ? `<span class="pill amarillo">⏳ PENDIENTE</span><br><button class="btn-accion azul" style="margin-top:4px; font-size:0.85rem;" onclick="abrirModalComprobante(${r.reserva_id})">📄 Ver</button>` 

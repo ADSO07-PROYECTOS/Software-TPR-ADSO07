@@ -57,7 +57,7 @@
     
     <footer class="menu_inferior">
         <div class="logo-contenedor">
-            <img class="logo-empresa" src="/app/static/img/sabores-unidos.png" alt="Logo del restaurante">
+            <img class="logo-empresa" src="{{ url_for('static', filename='img/sabores-unidos.png') }}" alt="Logo del restaurante">
         </div>
         <div class="nav_btn_cont">
             <a class="nav-btn" href="{{ url_for('cliente.ver_menu') }}">
