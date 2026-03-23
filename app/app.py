@@ -17,6 +17,7 @@ def crear_app():
     CORS(app)
     app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', 'trespasos_secret_2026')
     app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
+    app.config['MAX_CONTENT_LENGTH'] = 5 * 1024 * 1024  # 5 MB
 
 
     app.register_blueprint(bp_autenticacion)

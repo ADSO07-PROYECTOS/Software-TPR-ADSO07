@@ -5,7 +5,7 @@ let _pisoFiltroActual = '';
 
 async function cargarMesas() {
     const tbody = document.getElementById('tbody-mesas');
-    tbody.innerHTML = '<tr><td colspan="4" class="cargando">Cargando...</td></tr>';
+    tbody.innerHTML = '<tr><td colspan="3" class="cargando">Cargando...</td></tr>';
     try {
         mesasCache = await apiFetch('/admin/api/mesas');
         renderizarMesas();
@@ -21,13 +21,12 @@ function renderizarMesas() {
         ? mesasCache.filter(m => String(m.piso) === _pisoFiltroActual)
         : mesasCache;
     if (!lista.length) {
-        tbody.innerHTML = '<tr><td colspan="4" class="cargando">Sin mesas para el filtro seleccionado</td></tr>';
+        tbody.innerHTML = '<tr><td colspan="3" class="cargando">Sin mesas para el filtro seleccionado</td></tr>';
         return;
     }
     tbody.innerHTML = lista.map(m => `
         <tr>
             <td>${m.mesa_id}</td>
-            <td>${esc(String(m.numero_mesa || m.mesa_id))}</td>
             <td>Piso ${m.piso}</td>
             <td>
                 <button class="btn-accion azul" onclick="editarMesa(${m.mesa_id})">Editar</button>
@@ -48,9 +47,9 @@ function abrirModalMesa() {
     document.getElementById('form-mesa').reset();
     document.getElementById('fm-id').value = '';
     document.getElementById('fm-piso').value = '1';
+    document.getElementById('fm-numero').value = '0';
     document.getElementById('modal-mesa-titulo').textContent = 'Nueva Mesa';
     document.getElementById('modal-mesa').classList.remove('oculta');
-    document.getElementById('fm-numero').focus();
 }
 
 function cerrarModalMesa() {
@@ -61,18 +60,17 @@ function editarMesa(id) {
     const mesa = mesasCache.find(m => m.mesa_id === id);
     if (!mesa) { toast('Mesa no encontrada', 'error'); return; }
     document.getElementById('fm-id').value       = mesa.mesa_id;
-    document.getElementById('fm-numero').value   = mesa.numero_mesa || mesa.mesa_id;
+    document.getElementById('fm-numero').value   = mesa.numero_mesa || 0;
     document.getElementById('fm-piso').value     = mesa.piso;
     document.getElementById('modal-mesa-titulo').textContent = 'Editar Mesa';
     document.getElementById('modal-mesa').classList.remove('oculta');
-    document.getElementById('fm-numero').focus();
 }
 
 async function guardarMesa(e) {
     e.preventDefault();
     const id = document.getElementById('fm-id').value;
     const payload = {
-        numero_mesa: parseInt(document.getElementById('fm-numero').value),
+        numero_mesa: parseInt(document.getElementById('fm-numero').value) || 0,
         piso:        parseInt(document.getElementById('fm-piso').value),
     };
     try {
@@ -92,7 +90,7 @@ async function guardarMesa(e) {
 
 async function eliminarMesa(id) {
     const mesa = mesasCache.find(m => m.mesa_id === id);
-    const label = mesa ? `Mesa ${mesa.numero_mesa} – Piso ${mesa.piso}` : `#${id}`;
+    const label = mesa ? `Mesa #${mesa.mesa_id} – Piso ${mesa.piso}` : `#${id}`;
     if (!confirm(`¿Eliminar "${label}"? Esta acción no se puede deshacer.`)) return;
     try {
         await apiFetch(`/admin/api/mesas/${id}`, { method: 'DELETE' });

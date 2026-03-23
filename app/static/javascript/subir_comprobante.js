@@ -25,19 +25,20 @@ document.addEventListener('DOMContentLoaded', () => {
         const file = e.target.files[0];
         if (file) {
 
-            const esImagen = file.type.startsWith('image/');
-            const esPDF = file.type === 'application/pdf';
+            const tiposPermitidos = ['image/png', 'image/jpeg', 'image/jpg', 'application/pdf'];
+            const extPermitidas = ['png', 'jpg', 'jpeg', 'pdf'];
+            const ext = file.name.split('.').pop().toLowerCase();
             
-            if (!esImagen && !esPDF) {
-                alert('Por favor, selecciona una imagen o PDF');
+            if (!tiposPermitidos.includes(file.type) && !extPermitidas.includes(ext)) {
+                alert('Formato no permitido. Solo se aceptan archivos PNG, JPG o PDF.');
                 inputFile.value = '';
                 nombreArchivo.textContent = '';
                 archivoSeleccionado = null;
                 return;
             }
 
-            if (file.size > 10 * 1024 * 1024) {
-                alert('El archivo es muy grande. Máximo 10MB.');
+            if (file.size > 5 * 1024 * 1024) {
+                alert('El archivo es muy grande. Máximo 5MB.');
                 inputFile.value = '';
                 nombreArchivo.textContent = '';
                 archivoSeleccionado = null;

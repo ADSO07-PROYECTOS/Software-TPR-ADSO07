@@ -261,6 +261,19 @@ async function guardarProducto(e) {
         return;
     }
 
+    const nombreNuevo = document.getElementById('fp-nombre').value.trim();
+    try {
+        const todosProductos = await apiFetch('/admin/api/productos');
+        const duplicado = todosProductos.find(p =>
+            p.nombre_producto.trim().toLowerCase() === nombreNuevo.toLowerCase()
+            && String(p.producto_id) !== String(id)
+        );
+        if (duplicado) {
+            toast('Ya existe un producto con ese nombre', 'error');
+            return;
+        }
+    } catch (_) { /* si falla la verificación, continúa con el guardado */ }
+
     const fileInput = document.getElementById('fp-imagen-file');
     if (fileInput.files.length > 0) {
         const formData = new FormData();
