@@ -12,6 +12,8 @@ from routes.rutas_admin import bp_admin
 from routes.rutas_api import bp_api
 
 
+
+
 def crear_app():
     app = Flask(__name__)
     CORS(app)

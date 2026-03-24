@@ -5,18 +5,14 @@ from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, jsonify
 import requests
 
-from utils.constantes import URL_MICROSERVICIO_MENU
+from utils.constantes import URL_MICROSERVICIO_MENU, URL_MICROSERVICIO_MIS_RESERVAS
 from models.modelo_tematica import obtener_tematicas
 from models.modelo_reserva import (
     obtener_reserva_con_tematica,
     obtener_productos_reserva,
-    eliminar_reserva_por_id,
-    obtener_reserva_para_modificar,
-    actualizar_reserva,
 )
 from models.modelo_domicilio import obtener_domicilio_por_id, obtener_productos_domicilio
 from models.modelo_cliente import obtener_cliente_por_id
-from services.servicio_reservas import consultar_reservas_cliente
 
 bp_cliente = Blueprint('cliente', __name__)
 
@@ -165,7 +161,17 @@ def mis_reservas():
     if cedula:
         buscado = True
         try:
-            reservas, sin_resultados = consultar_reservas_cliente(cedula)
+            resp = requests.get(
+                f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas',
+                params={'cedula': cedula},
+                timeout=15
+            )
+            if resp.status_code == 200:
+                data = resp.json()
+                reservas = data.get('reservas', [])
+                sin_resultados = data.get('sin_resultados', False)
+            else:
+                print(f"Error microservicio mis_reservas: {resp.status_code}")
         except Exception as error:
             print(f"Error al obtener reservas: {error}")
 
@@ -179,8 +185,14 @@ def mis_reservas():
 @bp_cliente.route('/mis_reservas/<int:id_reserva>/eliminar', methods=['POST'])
 def eliminar_reserva(id_reserva):
     try:
-        eliminar_reserva_por_id(id_reserva)
-        return jsonify({"success": True})
+        resp = requests.delete(
+            f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas/{id_reserva}',
+            timeout=15
+        )
+        if resp.status_code == 200:
+            return jsonify({"success": True})
+        else:
+            return jsonify({"success": False, "message": resp.json().get('error', 'Error')}), resp.status_code
     except Exception as error:
         return jsonify({"success": False, "message": str(error)}), 500
 
@@ -191,20 +203,38 @@ def modificar_reserva(id_reserva):
         try:
             datos = request.form
             fecha_hora = f"{datos['fecha']} {datos['hora']}:00:00"
-            actualizar_reserva(
-                id_reserva, fecha_hora,
-                datos['personas'], datos['tematica'],
-                datos['nombre'], datos['email'], datos['telefono']
+            resp = requests.put(
+                f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas/{id_reserva}',
+                json={
+                    'fecha_hora': fecha_hora,
+                    'personas': datos['personas'],
+                    'tematica': datos['tematica'],
+                    'nombre': datos['nombre'],
+                    'email': datos['email'],
+                    'telefono': datos['telefono']
+                },
+                timeout=15
             )
+            if resp.status_code != 200:
+                return f"Error al modificar: {resp.json().get('error', 'Error')}", 500
             return redirect('/mis_reservas')
         except Exception as error:
             return f"Error al modificar: {error}", 500
     else:
         try:
-            reserva = obtener_reserva_para_modificar(id_reserva)
-            tematicas = obtener_tematicas()
-            if not reserva:
+            resp = requests.get(
+                f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas/{id_reserva}',
+                timeout=15
+            )
+            if resp.status_code != 200:
                 return redirect('/mis_reservas')
+            reserva = resp.json()
+
+            # Convertir fecha_hora string a datetime para el template
+            if reserva.get('fecha_hora'):
+                reserva['fecha_hora'] = datetime.strptime(reserva['fecha_hora'], '%Y-%m-%d %H:%M:%S')
+
+            tematicas = obtener_tematicas()
             fecha_actual = datetime.today()
             return render_template('client/modificar_reserva.html',
                                    reserva=reserva,
