@@ -1,6 +1,4 @@
-"""
-Servicio – Subida y validación de comprobantes de pago.
-"""
+
 import os
 from werkzeug.utils import secure_filename
 
@@ -11,10 +9,7 @@ from models.modelo_domicilio import obtener_cedula_por_domicilio, guardar_compro
 
 
 def procesar_comprobante_reserva(id_reserva, archivo):
-    """
-    Valida, guarda el archivo y actualiza la BD.
-    Devuelve (exito: bool, mensaje: str, codigo_http: int).
-    """
+   
     if not id_reserva:
         return False, 'ID de reserva no proporcionado', 400
     if not archivo or archivo.filename == '':
@@ -43,10 +38,7 @@ def procesar_comprobante_reserva(id_reserva, archivo):
 
 
 def procesar_comprobante_domicilio(id_domicilio, archivo):
-    """
-    Valida, guarda el archivo y actualiza la BD para domicilios.
-    Devuelve (exito: bool, mensaje: str, codigo_http: int).
-    """
+
     if not id_domicilio:
         return False, 'ID de pedido no proporcionado', 400
     if not archivo or archivo.filename == '':

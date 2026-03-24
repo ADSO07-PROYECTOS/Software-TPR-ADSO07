@@ -1,6 +1,3 @@
-"""
-Servicio – Proxy genérico hacia microservicios.
-"""
 import requests
 from flask import jsonify
 

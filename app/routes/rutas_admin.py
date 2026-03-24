@@ -1,6 +1,4 @@
-"""
-Blueprint – Rutas del panel de administración y proxy al microservicio admin.
-"""
+
 import os
 from flask import Blueprint, render_template, request, redirect, session, jsonify
 from werkzeug.utils import secure_filename
@@ -45,8 +43,6 @@ def panel_admin():
                            rol_usuario=rol,
                            nombre_usuario=session.get('usuario_nombre', ''))
 
-
-# ─── Helper de proxy ─────────────────────────────────────────────────
 
 def _proxy(metodo, ruta, **kwargs):
     return reenviar_peticion(metodo, URL_MICROSERVICIO_ADMIN, ruta, **kwargs)

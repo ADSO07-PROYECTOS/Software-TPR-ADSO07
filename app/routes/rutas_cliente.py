@@ -1,6 +1,4 @@
-"""
-Blueprint – Rutas del cliente (menú, carrito, reservas, domicilios, etc.).
-"""
+
 from datetime import datetime, timedelta
 from flask import Blueprint, render_template, request, redirect, jsonify
 import requests
