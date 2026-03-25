@@ -13,19 +13,33 @@ BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
 BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Sabores Unidos")
 
+URL_SERVIDOR = os.environ.get("URL_SERVIDOR_PUBLICO", "http://54.156.114.70:62001")
+LOGO_URL = f"{URL_SERVIDOR}/static/img/sabores-unidos.png"
+
 def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
     qr_buf.seek(0)
     qr_b64 = base64.b64encode(qr_buf.read()).decode()
 
     cuerpo = f"""
     <html>
-        <body style="font-family: Arial; text-align: center;">
-            <h2 style="color: #99181F;">¡Pedido Recibido!</h2>
-            <p>Hola <b>{cli['nom']}</b>, estamos preparando tu pedido.</p>
-            <p><b>ID del Pedido:</b> #{dom_id}</p>
-            <p><b>Dirección de entrega:</b> {direccion}</p>
-            <img src="data:image/png;base64,{qr_b64}" style="width: 200px; border: 2px solid #99181F;">
-            <p>Escanea este código para ver los detalles de tu entrega.</p>
+        <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; margin: 0; padding: 0;">
+            <div style="max-width: 520px; margin: 20px auto; background: #2b2b2b; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                <div style="background-color: #99181F; padding: 20px; text-align: center;">
+                    <img src="{LOGO_URL}" alt="Sabores Unidos" style="height: 70px;">
+                </div>
+                <div style="padding: 25px 30px; text-align: center; color: #e0e0e0;">
+                    <h2 style="color: #ff4d4d; margin-top: 0;">¡Pedido Recibido!</h2>
+                    <p style="font-size: 16px;">Hola <b style="color: #fff;">{cli['nom']}</b>, estamos preparando tu pedido.</p>
+                    <div style="background: #3a2020; border-radius: 8px; padding: 15px; margin: 15px 0; border: 1px solid #99181F;">
+                        <p style="margin: 5px 0; color: #e0e0e0;"><b>📦 Pedido #:</b> {dom_id}</p>
+                        <p style="margin: 5px 0; color: #e0e0e0;"><b>📍 Dirección:</b> {direccion}</p>
+                    </div>
+                    <p style="font-size: 14px; color: #aaa;">El código QR de tu pedido va adjunto en este correo. Escanéalo para ver los detalles de tu entrega.</p>
+                </div>
+                <div style="background: #1a1a1a; text-align: center; padding: 12px; font-size: 12px; color: #666;">
+                    Sabores Unidos &copy; 2026 — Todos los derechos reservados
+                </div>
+            </div>
         </body>
     </html>
     """
@@ -39,8 +53,16 @@ def enviar_mail_dom(cli, direccion, qr_buf, dom_id):
             json={
                 "sender": {"name": BREVO_SENDER_NAME, "email": BREVO_SENDER_EMAIL},
                 "to": [{"email": cli['correo']}],
-                "subject": f"Confirmación de Pedido - Sabores Unidos #{dom_id}",
-                "htmlContent": cuerpo
+                "subject": f"Confirmación de Pedido #{dom_id} - Sabores Unidos",
+                "htmlContent": cuerpo,
+                "attachment": [{
+                    "content": qr_b64,
+                    "name": "qr_domicilio.png",
+                    "type": "image/png"
+                }],
+                "headers": {
+                    "X-Mailin-custom": f"domicilio_{dom_id}"
+                }
             },
             timeout=30
         )

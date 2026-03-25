@@ -16,18 +16,49 @@ BREVO_API_KEY = os.environ.get("BREVO_API_KEY", "")
 BREVO_SENDER_EMAIL = os.environ.get("BREVO_SENDER_EMAIL", "")
 BREVO_SENDER_NAME = os.environ.get("BREVO_SENDER_NAME", "Sabores Unidos")
 
-def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
+URL_SERVIDOR = os.environ.get("URL_SERVIDOR_PUBLICO", "http://54.156.114.70:62001")
+LOGO_URL = f"{URL_SERVIDOR}/static/img/sabores-unidos.png"
+
+def formato_hora_12h(hora_str):
+    """Convierte '14' o '14:00' a '2:00 PM'."""
+    h = int(str(hora_str).split(':')[0])
+    sufijo = 'AM' if h < 12 else 'PM'
+    h12 = h % 12 or 12
+    return f"{h12}:00 {sufijo}"
+
+def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf, res_id):
     qr_buf.seek(0)
     qr_b64 = base64.b64encode(qr_buf.read()).decode()
 
+    hora_12 = formato_hora_12h(datos_reserva['hor'])
+    cedula = datos_cliente['doc']
+    url_mis_reservas = f"{URL_SERVIDOR}/mis_reservas?cedula={cedula}"
+
     cuerpo = f"""
     <html>
-        <body style="font-family: Arial; text-align: center;">
-            <h2 style="color: #99181F;">¡Reserva Confirmada!</h2>
-            <p>Hola <b>{datos_cliente['nom']}</b>, tu mesa ha sido reservada con éxito.</p>
-            <p><b>Fecha:</b> {datos_reserva['fec']} | <b>Hora:</b> {datos_reserva['hor']}:00</p>
-            <img src="data:image/png;base64,{qr_b64}" style="width: 200px; border: 2px solid #99181F;">
-            <p>Por favor, presenta este QR al llegar al restaurante.</p>
+        <body style="font-family: Arial, sans-serif; background-color: #1a1a1a; margin: 0; padding: 0;">
+            <div style="max-width: 520px; margin: 20px auto; background: #2b2b2b; border-radius: 12px; overflow: hidden; box-shadow: 0 2px 8px rgba(0,0,0,0.3);">
+                <div style="background-color: #99181F; padding: 20px; text-align: center;">
+                    <img src="{LOGO_URL}" alt="Sabores Unidos" style="height: 70px;">
+                </div>
+                <div style="padding: 25px 30px; text-align: center; color: #e0e0e0;">
+                    <h2 style="color: #ff4d4d; margin-top: 0;">¡Reserva Confirmada!</h2>
+                    <p style="font-size: 16px;">Hola <b style="color: #fff;">{datos_cliente['nom']}</b>, tu mesa ha sido reservada con éxito.</p>
+                    <div style="background: #3a2020; border-radius: 8px; padding: 15px; margin: 15px 0; border: 1px solid #99181F;">
+                        <p style="margin: 5px 0; color: #e0e0e0;"><b>Fecha:</b> {datos_reserva['fec']}</p>
+                        <p style="margin: 5px 0; color: #e0e0e0;"><b>Hora:</b> {hora_12}</p>
+                        <p style="margin: 5px 0; color: #e0e0e0;"><b>Reserva #:</b> {res_id}</p>
+                    </div>
+                    <p style="font-size: 14px; color: #aaa;">El código QR de tu reserva va adjunto en este correo. Preséntalo al llegar al restaurante.</p>
+                    <div style="margin-top: 25px;">
+                        <p style="font-size: 14px; color: #aaa;">¿Necesitas modificar o cancelar tu reserva?</p>
+                        <a href="{url_mis_reservas}" style="display: inline-block; background-color: #99181F; color: #fff; text-decoration: none; padding: 12px 25px; border-radius: 6px; font-weight: bold; margin-top: 5px;">Gestionar mi reserva</a>
+                    </div>
+                </div>
+                <div style="background: #1a1a1a; text-align: center; padding: 12px; font-size: 12px; color: #666;">
+                    Sabores Unidos &copy; 2026 — Todos los derechos reservados
+                </div>
+            </div>
         </body>
     </html>
     """
@@ -41,8 +72,16 @@ def enviar_mail_reserva(datos_cliente, datos_reserva, qr_buf):
             json={
                 "sender": {"name": BREVO_SENDER_NAME, "email": BREVO_SENDER_EMAIL},
                 "to": [{"email": datos_cliente['correo']}],
-                "subject": "Confirmación de Reserva - Sabores Unidos",
-                "htmlContent": cuerpo
+                "subject": f"Confirmación de Reserva #{res_id} - Sabores Unidos",
+                "htmlContent": cuerpo,
+                "attachment": [{
+                    "content": qr_b64,
+                    "name": "qr_reserva.png",
+                    "type": "image/png"
+                }],
+                "headers": {
+                    "X-Mailin-custom": f"reserva_{res_id}"
+                }
             },
             timeout=30
         )
@@ -164,7 +203,7 @@ def crear_reserva():
 
         threading.Thread(
             target=enviar_mail_reserva,
-            args=(cli, res_data, buf),
+            args=(cli, res_data, buf, res_id),
             daemon=True
         ).start()
 

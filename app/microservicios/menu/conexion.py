@@ -5,7 +5,7 @@ def conectar():
     conexion = None
     try:
         conexion = mysql.connector.connect(
-            host='54.156.114.70',
+            host='localhost',
             user='taster',
             password='uYW8CXhOAC7',
             database='db_tpr'
