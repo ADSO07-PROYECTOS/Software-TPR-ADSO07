@@ -9,6 +9,7 @@ from utils.constantes import (
     URL_MICROSERVICIO_RESERVAS,
     URL_MICROSERVICIO_DOMICILIOS,
     URL_MICROSERVICIO_MENU,
+    URL_MICROSERVICIO_MIS_RESERVAS,
 )
 from services.servicio_comprobantes import (
     procesar_comprobante_reserva,
@@ -105,6 +106,89 @@ def api_subir_comprobante_domicilio():
         return jsonify({'success': exito, 'message': mensaje}), codigo
     except Exception as error:
         return jsonify({'success': False, 'message': str(error)}), 500
+
+
+# ─── Categorías (proxy) ──────────────────────────────────────────────
+
+@bp_api.route('/api/categorias', methods=['GET'])
+def proxy_categorias():
+    try:
+        respuesta = requests.get(f'{URL_MICROSERVICIO_MENU}/api/categorias', timeout=10)
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+
+
+# ─── Platos por categoría (proxy) ───────────────────────────────────
+
+@bp_api.route('/api/platos/<int:id_categoria>', methods=['GET'])
+def proxy_platos_por_categoria(id_categoria):
+    try:
+        respuesta = requests.get(f'{URL_MICROSERVICIO_MENU}/api/platos/{id_categoria}', timeout=10)
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+
+
+# ─── Extras (proxy) ─────────────────────────────────────────────────
+
+@bp_api.route('/api/extras', methods=['GET'])
+def proxy_extras():
+    try:
+        respuesta = requests.get(f'{URL_MICROSERVICIO_MENU}/api/extras', timeout=10)
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+
+
+# ─── Mis reservas (proxy) ────────────────────────────────────────────
+
+@bp_api.route('/api/mis_reservas', methods=['GET'])
+def proxy_mis_reservas():
+    try:
+        respuesta = requests.get(
+            f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas',
+            params=request.args, timeout=15
+        )
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+
+
+@bp_api.route('/api/mis_reservas/<int:id_reserva>', methods=['GET'])
+def proxy_obtener_reserva(id_reserva):
+    try:
+        respuesta = requests.get(
+            f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas/{id_reserva}',
+            timeout=15
+        )
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+
+
+@bp_api.route('/api/mis_reservas/<int:id_reserva>', methods=['PUT'])
+def proxy_actualizar_reserva(id_reserva):
+    try:
+        respuesta = requests.put(
+            f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas/{id_reserva}',
+            json=request.json, timeout=15
+        )
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
+
+
+@bp_api.route('/api/mis_reservas/<int:id_reserva>', methods=['DELETE'])
+def proxy_eliminar_reserva(id_reserva):
+    try:
+        respuesta = requests.delete(
+            f'{URL_MICROSERVICIO_MIS_RESERVAS}/api/mis_reservas/{id_reserva}',
+            timeout=15
+        )
+        return jsonify(respuesta.json()), respuesta.status_code
+    except Exception as error:
+        return jsonify({"error": str(error)}), 502
 
 
 # ─── Detalle de plato (proxy) ───────────────────────────────────────

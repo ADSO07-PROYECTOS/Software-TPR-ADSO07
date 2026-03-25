@@ -2,6 +2,7 @@
 
 let _categorias = [];
 let _categActual = null;
+let _tamanos = [];  // cache de tamaños disponibles
 
 async function cargarProductos() {
     document.getElementById('vista-categorias').classList.remove('oculta');
@@ -68,6 +69,13 @@ function abrirModalProducto() {
     }
     const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
     document.getElementById('fp-stock-grupo').style.display = esAdic ? '' : 'none';
+
+    const esPizza = _categActual && _categActual.nombre.toUpperCase() === 'PIZZAS';
+    document.getElementById('fp-tamanos-grupo').style.display = esPizza ? '' : 'none';
+    document.getElementById('fp-precio').closest('.form-grupo').style.display = esPizza ? 'none' : '';
+    document.getElementById('fp-precio').required = !esPizza;
+    if (esPizza) cargarCamposTamanos();
+
     document.getElementById('modal-producto').classList.remove('oculta');
     document.getElementById('fp-nombre').focus();
 }
@@ -206,6 +214,57 @@ function llenarSelectCategorias() {
         _categorias.map(c => `<option value="${c.id}"${_categActual && _categActual.id === c.id ? ' selected' : ''}>${esc(c.nombre)}</option>`).join('');
 }
 
+/* ── Tamaños para Pizzas ── */
+
+async function cargarCamposTamanos(preciosExistentes = []) {
+    const contenedor = document.getElementById('fp-tamanos-lista');
+    if (!contenedor) return;
+    if (!_tamanos.length) {
+        try {
+            _tamanos = await apiFetch('/admin/api/tamanos');
+        } catch (e) {
+            contenedor.innerHTML = '<small style="color:#f66;">No se pudieron cargar los tamaños</small>';
+            return;
+        }
+    }
+    contenedor.innerHTML = _tamanos.map(t => {
+        const existente = preciosExistentes.find(p => p.tamano_id === t.id);
+        const valor = existente ? existente.precio : '';
+        return `
+        <div style="display:flex;align-items:center;gap:10px;">
+            <span style="min-width:110px;font-size:14px;">${esc(t.nombre)}</span>
+            <input type="number" class="fp-tamano-precio" data-tamano-id="${t.id}"
+                   min="0" step="100" placeholder="0" value="${valor}"
+                   style="flex:1;padding:6px 10px;border-radius:6px;border:1px solid rgba(255,255,255,0.15);background:rgba(255,255,255,0.06);color:#fff;">
+        </div>`;
+    }).join('');
+}
+
+function obtenerPreciosTamanoDelForm() {
+    const inputs = document.querySelectorAll('.fp-tamano-precio');
+    const precios = [];
+    inputs.forEach(input => {
+        const precio = parseFloat(input.value) || 0;
+        if (precio > 0) {
+            precios.push({ tamano_id: parseInt(input.dataset.tamanoId), precio });
+        }
+    });
+    return precios;
+}
+
+async function guardarPreciosTamano(productoId) {
+    const precios = obtenerPreciosTamanoDelForm();
+    if (precios.length === 0) return;
+    try {
+        await apiFetch(`/admin/api/productos/${productoId}/precios_tamano`, {
+            method: 'POST',
+            body: JSON.stringify({ precios })
+        });
+    } catch (e) {
+        console.error('Error guardando precios por tamaño:', e);
+    }
+}
+
 function toggleFormProducto() { abrirModalProducto(); }
 
 async function editarProducto(id) {
@@ -234,6 +293,18 @@ async function editarProducto(id) {
         document.getElementById('fp-stock').value = p.stock ?? 0;
         const esAdic = _categActual && _categActual.nombre.toLowerCase() === 'adiciones';
         document.getElementById('fp-stock-grupo').style.display = esAdic ? '' : 'none';
+
+        const esPizza = _categActual && _categActual.nombre.toUpperCase() === 'PIZZAS';
+        document.getElementById('fp-tamanos-grupo').style.display = esPizza ? '' : 'none';
+        document.getElementById('fp-precio').closest('.form-grupo').style.display = esPizza ? 'none' : '';
+        document.getElementById('fp-precio').required = !esPizza;
+        if (esPizza) {
+            let preciosExistentes = [];
+            try {
+                preciosExistentes = await apiFetch(`/admin/api/productos/${p.id}/precios_tamano`);
+            } catch (_) {}
+            await cargarCamposTamanos(preciosExistentes);
+        }
 
         llenarSelectCategorias();
         const sel = document.getElementById('fp-categoria');
@@ -292,19 +363,35 @@ async function guardarProducto(e) {
     const payload = {
         nombre_producto:         document.getElementById('fp-nombre').value.trim(),
         categoria_id:            categoriaId,
-        precio_base:             parseFloat(document.getElementById('fp-precio').value),
+        precio_base:             parseFloat(document.getElementById('fp-precio').value) || 0,
         descripcion_producto:    document.getElementById('fp-descripcion').value.trim(),
         imagen_producto:         document.getElementById('fp-imagen').value.trim() || null,
         disponibilidad_producto: parseInt(document.getElementById('fp-disponibilidad').value),
         stock:                   parseInt(document.getElementById('fp-stock').value) || 0,
     };
 
+    // Si es pizza, tomar el precio personal como precio_base
+    const catSel = _categorias.find(c => c.id === categoriaId);
+    const esPizza = catSel && catSel.nombre.toUpperCase() === 'PIZZAS';
+    if (esPizza) {
+        const preciosTamano = obtenerPreciosTamanoDelForm();
+        const personal = preciosTamano.find(p => {
+            const tam = _tamanos.find(t => t.id === p.tamano_id);
+            return tam && tam.nombre.toLowerCase() === 'personal';
+        });
+        payload.precio_base = personal ? personal.precio : (preciosTamano[0]?.precio || 0);
+    }
+
     try {
         if (id) {
             await apiFetch(`/admin/api/productos/${id}`, { method: 'PUT', body: JSON.stringify(payload) });
+            if (esPizza) await guardarPreciosTamano(id);
             toast('Producto actualizado');
         } else {
-            await apiFetch('/admin/api/productos', { method: 'POST', body: JSON.stringify(payload) });
+            const respCrear = await apiFetch('/admin/api/productos', { method: 'POST', body: JSON.stringify(payload) });
+            if (esPizza && respCrear.producto_id) {
+                await guardarPreciosTamano(respCrear.producto_id);
+            }
             toast('Producto agregado');
         }
         cancelarFormProducto();

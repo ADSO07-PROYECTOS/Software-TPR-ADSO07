@@ -58,6 +58,47 @@ def admin_desactivar_producto(producto_id):
         return jsonify({"error": str(e)}), 500
 
 
+# ── Precios por tamaño (proxy al menú MS) ──────────────
+
+@mod_productos.route('/api/admin/productos/<int:producto_id>/precios_tamano', methods=['GET'])
+def admin_obtener_precios_tamano(producto_id):
+    try:
+        resp = requests.get(f'{MENU_MS}/api/productos/{producto_id}/precios_tamano', timeout=10)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@mod_productos.route('/api/admin/productos/<int:producto_id>/precios_tamano', methods=['POST'])
+def admin_guardar_precios_tamano(producto_id):
+    try:
+        resp = requests.post(f'{MENU_MS}/api/productos/{producto_id}/precios_tamano',
+                             json=request.get_json(), timeout=10)
+        return jsonify(resp.json()), resp.status_code
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@mod_productos.route('/api/admin/tamanos', methods=['GET'])
+def admin_listar_tamanos():
+    try:
+        conn = conectar()
+        cursor = conn.cursor(dictionary=True)
+        cursor.execute("""
+            SELECT p.producto_id AS id, p.nombre_producto AS nombre, p.precio_base AS precio
+            FROM productos p
+            INNER JOIN categorias c ON p.categoria_id = c.categoria_id
+            WHERE LOWER(c.nombre_categoria) LIKE '%%tamano%%'
+              AND p.disponibilidad_producto = 1
+            ORDER BY p.precio_base ASC
+        """)
+        tamanos = cursor.fetchall()
+        cursor.close(); conn.close()
+        return jsonify(tamanos)
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
 # ── Categorías ──────────────────────────────────────────
 
 @mod_productos.route('/api/admin/categorias', methods=['GET'])

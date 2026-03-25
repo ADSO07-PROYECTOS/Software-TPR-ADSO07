@@ -96,6 +96,23 @@ def admin_producto_delete(id_producto):
     return _proxy('DELETE', f'/api/admin/productos/{id_producto}')
 
 
+# ─── Precios por tamaño ─────────────────────────────────────────────
+
+@bp_admin.route('/admin/api/productos/<int:id_producto>/precios_tamano', methods=['GET'])
+def admin_precios_tamano_get(id_producto):
+    return _proxy('GET', f'/api/admin/productos/{id_producto}/precios_tamano')
+
+
+@bp_admin.route('/admin/api/productos/<int:id_producto>/precios_tamano', methods=['POST'])
+def admin_precios_tamano_post(id_producto):
+    return _proxy('POST', f'/api/admin/productos/{id_producto}/precios_tamano', json=request.get_json())
+
+
+@bp_admin.route('/admin/api/tamanos', methods=['GET'])
+def admin_tamanos_get():
+    return _proxy('GET', '/api/admin/tamanos')
+
+
 # ─── Categorías ──────────────────────────────────────────────────────
 
 @bp_admin.route('/admin/api/categorias', methods=['GET'])

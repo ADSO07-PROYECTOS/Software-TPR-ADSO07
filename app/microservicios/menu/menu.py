@@ -71,22 +71,42 @@ def ver_platos_por_categoria(id_categoria):
         conn = conectar()
         if conn:
             cursor = conn.cursor(dictionary=True)
-            
+
+            # Verificar si la categoría es Pizzas
+            cursor.execute(
+                "SELECT nombre_categoria FROM categorias WHERE categoria_id = %s",
+                (id_categoria,)
+            )
+            cat_row = cursor.fetchone()
+            es_pizza = cat_row and cat_row['nombre_categoria'].upper() == 'PIZZAS'
+
             query = "SELECT * FROM productos WHERE categoria_id = %s AND disponibilidad_producto = 1"
             cursor.execute(query, (id_categoria,))
             result = cursor.fetchall()
-            
+
             for row in result:
+                precio_mostrar = row.get('precio_base')
+                if es_pizza:
+                    cursor.execute("""
+                        SELECT pt.precio FROM precios_tamano pt
+                        INNER JOIN productos t ON pt.tamano_id = t.producto_id
+                        WHERE pt.producto_id = %s AND LOWER(t.nombre_producto) = 'personal'
+                        LIMIT 1
+                    """, (row.get('producto_id'),))
+                    precio_personal = cursor.fetchone()
+                    if precio_personal:
+                        precio_mostrar = precio_personal['precio']
+
                 plato = {
-                    'id': row.get('producto_id'), 
+                    'id': row.get('producto_id'),
                     'nombre': row.get('nombre_producto'),
-                    'precio': row.get('precio_base'),
+                    'precio': precio_mostrar,
                     'descripcion': row.get('descripcion_producto'),
                     'imagen': row.get('imagen_producto'),
                     'categoria_id': row.get('categoria_id')
                 }
                 lista_platos.append(plato)
-            
+
             cursor.close()
             conn.close()
 
@@ -243,6 +263,67 @@ def eliminar_producto(id_producto):
     except Exception as e:
         print(f"Error al desactivar producto: {e}")
         return jsonify({"error": str(e)}), 500
+
+# ─── Precios por tamaño (CRUD) ───────────────────────────────────────
+
+@app.route('/api/productos/<int:producto_id>/precios_tamano', methods=['GET'])
+def obtener_precios_tamano(producto_id):
+    try:
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor(dictionary=True)
+            cursor.execute("""
+                SELECT pt.id, pt.tamano_id, t.nombre_producto AS nombre_tamano, pt.precio
+                FROM precios_tamano pt
+                INNER JOIN productos t ON pt.tamano_id = t.producto_id
+                WHERE pt.producto_id = %s
+                ORDER BY pt.precio ASC
+            """, (producto_id,))
+            precios = cursor.fetchall()
+            cursor.close(); conn.close()
+            return jsonify(precios)
+        return jsonify([]), 200
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
+
+@app.route('/api/productos/<int:producto_id>/precios_tamano', methods=['POST'])
+def guardar_precios_tamano(producto_id):
+    try:
+        datos = request.get_json()
+        precios = datos.get('precios', [])
+        conn = conectar()
+        if conn:
+            cursor = conn.cursor()
+            cursor.execute("DELETE FROM precios_tamano WHERE producto_id = %s", (producto_id,))
+            for item in precios:
+                tamano_id = int(item['tamano_id'])
+                precio = float(item['precio'])
+                if precio > 0:
+                    cursor.execute(
+                        "INSERT INTO precios_tamano (producto_id, tamano_id, precio) VALUES (%s, %s, %s)",
+                        (producto_id, tamano_id, precio)
+                    )
+            # Actualizar precio_base del producto con el precio personal
+            for item in precios:
+                cursor.execute(
+                    "SELECT nombre_producto FROM productos WHERE producto_id = %s",
+                    (int(item['tamano_id']),)
+                )
+                row = cursor.fetchone()
+                if row and row[0].lower() == 'personal' and float(item['precio']) > 0:
+                    cursor.execute(
+                        "UPDATE productos SET precio_base = %s WHERE producto_id = %s",
+                        (float(item['precio']), producto_id)
+                    )
+                    break
+            conn.commit()
+            cursor.close(); conn.close()
+            return jsonify({"mensaje": "Precios por tamaño guardados"}), 200
+        return jsonify({"error": "Sin conexión a BD"}), 500
+    except Exception as e:
+        return jsonify({"error": str(e)}), 500
+
 
 @app.route('/api/extras', methods=['GET'])
 def obtener_extras_configuracion():

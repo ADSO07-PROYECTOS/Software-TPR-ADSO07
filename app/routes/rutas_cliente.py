@@ -60,10 +60,27 @@ def detalle_plato(id_plato):
     nombre_categoria = info_plato.get('categoria_nombre', '').lower()
     es_pizza = 'pizza' in nombre_categoria
 
+    # Si es pizza, sobreescribir precios genéricos con precios por producto
+    tamanos = datos_extras.get('tamanos', [])
+    if es_pizza:
+        try:
+            res_precios = requests.get(
+                f'{URL_MICROSERVICIO_MENU}/api/productos/{id_plato}/precios_tamano', timeout=5
+            )
+            if res_precios.status_code == 200:
+                precios_producto = {
+                    p['tamano_id']: p['precio'] for p in res_precios.json()
+                }
+                for tam in tamanos:
+                    if tam['id'] in precios_producto:
+                        tam['precio'] = precios_producto[tam['id']]
+        except Exception as error:
+            print(f"Error obteniendo precios por tamaño: {error}")
+
     return render_template('client/detalle_plato.html',
                            plato=info_plato,
                            es_pizza=es_pizza,
-                           tamanos=datos_extras.get('tamanos', []),
+                           tamanos=tamanos,
                            adiciones=datos_extras.get('adiciones', []),
                            sabores=datos_extras.get('sabores', []))
 
