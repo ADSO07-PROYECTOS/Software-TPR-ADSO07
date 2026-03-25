@@ -21,15 +21,15 @@
         <div id="panel_der">
             <article class="hijo_centro">
                 <div id="recientes">
-                    <h1>Pedidos recientes</h1>
+                    <h1>Domicilios recientes</h1>
                     {% for p in pedidos_recientes %}
                     <p>
-                        Pedido #{{ p.domicilio_id }} &ndash;
+                        Domicilio #{{ p.domicilio_id }} &ndash;
                         {{ p.nombre or 'Cliente' }} &ndash;
                         <span class="badge-estado estado-{{ p.estado_pedido | lower | replace(' ', '_') }}">{{ p.estado_pedido }}</span>
                     </p>
                     {% else %}
-                    <p>Sin pedidos recientes</p>
+                    <p>Sin domicilios recientes</p>
                     {% endfor %}
                 </div>
             </article>

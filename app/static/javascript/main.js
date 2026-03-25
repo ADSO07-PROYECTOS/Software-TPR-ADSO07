@@ -74,7 +74,7 @@ const router = () => {
         const msgEl = document.getElementById('mensaje-exito');
         if (msgEl) {
             if (tipo === 'domicilio') {
-                msgEl.textContent = `Pedido #${idOrden} registrado. ¡Te lo llevamos pronto!`;
+                msgEl.textContent = `Domicilio #${idOrden} registrado. ¡Te lo llevamos pronto!`;
             } else {
                 msgEl.textContent = `Reserva #${idOrden} confirmada. ¡Hasta pronto!`;
             }

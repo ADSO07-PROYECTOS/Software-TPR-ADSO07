@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const idDomicilio = localStorage.getItem('id_domicilio');
     if (!idDomicilio) {
-        alert('Error: No se encontró el ID del pedido');
+        alert('Error: No se encontró el ID del domicilio');
         window.location.href = '/menu';
         return;
     }
@@ -69,7 +69,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const data = await res.json();
 
             if (res.ok && data.success) {
-                alert('✓ Comprobante enviado correctamente. Tu pedido está en revisión.');
+                alert('✓ Comprobante enviado correctamente. Tu domicilio está en revisión.');
                 localStorage.removeItem('id_domicilio');
                 localStorage.removeItem('total_domicilio');
                 window.location.href = '/exito';

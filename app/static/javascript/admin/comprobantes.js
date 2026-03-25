@@ -23,7 +23,7 @@ async function abrirModalComprobante(id, tipo = 'reserva') {
         const btnConfirmar = document.getElementById('btn-confirmar-comprobante');
         const btnRechazar  = document.getElementById('btn-rechazar-comprobante');
 
-        const label = tipo === 'domicilio' ? `Pedido #${id}` : `Reserva #${id} - ${registro.cc_cliente}`;
+        const label = tipo === 'domicilio' ? `Domicilio #${id}` : `Reserva #${id} - ${registro.cc_cliente}`;
         titulo.textContent = `Comprobante ${label}`;
 
         const rutaComprobante = `/static/${registro.comprobante_transferencia}`;
@@ -56,7 +56,7 @@ function cerrarModalComprobante() {
 async function rechazarComprobante(reservaId) {
     const btn  = document.getElementById('btn-rechazar-comprobante');
     const tipo = btn.dataset.tipo || 'reserva';
-    if (!confirm('¿Rechazar este comprobante? El pedido/reserva volverá a estado Pendiente.')) return;
+    if (!confirm('¿Rechazar este comprobante? El domicilio/reserva volverá a estado Pendiente.')) return;
 
     try {
         btn.disabled = true;

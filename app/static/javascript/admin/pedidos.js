@@ -57,7 +57,7 @@ async function cambiarEstadoDomicilio(id, nuevoEstado) {
             method: 'PUT',
             body: JSON.stringify({ estado_pedido: nuevoEstado }),
         });
-        toast(`Pedido #${id} → ${nuevoEstado}`);
+        toast(`Domicilio #${id} → ${nuevoEstado}`);
     } catch (e) {
         toast(e.message, 'error');
     }

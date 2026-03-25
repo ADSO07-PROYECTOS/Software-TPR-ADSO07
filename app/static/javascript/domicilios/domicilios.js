@@ -51,7 +51,7 @@ export function prepararPasoDomicilio() {
         if (!clienteTemporal || !clienteTemporal.doc || !clienteTemporal.nom) {
             alert('No se encontraron los datos del cliente. Vuelve al paso anterior e inténtalo de nuevo.');
             btn.disabled = false;
-            btn.innerText = 'ENVIAR PEDIDO'; 
+            btn.innerText = 'ENVIAR DOMICILIO'; 
             return;
         }
 
@@ -91,12 +91,12 @@ export function prepararPasoDomicilio() {
             } else {
                 alert("Error: " + data.message);
                 btn.disabled = false;
-                btn.innerText = 'ENVIAR PEDIDO';
+                btn.innerText = 'ENVIAR DOMICILIO';
             }
         } catch (error) {
             alert("Error al conectar con el servicio de domicilios");
             btn.disabled = false;
-            btn.innerText = 'ENVIAR PEDIDO';
+            btn.innerText = 'ENVIAR DOMICILIO';
         }
     };
 }
