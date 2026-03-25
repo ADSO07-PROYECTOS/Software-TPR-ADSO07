@@ -90,7 +90,7 @@ def crear_domicilio():
             """, (dom_id, prod_id, p.get('cantidad', 1), p.get('precio', 0)))
 
         conn.commit()
-        detalles_qr = f"http://147.182.238.195:5000/resumen/domicilio/{dom_id}"
+        detalles_qr = f"http://54.156.114.70:62001/resumen/domicilio/{dom_id}"
         
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()

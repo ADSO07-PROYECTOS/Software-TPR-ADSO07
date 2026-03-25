@@ -31,7 +31,7 @@ def proxy_tematicas():
         errores.append(f'localhost: {error}')
 
     try:
-        respuesta = requests.get('http://192.168.215.37:5005/api/tematicas', timeout=8)
+        respuesta = requests.get('http://54.156.114.70:5005/api/tematicas', timeout=8)
         return jsonify(respuesta.json()), respuesta.status_code
     except Exception as error:
         errores.append(f'remoto: {error}')
@@ -59,7 +59,7 @@ def proxy_tematicas():
 def proxy_reservas():
     try:
         respuesta = requests.post(
-            'http://192.168.215.37:5005/api/reservas',
+            'http://54.156.114.70:5005/api/reservas',
             json=request.json, timeout=30
         )
         return jsonify(respuesta.json()), respuesta.status_code

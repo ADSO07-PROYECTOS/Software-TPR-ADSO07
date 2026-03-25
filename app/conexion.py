@@ -5,10 +5,10 @@ def conectar():
     conexion = None
     try:
         conexion = mysql.connector.connect(
-            host='64.23.140.136',
-            user='usuario',
-            password='Rest@uranteTPR?',
-            database='db_tpr1',
+            host='54.156.114.70',
+            user='taster',
+            password='uYW8CXhOAC7',
+            database='db_tpr',
             auth_plugin='mysql_native_password'
         )
         

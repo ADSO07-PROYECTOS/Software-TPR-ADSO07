@@ -155,7 +155,7 @@ def crear_reserva():
 
         conn.commit()
 
-        detalles_qr = f"http://147.182.238.195:5000/resumen/reserva/{res_id}"
+        detalles_qr = f"http://54.156.114.70:62001/resumen/reserva/{res_id}"
         
         qr = qrcode.make(detalles_qr)
         buf = io.BytesIO()
