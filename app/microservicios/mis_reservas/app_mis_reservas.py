@@ -11,7 +11,7 @@ from conexion import conectar
 app = Flask(__name__)
 CORS(app)
 
-URL_SERVIDOR_PUBLICO = os.environ.get("URL_SERVIDOR_PUBLICO", "http://147.182.238.195:5000")
+URL_SERVIDOR_PUBLICO = os.environ.get("URL_SERVIDOR_PUBLICO", "http://192.168.215.37:5000")
 
 DIAS_ES = ['LUNES', 'MARTES', 'MIÉRCOLES', 'JUEVES', 'VIERNES', 'SÁBADO', 'DOMINGO']
 MESES_ES = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
