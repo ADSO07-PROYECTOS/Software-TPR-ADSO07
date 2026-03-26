@@ -70,7 +70,7 @@ document.addEventListener('DOMContentLoaded', () => {
             
             if (cant > 0) {
                 precioUnidad += (cant * precioIndividual);
-                item.style.backgroundColor = "#fff3cd";
+                item.style.backgroundColor = "#52524f";
                 item.style.borderRadius = "8px";
             } else {
                 item.style.backgroundColor = "transparent";

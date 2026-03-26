@@ -18,7 +18,6 @@ MESES_ES = ['ENERO', 'FEBRERO', 'MARZO', 'ABRIL', 'MAYO', 'JUNIO',
             'JULIO', 'AGOSTO', 'SEPTIEMBRE', 'OCTUBRE', 'NOVIEMBRE', 'DICIEMBRE']
 
 
-# ─── Consultar reservas por cédula ──────────────────────────────────
 
 @app.route('/api/mis_reservas', methods=['GET'])
 def consultar_reservas():
@@ -55,7 +54,6 @@ def consultar_reservas():
                 reserva['fecha_formato'] = ''
                 reserva['fecha_hora'] = ''
 
-            # Pedido asociado
             cursor.execute("""
                 SELECT p.nombre_producto, dr.cantidad, dr.notas
                 FROM detalles_reservas dr
@@ -64,7 +62,6 @@ def consultar_reservas():
             """, (reserva['reserva_id'],))
             reserva['pedido'] = cursor.fetchall()
 
-            # QR
             url_qr = f"{URL_SERVIDOR_PUBLICO}/resumen/reserva/{reserva['reserva_id']}"
             imagen_qr = qrcode.make(url_qr)
             buffer = io.BytesIO()
@@ -81,7 +78,6 @@ def consultar_reservas():
         conn.close()
 
 
-# ─── Obtener reserva para modificar ─────────────────────────────────
 
 @app.route('/api/mis_reservas/<int:id_reserva>', methods=['GET'])
 def obtener_reserva(id_reserva):
@@ -112,7 +108,6 @@ def obtener_reserva(id_reserva):
         conn.close()
 
 
-# ─── Actualizar reserva ─────────────────────────────────────────────
 
 @app.route('/api/mis_reservas/<int:id_reserva>', methods=['PUT'])
 def actualizar_reserva(id_reserva):
@@ -154,7 +149,6 @@ def actualizar_reserva(id_reserva):
         conn.close()
 
 
-# ─── Eliminar reserva ───────────────────────────────────────────────
 
 @app.route('/api/mis_reservas/<int:id_reserva>', methods=['DELETE'])
 def eliminar_reserva(id_reserva):
@@ -174,7 +168,6 @@ def eliminar_reserva(id_reserva):
         conn.close()
 
 
-# ─── Tematicas (para el formulario de modificar) ────────────────────
 
 @app.route('/api/tematicas', methods=['GET'])
 def listar_tematicas():

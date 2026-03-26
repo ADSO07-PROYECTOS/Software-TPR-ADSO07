@@ -72,7 +72,6 @@ def ver_platos_por_categoria(id_categoria):
         if conn:
             cursor = conn.cursor(dictionary=True)
 
-            # Verificar si la categoría es Pizzas
             cursor.execute(
                 "SELECT nombre_categoria FROM categorias WHERE categoria_id = %s",
                 (id_categoria,)
@@ -264,7 +263,6 @@ def eliminar_producto(id_producto):
         print(f"Error al desactivar producto: {e}")
         return jsonify({"error": str(e)}), 500
 
-# ─── Precios por tamaño (CRUD) ───────────────────────────────────────
 
 @app.route('/api/productos/<int:producto_id>/precios_tamano', methods=['GET'])
 def obtener_precios_tamano(producto_id):
@@ -304,7 +302,6 @@ def guardar_precios_tamano(producto_id):
                         "INSERT INTO precios_tamano (producto_id, tamano_id, precio) VALUES (%s, %s, %s)",
                         (producto_id, tamano_id, precio)
                     )
-            # Actualizar precio_base del producto con el precio personal
             for item in precios:
                 cursor.execute(
                     "SELECT nombre_producto FROM productos WHERE producto_id = %s",

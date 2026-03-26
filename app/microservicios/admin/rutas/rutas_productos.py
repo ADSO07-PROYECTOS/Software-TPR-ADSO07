@@ -58,7 +58,6 @@ def admin_desactivar_producto(producto_id):
         return jsonify({"error": str(e)}), 500
 
 
-# ── Precios por tamaño (proxy al menú MS) ──────────────
 
 @mod_productos.route('/api/admin/productos/<int:producto_id>/precios_tamano', methods=['GET'])
 def admin_obtener_precios_tamano(producto_id):
@@ -99,7 +98,6 @@ def admin_listar_tamanos():
         return jsonify({"error": str(e)}), 500
 
 
-# ── Categorías ──────────────────────────────────────────
 
 @mod_productos.route('/api/admin/categorias', methods=['GET'])
 def admin_listar_categorias():

@@ -9,10 +9,7 @@ from flask_cors import CORS
 app = Flask(__name__)
 CORS(app)
 
-# ── Registrar módulos de rutas ──────────────────────────
-
 from rutas import modulos
-
 for mod in modulos:
     app.register_blueprint(mod)
 

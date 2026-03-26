@@ -1,6 +1,3 @@
-"""
-Blueprint – Rutas de la API (comprobantes, proxy de temáticas, domicilios, plato).
-"""
 from flask import Blueprint, request, jsonify
 import requests
 
@@ -19,7 +16,6 @@ from services.servicio_comprobantes import (
 bp_api = Blueprint('api', __name__)
 
 
-# ─── Temáticas (proxy con fallback a BD local) ──────────────────────
 
 @bp_api.route('/api/tematicas', methods=['GET'])
 def proxy_tematicas():
@@ -54,7 +50,6 @@ def proxy_tematicas():
         return jsonify({"error": "No fue posible cargar temáticas", "detalles": errores}), 500
 
 
-# ─── Reservas (proxy) ───────────────────────────────────────────────
 
 @bp_api.route('/api/reservas', methods=['POST'])
 def proxy_reservas():
@@ -68,7 +63,6 @@ def proxy_reservas():
         return jsonify({"error": str(error)}), 500
 
 
-# ─── Comprobante de reserva ─────────────────────────────────────────
 
 @bp_api.route('/api/reservas/comprobante', methods=['POST'])
 def subir_comprobante_reserva():
@@ -81,7 +75,6 @@ def subir_comprobante_reserva():
         return jsonify({'success': False, 'message': str(error)}), 500
 
 
-# ─── Domicilios (proxy) ─────────────────────────────────────────────
 
 @bp_api.route('/api/domicilios', methods=['POST'])
 def proxy_crear_domicilio():
@@ -95,7 +88,6 @@ def proxy_crear_domicilio():
         return jsonify({"status": "error", "message": str(error)}), 502
 
 
-# ─── Comprobante de domicilio ───────────────────────────────────────
 
 @bp_api.route('/api/domicilios/comprobante', methods=['POST'])
 def api_subir_comprobante_domicilio():
@@ -108,7 +100,6 @@ def api_subir_comprobante_domicilio():
         return jsonify({'success': False, 'message': str(error)}), 500
 
 
-# ─── Categorías (proxy) ──────────────────────────────────────────────
 
 @bp_api.route('/api/categorias', methods=['GET'])
 def proxy_categorias():
@@ -119,7 +110,6 @@ def proxy_categorias():
         return jsonify({"error": str(error)}), 502
 
 
-# ─── Platos por categoría (proxy) ───────────────────────────────────
 
 @bp_api.route('/api/platos/<int:id_categoria>', methods=['GET'])
 def proxy_platos_por_categoria(id_categoria):
@@ -130,7 +120,6 @@ def proxy_platos_por_categoria(id_categoria):
         return jsonify({"error": str(error)}), 502
 
 
-# ─── Extras (proxy) ─────────────────────────────────────────────────
 
 @bp_api.route('/api/extras', methods=['GET'])
 def proxy_extras():
@@ -141,7 +130,6 @@ def proxy_extras():
         return jsonify({"error": str(error)}), 502
 
 
-# ─── Mis reservas (proxy) ────────────────────────────────────────────
 
 @bp_api.route('/api/mis_reservas', methods=['GET'])
 def proxy_mis_reservas():
@@ -191,7 +179,6 @@ def proxy_eliminar_reserva(id_reserva):
         return jsonify({"error": str(error)}), 502
 
 
-# ─── Detalle de plato (proxy) ───────────────────────────────────────
 
 @bp_api.route('/api/plato/<int:id_plato>', methods=['GET'])
 def proxy_plato_detalle(id_plato):
