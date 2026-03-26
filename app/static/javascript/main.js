@@ -35,18 +35,24 @@ document.addEventListener('DOMContentLoaded', () => {
     router(); 
 });
 
-function establecerFechaMinima() {
+function establecerRangoFechas() {
     const inputFecha = document.getElementById('v_fec');
     if (!inputFecha) return;
 
-    const fechaMinima = new Date();
-    fechaMinima.setDate(fechaMinima.getDate() + 1); 
+    const fechaMin = new Date();
+    fechaMin.setDate(fechaMin.getDate() + 1);
+    const minStr = fechaMin.toISOString().split('T')[0];
+
+    const fechaMax = new Date();
+    fechaMax.setMonth(fechaMax.getMonth() + 2);
+    const maxStr = fechaMax.toISOString().split('T')[0];
+
+    inputFecha.min = minStr; 
+    inputFecha.max = maxStr; 
     
-    const minDateStr = fechaMinima.toISOString().split('T')[0];
-    
-    inputFecha.min = minDateStr;
-    inputFecha.value = minDateStr;
+    inputFecha.value = minStr;
 }
+
 
 const router = () => {
     const path = window.location.pathname;
@@ -61,7 +67,7 @@ const router = () => {
     } 
     else if (path.includes('detalles_reserva')) {
         cargarTematicas();
-        establecerFechaMinima(); 
+        establecerRangoFechas(); 
         prepararPaso2();
     } 
     else if (path.includes('direccion_domicilio')) {
