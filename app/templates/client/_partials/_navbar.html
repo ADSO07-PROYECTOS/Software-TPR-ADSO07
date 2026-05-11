@@ -1,0 +1,65 @@
+{# Navbar inferior compartida.
+   Uso:  {% set nav_active = 'inicio' %}  ó  'carrito' / 'reservas'
+         {% include 'client/_partials/_navbar.html' %}
+#}
+<nav class="bottom-nav" aria-label="Navegación principal">
+  <div class="inner">
+    <a class="nav-item {% if nav_active == 'inicio' %}is-active{% endif %}"
+       href="{{ url_for('cliente.ver_menu') }}">
+      <span class="nav-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M3 11l9-8 9 8"/>
+          <path d="M5 10v10a1 1 0 0 0 1 1h4v-6h4v6h4a1 1 0 0 0 1-1V10"/>
+        </svg>
+      </span>
+      <span class="nav-label">Inicio</span>
+    </a>
+
+    <a class="nav-item {% if nav_active == 'carrito' %}is-active{% endif %}"
+       href="{{ url_for('cliente.ver_carrito') }}">
+      <span class="nav-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <circle cx="9" cy="20" r="1.4"/>
+          <circle cx="17" cy="20" r="1.4"/>
+          <path d="M3 4h2l2.4 11.2a1.5 1.5 0 0 0 1.5 1.2h8.6a1.5 1.5 0 0 0 1.5-1.2L21 7H6.5"/>
+        </svg>
+        <span class="nav-badge" data-cart-badge>0</span>
+      </span>
+      <span class="nav-label">Carrito</span>
+    </a>
+
+    <a class="nav-item {% if nav_active == 'reservas' %}is-active{% endif %}"
+       href="{{ url_for('cliente.mis_reservas') }}">
+      <span class="nav-icon" aria-hidden="true">
+        <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor"
+             stroke-width="1.6" stroke-linecap="round" stroke-linejoin="round">
+          <rect x="3.5" y="5" width="17" height="16" rx="2"/>
+          <path d="M8 3v4M16 3v4M3.5 10h17"/>
+        </svg>
+      </span>
+      <span class="nav-label">Reservas</span>
+    </a>
+  </div>
+</nav>
+
+<script>
+  (function () {
+    try {
+      var items = JSON.parse(localStorage.getItem('carrito') || '[]');
+      var count = items.reduce(function (s, i) {
+        var c = parseInt(i && i.cantidad, 10);
+        return s + (isNaN(c) ? 1 : c);
+      }, 0);
+      document.querySelectorAll('[data-cart-badge]').forEach(function (el) {
+        if (count > 0) {
+          el.textContent = count;
+          el.style.display = 'inline-flex';
+        } else {
+          el.style.display = 'none';
+        }
+      });
+    } catch (e) { /* noop */ }
+  })();
+</script>

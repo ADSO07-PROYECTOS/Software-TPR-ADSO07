@@ -78,8 +78,15 @@ document.addEventListener('DOMContentLoaded', () => {
         });
 
         const totalFormateado = totalGeneral.toLocaleString('es-CO');
-        displayTotalTexto.innerHTML = `TOTAL: $ ${totalFormateado}`;
-        botonPagar.innerText = `IR A PAGAR $ ${totalFormateado}`;
+        displayTotalTexto.innerHTML = `$ ${totalFormateado}`;
+        const subtotalEl = document.querySelector('[data-subtotal]');
+        if (subtotalEl) subtotalEl.textContent = `$ ${totalFormateado}`;
+        botonPagar.innerText = `Ir a pagar · $ ${totalFormateado}`;
+        if (totalGeneral === 0) {
+            botonPagar.classList.add('is-disabled');
+        } else {
+            botonPagar.classList.remove('is-disabled');
+        }
 
         sincronizarLocalStorage();
     };

@@ -4,38 +4,61 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalles cliente</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_reservas.css') }}">
+    <title>La Higuera · Envío</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/la-higuera.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
-
 </head>
 <body>
-    <main id="contenedor">
+
+    <svg class="deco-leaf" viewBox="0 0 100 100" fill="none" stroke="currentColor"
+         stroke-width="1.4" aria-hidden="true">
+        <path d="M10 50 C 30 15, 70 15, 90 50 C 70 85, 30 85, 10 50 Z"/>
+        <path d="M10 50 C 30 50, 70 50, 90 50"/>
+    </svg>
+
+    <main class="app-shell" id="contenedor">
+
+        <header class="page-header">
+            <a class="back-btn" href="javascript:history.back()" aria-label="Volver">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 6l-6 6 6 6"/>
+                </svg>
+            </a>
+            <span class="eyebrow">Domicilio · Paso 2 de 2</span>
+            <h1 class="section-title">Tu envío</h1>
+            <p class="section-help">Indícanos a dónde lo llevamos.</p>
+        </header>
+
         <div id="tpl-domicilio">
-            <header><h1>ENVÍO</h1></header>
-            <form id="form-domicilio">
-                <div class="grupo-entrada">
-                    <label>Dirección completa</label>
-                    <input type="text" name="direccion" placeholder="Calle 10 # 12-34" required>
+            <form id="form-domicilio" class="la-form">
+                <div class="field">
+                    <label class="field-label">Dirección completa</label>
+                    <input class="field-input" type="text" name="direccion" placeholder="Calle 10 # 12 — 34" required>
                 </div>
-                <div class="grupo-entrada">
-                    <label>Barrio / Referencia</label>
-                    <input type="text" name="referencia" placeholder="Edificio Torres del Parque, Apto 502" required>
+                <div class="field">
+                    <label class="field-label">Barrio / Referencia</label>
+                    <input class="field-input" type="text" name="referencia" placeholder="Edificio Torres del Parque, Apto 502" required>
                 </div>
-                <div class="grupo-entrada">
-                    <label>Método de pago</label>
-                    <select name="metodo_pago">
-                        <option value="efectivo">Efectivo (Contra entrega)</option>
+                <div class="field">
+                    <label class="field-label">Método de pago</label>
+                    <select class="field-select" name="metodo_pago">
+                        <option value="efectivo">Efectivo (contra entrega)</option>
                         <option value="transferencia">Transferencia</option>
                     </select>
                 </div>
-                <div class="contenedor-botones">
-                    <button type="button" class="btn-atras" onclick="window.history.back()">VOLVER</button>
-                    <button type="submit" class="btn-grande2" id="btn-submit-dom">CONFIRMAR DOMICILIO</button>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn--outline btn--lg" onclick="window.history.back()">Volver</button>
+                    <button type="submit" class="btn btn--primary btn--lg" id="btn-submit-dom">Confirmar domicilio</button>
                 </div>
             </form>
         </div>
     </main>
+
+    {% set nav_active = 'carrito' %}
+    {% include 'client/_partials/_navbar.html' %}
 
 </body>
 </html>

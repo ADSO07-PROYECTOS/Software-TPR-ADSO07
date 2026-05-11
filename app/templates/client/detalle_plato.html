@@ -4,64 +4,70 @@
     <meta charset="UTF-8">
     <link rel="icon" href="{{ url_for('static', filename='img/sabores-unidos.png') }}" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>{% if plato %}{{ plato.nombre }}{% else %}Plato no encontrado{% endif %}</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/detalle_plato.css') }}">
-
+    <title>La Higuera · {% if plato %}{{ plato.nombre }}{% else %}Plato no encontrado{% endif %}</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/la-higuera.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/menu.js') }}"></script>
     <script defer src="{{ url_for('static', filename='javascript/producto.js') }}"></script>
 </head>
 <body>
-    <header class="cont-superior">
-        <button class="atras-btn">
+
+    <svg class="deco-leaf" viewBox="0 0 100 100" fill="none" stroke="currentColor"
+         stroke-width="1.4" aria-hidden="true">
+        <path d="M10 50 C 30 15, 70 15, 90 50 C 70 85, 30 85, 10 50 Z"/>
+        <path d="M10 50 C 30 50, 70 50, 90 50"/>
+    </svg>
+
+    <main class="app-shell" style="padding-bottom: 160px;">
+
+        <header class="page-header">
             {% if plato and plato.categoria_id %}
-            <a href="{{ url_for('cliente.ver_platos', id_categoria=plato.categoria_id) }}">
-                <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
-                </svg>
-            </a>
+                <a class="back-btn" href="{{ url_for('cliente.ver_platos', id_categoria=plato.categoria_id) }}" aria-label="Volver">
             {% else %}
-            <a href="{{ url_for('cliente.ver_menu') }}">
-                <svg width="36" height="34" viewBox="0 0 36 34" fill="none" xmlns="http://www.w3.org/2000/svg">
-                    <path d="M17.6667 10.5L11 16.8333M11 16.8333L17.6667 23.1667M11 16.8333H24.3333M34.3333 16.8333C34.3333 25.5778 26.8714 32.6667 17.6667 32.6667C8.46192 32.6667 1 25.5778 1 16.8333C1 8.08882 8.46192 1 17.6667 1C26.8714 1 34.3333 8.08882 34.3333 16.8333Z" stroke="#D9D9D9" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>
+                <a class="back-btn" href="{{ url_for('cliente.ver_menu') }}" aria-label="Volver">
+            {% endif %}
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 6l-6 6 6 6"/>
                 </svg>
             </a>
-            {% endif %}
-        </button>
-    </header>
+            <span class="eyebrow">Plato</span>
+            <h1 class="section-title">Menú</h1>
+        </header>
 
-    {% if plato %}
-    <main>
-        <h3>Menú</h3>
+        {% if plato %}
         <section class="plato-detalle">
-            <h2>{{ plato.nombre }}</h2>
-            <img src="{{ url_for('static', filename='img/' + (plato.imagen if plato.imagen else 'default.png')) }}" alt="{{ plato.nombre }}">
 
-            <div class="info-detalle">
-                <p>{{ plato.descripcion }}</p>
-            </div>
+            <div class="plato-hero">
+                <div class="plato-img-wrap">
+                    <img src="{{ url_for('static', filename='img/' + (plato.imagen if plato.imagen else 'default.png')) }}" alt="{{ plato.nombre }}">
+                </div>
+                <h2>{{ plato.nombre }}</h2>
+                {% if plato.descripcion %}
+                    <p class="plato-desc">{{ plato.descripcion }}</p>
+                {% endif %}
 
-            {% if es_pizza %}
-            <div class="seleccion-tamano">
-                <select class="tamano-pizza" id="select-tamano">
-                    {% for tam in tamanos %}
-                    <option value="{{ tam.nombre }}" data-precio="{{ tam.precio }}" data-limite="{{ tam.limite_sabores }}">
-                        {{ tam.nombre }} 
-                    </option>
-                    {% endfor %}
-                </select>
-                <button class="precio-btn">$ 0</button>
-            </div>
-            {% endif %}
-
-            <div class="division">
-                <hr>
+                {% if es_pizza %}
+                <div class="seleccion-tamano">
+                    <select class="tamano-pizza" id="select-tamano">
+                        {% for tam in tamanos %}
+                        <option value="{{ tam.nombre }}" data-precio="{{ tam.precio }}" data-limite="{{ tam.limite_sabores }}">
+                            {{ tam.nombre }}
+                        </option>
+                        {% endfor %}
+                    </select>
+                    <button class="precio-btn">$ 0</button>
+                </div>
+                {% endif %}
             </div>
 
             {% if adiciones %}
+            <div class="division"><hr></div>
+
             <section class="cont-adiciones">
                 <div class="adicion">
-                    <h2 id="adicion">¿DESEAS ADICIONAR ALGO A TU COMIDA?</h2>
-                    <p>Los adicionales son de 50g la porción seleccionada</p>
+                    <h2 id="adicion">¿Deseas adicionar algo?</h2>
+                    <p>Los adicionales son de 50 g por porción.</p>
                 </div>
             </section>
 
@@ -73,12 +79,16 @@
                             <span>{{ adicion.nombre }}</span>
                         </div>
                         <div class="contador">
-                            <button class="btn-menos">
-                                <svg width="10" height="5" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M0 0H7L3.5 5L0 0Z" fill="black" fill-opacity="0.5"/></svg>
+                            <button class="btn-menos" aria-label="Quitar">
+                                <svg width="10" height="2" viewBox="0 0 10 2" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M0 1H10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                </svg>
                             </button>
                             <span class="cantidad">0</span>
-                            <button class="btn-mas">
-                                <svg width="10" height="10" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg"><path d="M4 6H0V4H4V0H6V4H10V6H6V10H4V6Z" fill="#99181F"/></svg>
+                            <button class="btn-mas" aria-label="Añadir">
+                                <svg width="10" height="10" viewBox="0 0 10 10" fill="none" xmlns="http://www.w3.org/2000/svg">
+                                    <path d="M5 0V10M0 5H10" stroke="currentColor" stroke-width="1.6" stroke-linecap="round"/>
+                                </svg>
                             </button>
                         </div>
                         <div class="seleccionar-btn">$ {{ "{:,.0f}".format(adicion.precio|float) }}</div>
@@ -89,10 +99,12 @@
             {% endif %}
 
             {% if es_pizza %}
+            <div class="division"><hr></div>
+
             <section class="combinar">
                 <div class="combinar-pizza">
-                    <h2 id="adicion">¿DESEAS ADICIONAR OTRO SABOR A TU PIZZA?</h2>
-                    <p>Solo puedes combinar hasta cuatro sabores de pizza si es extragrande</p>
+                    <h2 id="adicion">¿Combinar otro sabor?</h2>
+                    <p>Solo puedes combinar hasta cuatro sabores si la pizza es extragrande.</p>
                 </div>
                 <div class="lista-pizzas">
                     {% for sabor in sabores %}
@@ -105,32 +117,34 @@
                 </div>
             </section>
             {% endif %}
+
         </section>
+
+        <footer class="cont-inferior">
+            <div class="inner">
+                <div class="qty-stepper">
+                    <button class="cont_btn-menos" aria-label="Menos">−</button>
+                    <span class="cantidad-total">1</span>
+                    <button class="cont_btn-mas" aria-label="Más">+</button>
+                </div>
+                <span id="plato-id" data-id="{{ plato.id }}" data-precio="{{ plato.precio }}" style="display:none;"></span>
+                <button class="añadir">Añadir</button>
+                <span class="precio-fn">$ {{ "{:,.0f}".format(plato.precio|float) }}</span>
+            </div>
+        </footer>
+
+        {% else %}
+        <section style="text-align:center; padding: 60px 20px;">
+            <h2 style="font-family: var(--serif); color: var(--ink-dark); font-size: 24px; margin-bottom: 12px;">Plato no encontrado</h2>
+            <p style="color: var(--ink-soft); margin-bottom: 18px;">No pudimos cargar la información del plato.</p>
+            <a class="btn btn--primary" href="{{ url_for('cliente.ver_menu') }}">Volver al menú</a>
+        </section>
+        {% endif %}
+
     </main>
 
-    <footer class="cont-inferior">
-        <button class="cont_btn-menos"> 
-            <svg width="7" height="6" viewBox="0 0 7 5" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M1.11759e-08 -1.78814e-07H6.6V3H1.11759e-08V-1.78814e-07Z" fill="black" fill-opacity="0.25"/>
-            </svg>
-        </button>
-        <span class="cantidad-total"> 1 </span>
-        <button class="cont_btn-mas"> 
-            <svg width="7" height="7" viewBox="0 0 11 11" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M4.01994 6.38997H-5.85727e-05V4.04997H4.01994V-3.0756e-05H6.35994V4.04997H10.3799V6.38997H6.35994V10.5H4.01994V6.38997Z" fill="#99181F"/>
-            </svg>
-        </button>
-        
-        <span id="plato-id" data-id="{{ plato.id }}" data-precio="{{ plato.precio }}" style="display:none;"></span>
-        <button class="añadir"> AÑADIR </button>
-        <span class="precio-fn">$ {{ plato.precio }}</span>
-    </footer>
+    {% set nav_active = 'inicio' %}
+    {% include 'client/_partials/_navbar.html' %}
 
-    {% else %}
-    <main style="justify-content: center; text-align: center;">
-        <h2 style="color: white;">Plato no encontrado o Error de conexión</h2>
-        <a href="{{ url_for('cliente.ver_menu') }}" style="color: grey; text-decoration: underline; margin-top: 20px;">Volver al menú</a>
-    </main>
-    {% endif %}
 </body>
 </html>

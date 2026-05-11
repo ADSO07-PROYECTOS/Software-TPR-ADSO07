@@ -4,45 +4,76 @@
     <meta charset="UTF-8">
     <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Detalles cliente</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_reservas.css') }}">
+    <title>La Higuera · Tus datos</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/la-higuera.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
-
 </head>
 <body>
-    <main id="contenedor">   
+
+    <svg class="deco-leaf" viewBox="0 0 100 100" fill="none" stroke="currentColor"
+         stroke-width="1.4" aria-hidden="true">
+        <path d="M10 50 C 30 15, 70 15, 90 50 C 70 85, 30 85, 10 50 Z"/>
+        <path d="M10 50 C 30 50, 70 50, 90 50"/>
+    </svg>
+
+    <main class="app-shell" id="contenedor">
+
+        <header class="page-header">
+            <a class="back-btn" href="{{ url_for('cliente.ver_carrito') }}" aria-label="Volver">
+                <svg width="18" height="18" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="1.8"
+                     stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M15 6l-6 6 6 6"/>
+                </svg>
+            </a>
+            <span class="eyebrow">Reserva · Paso 1 de 2</span>
+            <h1 class="section-title">Tus datos</h1>
+            <p class="section-help">Necesitamos confirmar tu nombre y un contacto para enviarte el detalle.</p>
+        </header>
+
         <div id="tpl-paso1">
-            <header><h1>TUS DATOS</h1></header>
-            <form id="form-paso1">
-                <div class="grupo-entrada">
-                    <label>Nombre</label>
-                    <input type="text" name="nom" maxlength="60" minlength="2" placeholder="Juan Posada" pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,60}" tabindex="1" required>
+            <form id="form-paso1" class="la-form">
+                <div class="field">
+                    <label class="field-label">Nombre completo</label>
+                    <input class="field-input" type="text" name="nom" maxlength="60" minlength="2"
+                           placeholder="Juan Posada"
+                           pattern="[A-Za-zÁÉÍÓÚáéíóúÑñ\s]{2,60}" tabindex="1" required>
                 </div>
-                <div class="grupo-entrada">
-                    <label>Cédula</label>
-                    <input type="text" inputmode="numeric" name="doc" maxlength="10" minlength="6" placeholder="1112000000" pattern="[0-9]{6,10}" title="!Opss, Estas intentando ingresar letras o algun otro caracter. Por favor solo ingresa numeros." tabindex="2" required>
+                <div class="field">
+                    <label class="field-label">Cédula</label>
+                    <input class="field-input" type="text" inputmode="numeric" name="doc"
+                           maxlength="10" minlength="6" placeholder="1 112 000 000"
+                           pattern="[0-9]{6,10}"
+                           title="Solo números, entre 6 y 10 dígitos" tabindex="2" required>
                 </div>
-                <div class="grupo-entrada">
-                    <label>Correo</label>
-                    <input type="email" name="correo" inputmode="email" maxlength="60" minlength="8" placeholder="ejemplo@gmail.com" pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" tabindex="3" required>
+                <div class="field">
+                    <label class="field-label">Correo</label>
+                    <input class="field-input" type="email" name="correo" inputmode="email"
+                           maxlength="60" minlength="8" placeholder="tunombre@correo.com"
+                           pattern="[a-z0-9._%+\-]+@[a-z0-9.\-]+\.[a-z]{2,}$" tabindex="3" required>
                 </div>
-                <div class="grupo-entrada">
-                    <label>Teléfono</label>
-                    <input type="tel" name="tel" inputmode="tel" maxlength="10" minlength="10" placeholder="3154444444" pattern="[0-9]{10}" tabindex="4" required>
+                <div class="field">
+                    <label class="field-label">Teléfono</label>
+                    <input class="field-input" type="tel" name="tel" inputmode="tel"
+                           maxlength="10" minlength="10" placeholder="+57 315 444 4444"
+                           pattern="[0-9]{10}" tabindex="4" required>
                 </div>
-                <div class="grupo-habeas">
-                    <label class="habeas-label">
-                        <input type="checkbox" name="habeas" id="habeas-datos" required>
-                        <span>Autorizo la recopilación y tratamiento de mis datos personales conforme a la política de <strong>Habeas Data</strong> de Sabores Unidos. Mi información será usada únicamente para gestionar el pedido.</span>
-                    </label>
-                </div>
-                <div class="contenedor-botones">
-                    <button type="button" class="btn-atras" onclick="window.location.href='/menu'">VOLVER</button>
-                    <button type="submit" class="btn-grande2" tabindex="5">CONTINUAR</button>
+
+                <label class="consent-row">
+                    <input type="checkbox" name="habeas" id="habeas-datos" required>
+                    <span>Autorizo el tratamiento de mis datos personales conforme a la política de Habeas Data de <em>La Higuera</em>.</span>
+                </label>
+
+                <div class="form-actions">
+                    <button type="button" class="btn btn--outline btn--lg" onclick="window.location.href='/menu'">Volver</button>
+                    <button type="submit" class="btn btn--primary btn--lg" tabindex="5">Continuar</button>
                 </div>
             </form>
         </div>
     </main>
+
+    {% set nav_active = 'carrito' %}
+    {% include 'client/_partials/_navbar.html' %}
 
 </body>
 </html>

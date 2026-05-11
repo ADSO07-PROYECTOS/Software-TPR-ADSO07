@@ -6,8 +6,8 @@ def conectar():
     try:
         conexion = mysql.connector.connect(
             host='localhost',
-            user='taster',
-            password='uYW8CXhOAC7',
+            user='root',
+            password='',
             database='db_tpr',
             auth_plugin='mysql_native_password'
         )

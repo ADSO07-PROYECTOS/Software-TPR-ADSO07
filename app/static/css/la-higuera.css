@@ -1,0 +1,1858 @@
+/* ===========================================================
+   LA HIGUERA · sistema de diseño
+   Aplica solo a las pantallas restilizadas (menú, carrito).
+   No interfiere con el resto de plantillas que usan style.css.
+   =========================================================== */
+
+@import url('https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,400;0,500;0,600;0,700;1,400;1,500&family=Inter:wght@300;400;500;600;700&display=swap');
+
+:root {
+    --bg-cream:        #EFE7D6;
+    --bg-card:         #FBF7EE;
+    --bg-card-soft:    #F4EEDE;
+
+    --ink-dark:        #1F2A1C;   /* verde oliva muy oscuro */
+    --ink-mid:         #3F4A38;
+    --ink-soft:        #6B6A60;
+    --ink-mute:        #A8A496;
+
+    --accent-clay:     #C7522A;   /* terracota — labels y precios */
+    --accent-leaf:     #6B7A4A;   /* verde hoja — totales y acentos */
+
+    --line:            #D9D2C2;
+    --line-soft:       #E6DFCC;
+
+    --radius-pill:     999px;
+    --radius-card:     22px;
+    --radius-sm:       14px;
+
+    --shadow-soft:     0 2px 14px rgba(31, 42, 28, 0.04);
+    --shadow-card:     0 4px 22px rgba(31, 42, 28, 0.06);
+
+    --serif:           'Cormorant Garamond', Georgia, serif;
+    --sans:            'Inter', -apple-system, system-ui, sans-serif;
+}
+
+* { box-sizing: border-box; margin: 0; padding: 0; }
+
+html, body {
+    background: var(--bg-cream);
+    color: var(--ink-dark);
+    font-family: var(--sans);
+    font-size: 16px;
+    line-height: 1.5;
+    min-height: 100vh;
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+}
+
+a { text-decoration: none; color: inherit; }
+button { font-family: inherit; cursor: pointer; }
+
+/* Hoja decorativa (esquina superior derecha, fija) */
+.deco-leaf {
+    position: fixed;
+    top: 18px;
+    right: 14px;
+    width: 64px;
+    height: 64px;
+    opacity: 0.35;
+    pointer-events: none;
+    z-index: 1;
+    color: var(--accent-leaf);
+}
+
+/* Layout tipo "phone column" — móvil first, columna centrada en desktop */
+.app-shell {
+    max-width: 480px;
+    margin: 0 auto;
+    min-height: 100vh;
+    padding: 0 24px 110px;
+    position: relative;
+    background: var(--bg-cream);
+}
+
+/* ------------------------------------------------------------
+   Tipografía y elementos de marca
+   ------------------------------------------------------------ */
+
+.eyebrow {
+    font-family: var(--sans);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent-clay);
+    font-weight: 500;
+}
+
+.eyebrow--soft { color: var(--ink-soft); }
+
+.display-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 52px;
+    line-height: 1;
+    letter-spacing: -0.01em;
+    color: var(--ink-dark);
+    text-align: center;
+}
+
+.section-title {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 36px;
+    line-height: 1.05;
+    color: var(--ink-dark);
+    margin-top: 6px;
+}
+
+.brand-tagline {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--accent-clay);
+    text-align: center;
+    margin-bottom: 4px;
+}
+
+.brand-divider {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+    margin: 18px auto 8px;
+    color: var(--ink-soft);
+}
+.brand-divider::before,
+.brand-divider::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: var(--line);
+}
+.brand-divider span {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink-soft);
+}
+
+/* Olive sprig SVG suele ir centrado arriba; reservamos espacio */
+.brand-sprig {
+    display: block;
+    margin: 0 auto 6px;
+    color: var(--accent-leaf);
+    width: 36px;
+    height: 48px;
+}
+
+/* ------------------------------------------------------------
+   Top bar (ubicación + perfil)
+   ------------------------------------------------------------ */
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 22px 0 10px;
+    position: relative;
+    z-index: 2;
+}
+
+.top-bar .location {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+
+.icon-btn {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: background .15s ease;
+}
+.icon-btn:hover { background: var(--bg-card-soft); }
+
+/* ------------------------------------------------------------
+   Categorías (lista tipo card horizontal)
+   ------------------------------------------------------------ */
+
+.cat-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 20px;
+}
+
+.cat-card {
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 14px 18px 14px 14px;
+    box-shadow: var(--shadow-soft);
+    transition: transform .15s ease, box-shadow .15s ease;
+}
+.cat-card:hover {
+    transform: translateY(-1px);
+    box-shadow: var(--shadow-card);
+}
+
+.cat-thumb {
+    width: 70px;
+    height: 70px;
+    border-radius: 16px;
+    background: var(--bg-card-soft);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    flex-shrink: 0;
+    color: var(--accent-leaf);
+}
+.cat-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+    opacity: 0.9;
+}
+
+.cat-body {
+    flex: 1;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+}
+.cat-num {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-mute);
+}
+.cat-name {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1;
+    font-weight: 500;
+    color: var(--ink-dark);
+}
+.cat-sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 2px;
+}
+
+.cat-chevron {
+    color: var(--ink-mid);
+    flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------
+   Botones primarios / secundarios
+   ------------------------------------------------------------ */
+
+.btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 16px 22px;
+    border-radius: var(--radius-pill);
+    border: none;
+    font-family: var(--sans);
+    font-size: 13px;
+    font-weight: 600;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    transition: transform .12s ease, box-shadow .15s ease, background .15s ease;
+}
+.btn:active { transform: scale(0.98); }
+
+.btn--primary {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+}
+.btn--primary:hover { background: var(--ink-mid); }
+
+.btn--outline {
+    background: transparent;
+    color: var(--ink-dark);
+    border: 1.5px solid var(--ink-dark);
+}
+.btn--outline:hover { background: var(--bg-card-soft); }
+
+.btn--block { width: 100%; }
+.btn--lg { padding: 18px 28px; font-size: 14px; }
+
+/* Par de botones inferior (RESERVAR / DOMICILIO) */
+.action-pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 28px;
+}
+
+/* ------------------------------------------------------------
+   Carrito — barra superior con back
+   ------------------------------------------------------------ */
+
+.back-bar {
+    padding: 22px 0 6px;
+    position: relative;
+    z-index: 2;
+}
+
+.back-btn {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.cart-header {
+    margin-top: 14px;
+    margin-bottom: 18px;
+}
+.cart-header .eyebrow { display: block; margin-bottom: 6px; }
+
+/* Contenedor de items (la JS inyecta .producto_detalles aquí) */
+.padre_ppal {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    background: transparent;
+    padding: 0;
+    margin: 0;
+}
+
+/* Estilo de cada producto inyectado por carrito.js */
+.producto_detalles {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 18px 20px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.precio_seccion {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    gap: 12px;
+}
+
+.info-producto {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
+    flex: 1;
+}
+
+.ttlo_producto {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1.15;
+    color: var(--ink-dark);
+}
+
+.descripcion-extra {
+    font-size: 13px;
+    color: var(--ink-soft);
+    letter-spacing: 0.02em;
+}
+
+.precio {
+    font-family: var(--serif);
+    font-size: 20px;
+    color: var(--accent-clay);
+    white-space: nowrap;
+    flex-shrink: 0;
+}
+
+.controles {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 4px;
+}
+
+.seleccionar_cantidad {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.seleccionar_cantidad button {
+    width: 32px;
+    height: 32px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dark);
+    font-size: 16px;
+    line-height: 1;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.seleccionar_cantidad button:hover { background: var(--bg-card-soft); }
+.seleccionar_cantidad span {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    min-width: 18px;
+    text-align: center;
+    color: var(--ink-dark);
+}
+
+.acciones { display: flex; }
+.accion {
+    background: none;
+    border: none;
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    padding: 6px 4px;
+}
+.accion:hover { color: var(--accent-clay); }
+
+/* Estado vacío */
+.carrito-vacio {
+    text-align: center;
+    color: var(--ink-soft);
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    padding: 40px 0;
+}
+
+/* Tarjeta resumen (subtotal / servicio / total) */
+.divider {
+    border: 0;
+    height: 0;
+    margin: 0;
+}
+
+.cart-summary {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 20px 22px;
+    margin-top: 14px;
+    box-shadow: var(--shadow-soft);
+}
+.cart-summary .row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 6px 0;
+    color: var(--ink-mid);
+    font-size: 15px;
+}
+.cart-summary .row .label { color: var(--ink-mid); }
+.cart-summary .row .val { color: var(--ink-dark); }
+.cart-summary .rule {
+    height: 1px;
+    background: var(--line-soft);
+    margin: 10px 0;
+}
+.cart-summary .total-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 6px;
+}
+.cart-summary .total-row .total-label {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 20px;
+    color: var(--ink-dark);
+}
+.cart-summary .total_valor {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--accent-leaf);
+    letter-spacing: 0.01em;
+}
+
+/* CTA inferior fijo (IR A PAGAR) */
+.cta-bar {
+    position: fixed;
+    bottom: 64px;       /* deja espacio para la navbar inferior */
+    left: 0;
+    right: 0;
+    padding: 16px 24px 8px;
+    background: linear-gradient(to top, var(--bg-cream) 75%, rgba(239, 231, 214, 0));
+    z-index: 50;
+}
+.cta-bar .inner {
+    max-width: 480px;
+    margin: 0 auto;
+}
+
+.total_btn {
+    display: block;
+    width: 100%;
+    padding: 18px 24px;
+    border-radius: var(--radius-pill);
+    border: none;
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 14px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+.total_btn:hover { background: var(--ink-mid); }
+.total_btn:disabled,
+.total_btn.is-disabled {
+    background: var(--ink-mute);
+    cursor: not-allowed;
+}
+
+/* ------------------------------------------------------------
+   Modal "¿Cómo prefieres tu pedido?"
+   ------------------------------------------------------------ */
+
+.modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 42, 28, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.modal-overlay.is-open { display: flex; }
+
+.modal-card {
+    background: var(--bg-card);
+    border-radius: 26px;
+    padding: 28px 24px 18px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+.modal-card .brand-sprig { width: 28px; height: 38px; }
+.modal-card .modal-title {
+    font-family: var(--serif);
+    font-size: 26px;
+    line-height: 1.15;
+    color: var(--ink-dark);
+    margin-top: 4px;
+}
+.modal-card .modal-sub {
+    font-size: 13px;
+    color: var(--ink-soft);
+    margin-top: 4px;
+    margin-bottom: 18px;
+}
+.modal-card .btn { width: 100%; margin-top: 10px; }
+.modal-card .modal-cancel {
+    display: block;
+    width: 100%;
+    margin-top: 14px;
+    padding: 10px;
+    background: none;
+    border: none;
+    color: var(--ink-mute);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+}
+.modal-card .modal-cancel:hover { color: var(--ink-soft); }
+
+/* ------------------------------------------------------------
+   Navbar inferior compartida
+   ------------------------------------------------------------ */
+
+.bottom-nav {
+    position: fixed;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    background: var(--bg-cream);
+    border-top: 1px solid var(--line-soft);
+    z-index: 100;
+}
+.bottom-nav .inner {
+    max-width: 480px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-around;
+    padding: 10px 12px 14px;
+}
+
+.nav-item {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    padding: 6px 14px;
+    color: var(--ink-soft);
+    position: relative;
+    transition: color .12s ease;
+}
+.nav-item .nav-icon {
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.nav-item .nav-label {
+    font-size: 10px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    font-weight: 500;
+}
+.nav-item.is-active { color: var(--accent-clay); }
+.nav-item:hover { color: var(--ink-dark); }
+.nav-item.is-active:hover { color: var(--accent-clay); }
+
+.nav-badge {
+    position: absolute;
+    top: 0;
+    right: 6px;
+    min-width: 18px;
+    height: 18px;
+    padding: 0 5px;
+    border-radius: 999px;
+    background: var(--accent-clay);
+    color: #FBF7EE;
+    font-size: 10px;
+    font-weight: 700;
+    display: none;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+}
+
+/* ------------------------------------------------------------
+   Responsive — mantener look "phone-column" también en desktop
+   ------------------------------------------------------------ */
+
+@media (min-width: 1000px) {
+    body {
+        background:
+            radial-gradient(ellipse at top, rgba(107, 122, 74, 0.08), transparent 60%),
+            var(--bg-cream);
+    }
+    .app-shell {
+        margin-top: 32px;
+        margin-bottom: 32px;
+        border-radius: 36px;
+        box-shadow: 0 30px 80px rgba(31, 42, 28, 0.08);
+        min-height: calc(100vh - 64px);
+        overflow: hidden;
+    }
+    .deco-leaf { right: calc(50% - 222px); }
+    .bottom-nav,
+    .cta-bar {
+        position: absolute;
+    }
+    .cta-bar { bottom: 64px; }
+}
+
+/* ============================================================
+   EXTENSIÓN — componentes para flujos de reserva, domicilio,
+   detalle de plato, comprobantes, mis reservas y éxito.
+   ============================================================ */
+
+/* ------------------------------------------------------------
+   Page header: botón volver + eyebrow + título
+   ------------------------------------------------------------ */
+
+.page-header {
+    padding-top: 22px;
+    position: relative;
+    z-index: 2;
+}
+.page-header .back-btn { margin-bottom: 14px; }
+.page-header .eyebrow { display: block; margin-bottom: 6px; }
+.page-header .section-title { margin-bottom: 6px; }
+.page-header .section-help {
+    color: var(--ink-soft);
+    font-size: 14px;
+    margin-top: 8px;
+    line-height: 1.45;
+}
+
+/* ------------------------------------------------------------
+   Formularios
+   ------------------------------------------------------------ */
+
+.la-form {
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-top: 22px;
+    padding-bottom: 24px;
+}
+
+.field { display: flex; flex-direction: column; gap: 8px; }
+
+.field-label {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 500;
+}
+
+.field-input,
+.field-select,
+.field-textarea {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    padding: 16px 22px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink-dark);
+    appearance: none;
+    -webkit-appearance: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+    box-shadow: var(--shadow-soft);
+}
+.field-input::placeholder { color: var(--ink-mute); }
+.field-input:focus,
+.field-select:focus,
+.field-textarea:focus {
+    outline: none;
+    border-color: var(--accent-leaf);
+    box-shadow: 0 0 0 3px rgba(107, 122, 74, 0.18);
+}
+.field-input[readonly] { background: var(--bg-card-soft); color: var(--ink-soft); }
+
+/* Select con chevron */
+.field-select {
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231F2A1C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 22px center;
+    padding-right: 46px;
+}
+
+/* Botones tipo "input" (fecha picker, hora) */
+.field-input[type="date"],
+.field-input[type="time"] { font-family: var(--sans); }
+
+.field-button {
+    width: 100%;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    padding: 16px 22px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink-dark);
+    text-align: left;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    box-shadow: var(--shadow-soft);
+    cursor: pointer;
+}
+.field-button:hover { border-color: var(--line); }
+
+.field-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+
+/* Checkbox de habeas data */
+.consent-row {
+    display: flex;
+    align-items: flex-start;
+    gap: 12px;
+    margin-top: 6px;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+}
+.consent-row input[type="checkbox"] {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-mute);
+    border-radius: 6px;
+    background: var(--bg-card);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    margin-top: 1px;
+    transition: background .15s ease, border-color .15s ease;
+}
+.consent-row input[type="checkbox"]:checked {
+    background: var(--ink-dark);
+    border-color: var(--ink-dark);
+}
+.consent-row input[type="checkbox"]:checked::after {
+    content: '';
+    position: absolute;
+    left: 7px; top: 3px;
+    width: 5px; height: 10px;
+    border: solid #FBF7EE;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.consent-row span em,
+.consent-row span strong {
+    color: var(--ink-dark);
+    font-weight: 600;
+    font-style: normal;
+}
+
+/* Pareja de botones VOLVER / CONTINUAR */
+.form-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    margin-top: 22px;
+    padding-bottom: 8px;
+}
+
+/* ------------------------------------------------------------
+   Modal de selección de hora (chips)
+   Reusa clases que el JS ya espera: .modal-hora-overlay, .oculto-hora,
+   .chip-hora, .chip-bloqueada, .chip-activa
+   ------------------------------------------------------------ */
+
+.modal-hora-overlay,
+.modal_hora_overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 42, 28, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+.modal-hora-overlay.oculto-hora,
+.modal_hora_overlay.oculto_hora { display: none; }
+
+.modal-hora-caja,
+.modal_hora_caja {
+    background: var(--bg-card);
+    border-radius: 26px;
+    padding: 26px 22px 18px;
+    width: 100%;
+    max-width: 380px;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+.modal-hora-ttlo,
+.modal_hora_ttlo {
+    font-family: var(--serif);
+    font-size: 22px;
+    color: var(--ink-dark);
+    text-align: center;
+    margin-bottom: 18px;
+}
+.modal-horas-grid,
+.horas_grid {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-bottom: 14px;
+}
+
+.chip-hora,
+.chip_hora {
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 12px 6px;
+    font-family: var(--sans);
+    font-size: 13px;
+    color: var(--ink-dark);
+    cursor: pointer;
+    transition: background .12s ease, color .12s ease, border-color .12s ease;
+}
+.chip-hora:hover:not(:disabled),
+.chip_hora:hover:not(:disabled) {
+    background: var(--bg-card-soft);
+    border-color: var(--ink-mid);
+}
+.chip-hora.chip-activa,
+.chip_hora.chip_activa {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    border-color: var(--ink-dark);
+}
+.chip-bloqueada,
+.chip_bloqueada {
+    color: var(--ink-mute);
+    background: var(--bg-card-soft);
+    cursor: not-allowed;
+    text-decoration: line-through;
+}
+
+.modal-hora-cerrar,
+.modal_hora_cerrar {
+    width: 100%;
+    background: none;
+    border: none;
+    color: var(--ink-mute);
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    padding: 12px;
+    cursor: pointer;
+}
+.modal-hora-cerrar:hover,
+.modal_hora_cerrar:hover { color: var(--ink-soft); }
+
+/* ------------------------------------------------------------
+   Confirmación / Éxito (pantalla del QR)
+   ------------------------------------------------------------ */
+
+.success-screen {
+    text-align: center;
+    padding: 36px 20px 0;
+}
+.success-screen .brand-sprig { width: 36px; height: 48px; margin-bottom: 16px; }
+.success-screen .eyebrow { display: block; margin-bottom: 12px; }
+.success-screen .display-title { margin-bottom: 14px; }
+.success-screen .display-title .accent-italic {
+    font-style: italic;
+    color: var(--accent-leaf);
+    font-weight: 400;
+    display: block;
+}
+.success-screen .lead {
+    font-size: 14px;
+    color: var(--ink-soft);
+    line-height: 1.55;
+    max-width: 320px;
+    margin: 0 auto 26px;
+}
+
+.qr-frame {
+    display: inline-block;
+    background: var(--bg-card);
+    border-radius: 26px;
+    padding: 20px;
+    box-shadow: var(--shadow-card);
+    margin-bottom: 14px;
+}
+.qr-frame img {
+    display: block;
+    width: 220px;
+    height: 220px;
+    border-radius: 14px;
+    background: #FBF7EE;
+}
+.reserva-num {
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    color: var(--ink-mute);
+    text-transform: uppercase;
+    margin-bottom: 30px;
+}
+
+.success-actions {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+    padding: 0 4px 8px;
+}
+
+/* ------------------------------------------------------------
+   Detalle de plato
+   ------------------------------------------------------------ */
+
+.plato-hero {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 18px 18px 22px;
+    margin-top: 14px;
+    box-shadow: var(--shadow-soft);
+}
+.plato-hero .plato-img-wrap {
+    width: 100%;
+    aspect-ratio: 16 / 11;
+    background: var(--bg-card-soft);
+    border-radius: 18px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    overflow: hidden;
+    margin-bottom: 16px;
+}
+.plato-hero .plato-img-wrap img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+}
+.plato-hero h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 32px;
+    line-height: 1.05;
+    color: var(--ink-dark);
+    margin-bottom: 10px;
+}
+.plato-hero .plato-desc {
+    color: var(--ink-soft);
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+.seleccion-tamano {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin-top: 14px;
+}
+.seleccion-tamano .tamano-pizza {
+    flex: 1;
+    background: var(--bg-card-soft);
+    border: 1px solid var(--line);
+    border-radius: var(--radius-pill);
+    padding: 12px 18px;
+    font-family: var(--sans);
+    font-size: 14px;
+    color: var(--ink-dark);
+    appearance: none;
+    -webkit-appearance: none;
+    cursor: pointer;
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='14' height='14' viewBox='0 0 24 24' fill='none' stroke='%231F2A1C' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'%3E%3Cpath d='M6 9l6 6 6-6'/%3E%3C/svg%3E");
+    background-repeat: no-repeat;
+    background-position: right 14px center;
+    padding-right: 38px;
+}
+.seleccion-tamano .precio-btn {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 12px 18px;
+    font-family: var(--serif);
+    font-size: 16px;
+    font-weight: 500;
+    cursor: default;
+    min-width: 110px;
+    text-align: center;
+}
+
+.division { padding: 18px 0; }
+.division hr { border: 0; height: 1px; background: var(--line-soft); }
+
+.cont-adiciones { margin-top: 6px; }
+.cont-adiciones .adicion h2,
+.combinar-pizza h2 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 20px;
+    color: var(--ink-dark);
+    margin-bottom: 4px;
+    line-height: 1.2;
+}
+.cont-adiciones .adicion p,
+.combinar-pizza p {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.5;
+}
+
+.adiciones-lista,
+.lista-pizzas {
+    margin-top: 14px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+.adiciones-lista .adiciones-box {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.adicion-item,
+.pizza-item {
+    background: var(--bg-card);
+    border-radius: 16px;
+    padding: 12px 16px;
+    display: grid;
+    grid-template-columns: 1fr auto auto;
+    align-items: center;
+    gap: 12px;
+    box-shadow: var(--shadow-soft);
+}
+.adicion-item .adicion-nombre span,
+.pizza-item label {
+    font-family: var(--serif);
+    font-size: 17px;
+    color: var(--ink-dark);
+}
+.adicion-item .seleccionar-btn,
+.pizza-item .precio {
+    font-family: var(--serif);
+    font-size: 15px;
+    color: var(--accent-clay);
+    white-space: nowrap;
+    background: none;
+    border: none;
+}
+
+/* Stepper compacto +/- usado en adicionales */
+.contador {
+    display: inline-flex;
+    align-items: center;
+    gap: 10px;
+    background: var(--bg-card-soft);
+    border-radius: var(--radius-pill);
+    padding: 4px;
+}
+.contador .btn-mas,
+.contador .btn-menos {
+    width: 26px; height: 26px;
+    border-radius: 50%;
+    border: none;
+    background: transparent;
+    color: var(--ink-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: 0;
+}
+.contador .btn-mas svg,
+.contador .btn-menos svg { display: block; }
+.contador .btn-mas:hover,
+.contador .btn-menos:hover { background: var(--bg-card); }
+.contador .cantidad {
+    min-width: 18px;
+    text-align: center;
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 16px;
+    color: var(--ink-dark);
+}
+
+/* Sabores: checkbox tipo chip */
+.pizza-item .check {
+    appearance: none;
+    -webkit-appearance: none;
+    width: 22px;
+    height: 22px;
+    border: 1.5px solid var(--ink-mute);
+    border-radius: 6px;
+    background: var(--bg-card);
+    cursor: pointer;
+    flex-shrink: 0;
+    position: relative;
+    transition: background .15s ease, border-color .15s ease;
+}
+.pizza-item .check:checked {
+    background: var(--ink-dark);
+    border-color: var(--ink-dark);
+}
+.pizza-item .check:checked::after {
+    content: '';
+    position: absolute;
+    left: 7px; top: 3px;
+    width: 5px; height: 10px;
+    border: solid #FBF7EE;
+    border-width: 0 2px 2px 0;
+    transform: rotate(45deg);
+}
+.pizza-item .check:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* Barra inferior fija de "AÑADIR" en detalle de plato */
+.cont-inferior {
+    position: fixed;
+    bottom: 64px;
+    left: 0; right: 0;
+    background: linear-gradient(to top, var(--bg-cream) 75%, rgba(239, 231, 214, 0));
+    padding: 14px 20px 10px;
+    z-index: 50;
+}
+.cont-inferior .inner {
+    max-width: 480px;
+    margin: 0 auto;
+    display: grid;
+    grid-template-columns: auto 1fr auto;
+    align-items: center;
+    gap: 12px;
+}
+.cont-inferior .qty-stepper {
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-card);
+    border-radius: var(--radius-pill);
+    padding: 8px 12px;
+    box-shadow: var(--shadow-soft);
+}
+.cont-inferior .qty-stepper button {
+    width: 30px; height: 30px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dark);
+    font-size: 16px;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.cont-inferior .qty-stepper .cantidad-total {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--ink-dark);
+    min-width: 18px;
+    text-align: center;
+}
+.cont-inferior .añadir {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    border: none;
+    border-radius: var(--radius-pill);
+    padding: 14px 20px;
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.cont-inferior .precio-fn {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--accent-clay);
+    text-align: right;
+    grid-column: 2 / 4;
+    margin-top: 6px;
+}
+
+/* ------------------------------------------------------------
+   Lista de platos (ver_platos)
+   ------------------------------------------------------------ */
+
+.platos-list {
+    display: flex;
+    flex-direction: column;
+    gap: 14px;
+    margin-top: 16px;
+}
+.plato-card {
+    display: grid;
+    grid-template-columns: 110px 1fr;
+    gap: 14px;
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 14px;
+    box-shadow: var(--shadow-soft);
+    align-items: center;
+}
+.plato-card .plato-thumb {
+    width: 100%;
+    height: 110px;
+    border-radius: 16px;
+    background: var(--bg-card-soft);
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.plato-card .plato-thumb img {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    mix-blend-mode: multiply;
+}
+.plato-card .plato-info {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+    min-width: 0;
+}
+.plato-card .plato-num {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    color: var(--ink-mute);
+}
+.plato-card .plato-name {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    line-height: 1;
+    color: var(--ink-dark);
+}
+.plato-card .plato-desc {
+    font-size: 13px;
+    color: var(--ink-soft);
+    line-height: 1.4;
+    overflow: hidden;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+}
+.plato-card .plato-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px;
+    margin-top: 6px;
+}
+.plato-card .plato-precio {
+    font-family: var(--serif);
+    font-size: 18px;
+    color: var(--accent-clay);
+}
+.plato-card .seleccionar-btn {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    padding: 10px 18px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+}
+
+.platos-subhead {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 12px;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-family: var(--serif);
+    font-size: 16px;
+    margin-top: 6px;
+    margin-bottom: 4px;
+}
+.platos-subhead::before {
+    content: '';
+    flex: 0 0 0;
+    height: 1px;
+    background: var(--line);
+}
+.platos-subhead .meta {
+    font-size: 13px;
+    color: var(--ink-mute);
+    font-style: normal;
+    font-family: var(--sans);
+    letter-spacing: 0.04em;
+}
+
+/* ------------------------------------------------------------
+   Mis reservas (búsqueda + cards + modal eliminar)
+   ------------------------------------------------------------ */
+
+.search-bar {
+    display: flex;
+    gap: 8px;
+    margin-top: 20px;
+    margin-bottom: 14px;
+}
+.search-bar input {
+    flex: 1;
+    background: var(--bg-card);
+    border: 1px solid transparent;
+    border-radius: var(--radius-pill);
+    padding: 14px 22px;
+    font-family: var(--sans);
+    font-size: 15px;
+    color: var(--ink-dark);
+    box-shadow: var(--shadow-soft);
+}
+.search-bar input:focus {
+    outline: none;
+    border-color: var(--accent-leaf);
+}
+.search-bar button {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    border: none;
+    border-radius: 50%;
+    width: 50px; height: 50px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+}
+
+#msg_vacio {
+    text-align: center;
+    color: var(--ink-soft);
+    font-style: italic;
+    font-family: var(--serif);
+    font-size: 16px;
+    padding: 24px 0;
+}
+
+.reserva-card,
+.card_reserva {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 20px 22px;
+    margin-bottom: 14px;
+    box-shadow: var(--shadow-soft);
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+}
+.card_fecha {
+    font-family: var(--serif);
+    font-style: italic;
+    font-size: 18px;
+    color: var(--accent-clay);
+}
+.card_mesa {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--ink-dark);
+    line-height: 1.1;
+}
+.card_tematica,
+.card_piso {
+    font-size: 12px;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+}
+.card_subtitulo {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-mute);
+    margin-top: 14px;
+}
+.card_pedido {
+    list-style: none;
+    padding: 0;
+    margin: 6px 0 0;
+}
+.card_pedido li {
+    padding: 6px 0;
+    border-bottom: 1px solid var(--line-soft);
+    display: flex;
+    justify-content: space-between;
+    flex-wrap: wrap;
+}
+.card_pedido li:last-child { border-bottom: 0; }
+.pedido_nombre {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-dark);
+}
+.pedido_notas {
+    font-size: 12px;
+    color: var(--ink-soft);
+    width: 100%;
+}
+.card_qr {
+    width: 160px;
+    height: 160px;
+    border-radius: 14px;
+    margin-top: 8px;
+    align-self: center;
+    background: #FBF7EE;
+    padding: 8px;
+    box-shadow: var(--shadow-soft);
+}
+.card_botones {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-top: 16px;
+}
+.editar-btn,
+.eliminar-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    padding: 12px 14px;
+    border-radius: var(--radius-pill);
+    border: none;
+    font-family: var(--sans);
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    cursor: pointer;
+    transition: background .15s ease;
+}
+.editar-btn {
+    background: var(--ink-dark);
+    color: #FBF7EE;
+}
+.editar-btn svg path { stroke: currentColor; }
+.editar-btn:hover { background: var(--ink-mid); }
+.eliminar-btn {
+    background: transparent;
+    color: var(--ink-dark);
+    border: 1.5px solid var(--ink-dark);
+}
+.eliminar-btn svg path { stroke: currentColor; }
+.eliminar-btn:hover { background: var(--bg-card-soft); color: var(--accent-clay); border-color: var(--accent-clay); }
+
+/* Modal de confirmar/eliminar (modal.js usa #cubrir_modal y .oculto) */
+#cubrir_modal {
+    position: fixed;
+    inset: 0;
+    background: rgba(31, 42, 28, 0.55);
+    backdrop-filter: blur(2px);
+    z-index: 999;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+}
+#cubrir_modal.oculto { display: none; }
+.carta_modal {
+    background: var(--bg-card);
+    border-radius: 26px;
+    padding: 28px 24px 22px;
+    width: 100%;
+    max-width: 380px;
+    text-align: center;
+    box-shadow: 0 20px 60px rgba(0,0,0,0.18);
+}
+#ttlo_modal {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 24px;
+    color: var(--ink-dark) !important;
+    margin-bottom: 8px;
+    line-height: 1.2;
+}
+#descripcion_modal {
+    font-size: 14px;
+    color: var(--ink-soft);
+    margin-bottom: 6px;
+    line-height: 1.5;
+}
+.pregunta_modal {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-mid);
+    font-size: 16px;
+    margin-bottom: 18px;
+}
+.accion_modal {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 12px;
+}
+.btn-modal {
+    padding: 14px;
+    border-radius: var(--radius-pill);
+    border: none;
+    font-size: 18px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+.btn-modal.btn-confirmar { background: var(--ink-dark); color: #FBF7EE; }
+.btn-modal.btn-confirmar:hover { background: var(--ink-mid); }
+.btn-modal.btn-cerrar {
+    background: transparent;
+    border: 1.5px solid var(--ink-dark);
+    color: var(--ink-dark);
+}
+.btn-modal.btn-cerrar:hover { background: var(--bg-card-soft); }
+
+/* ------------------------------------------------------------
+   Resumen (de reserva o domicilio)
+   ------------------------------------------------------------ */
+
+.resumen-shell {
+    background: var(--bg-cream);
+    min-height: 100vh;
+    padding: 24px 16px 32px;
+    display: flex;
+    justify-content: center;
+}
+.tarjeta {
+    width: 100%;
+    max-width: 480px;
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 28px 24px;
+    box-shadow: var(--shadow-card);
+    color: var(--ink-dark);
+}
+.tarjeta .logo-titulo {
+    text-align: center;
+    margin-bottom: 16px;
+}
+.tarjeta .logo-titulo h1 {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 36px;
+    color: var(--ink-dark);
+    line-height: 1;
+    margin-bottom: 6px;
+}
+.tarjeta .logo-titulo p {
+    color: var(--accent-clay);
+    font-size: 12px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+}
+.tarjeta .badge {
+    display: inline-block;
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    padding: 8px 18px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    font-weight: 600;
+    margin: 6px 0 18px;
+}
+.tarjeta .seccion {
+    margin-top: 14px;
+    padding-top: 16px;
+    border-top: 1px solid var(--line-soft);
+}
+.tarjeta .seccion:first-of-type { border-top: 0; padding-top: 0; }
+.tarjeta .seccion h2 {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--ink-soft);
+    font-weight: 600;
+    margin-bottom: 12px;
+}
+.tarjeta .fila {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 6px 0;
+    gap: 10px;
+}
+.tarjeta .fila .label { color: var(--ink-soft); font-size: 14px; }
+.tarjeta .fila .valor {
+    color: var(--ink-dark);
+    font-size: 15px;
+    text-align: right;
+    word-break: break-word;
+}
+.estado-badge {
+    background: var(--bg-card-soft);
+    color: var(--accent-leaf);
+    padding: 4px 12px;
+    border-radius: var(--radius-pill);
+    font-size: 11px;
+    letter-spacing: 0.18em;
+    font-weight: 600;
+}
+.fila-producto {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line-soft);
+}
+.fila-producto:last-of-type { border-bottom: 0; }
+.prod-nombre {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--ink-dark);
+}
+.prod-precio {
+    font-family: var(--serif);
+    font-size: 16px;
+    color: var(--accent-clay);
+}
+.total-line {
+    display: flex;
+    justify-content: space-between;
+    align-items: baseline;
+    padding-top: 14px;
+    margin-top: 8px;
+    border-top: 1.5px solid var(--ink-dark);
+}
+.total-line span:first-child {
+    font-family: var(--serif);
+    font-style: italic;
+    color: var(--ink-dark);
+    font-size: 18px;
+}
+.total-line span:last-child {
+    font-family: var(--serif);
+    font-weight: 500;
+    color: var(--accent-leaf);
+    font-size: 26px;
+}
+
+/* ------------------------------------------------------------
+   Subir comprobante (transferencia)
+   ------------------------------------------------------------ */
+
+.transfer-card,
+.warning-card,
+.cont_hijo {
+    background: var(--bg-card);
+    border-radius: var(--radius-card);
+    padding: 20px 22px;
+    margin-top: 16px;
+    box-shadow: var(--shadow-soft);
+}
+.warning-card { border-left: 3px solid var(--accent-clay); }
+.transfer-card .sub_ttlo,
+.warning-card #sub_ttlo,
+.cont_hijo .sub_ttlo,
+.cont_hijo #sub_ttlo {
+    font-size: 11px;
+    letter-spacing: 0.22em;
+    text-transform: uppercase;
+    color: var(--accent-clay);
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    margin-bottom: 10px;
+}
+.cont_hijo .msg_1 {
+    color: var(--ink-dark);
+    font-size: 14px;
+    padding: 4px 0;
+}
+.cont_hijo .msg {
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.55;
+}
+.cont_hijo .ttlo {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 22px;
+    color: var(--ink-dark);
+    margin-bottom: 14px;
+    text-align: left;
+}
+.cont_hijo .ttlo #total-pagar {
+    color: var(--accent-leaf);
+    margin-left: 6px;
+}
+
+/* Página principal de subir_com */
+.upload-shell .ttlo {
+    font-family: var(--serif);
+    font-weight: 500;
+    font-size: 28px;
+    color: var(--ink-dark);
+    text-align: center;
+    margin-top: 14px;
+}
+.upload-shell .msg {
+    text-align: center;
+    color: var(--ink-soft);
+    font-size: 13px;
+    line-height: 1.5;
+    margin-top: 8px;
+    padding: 0 6px;
+}
+
+.caja-subida {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    background: var(--bg-card-soft);
+    border: 1.5px dashed var(--line);
+    border-radius: 16px;
+    padding: 22px 16px;
+    color: var(--ink-soft);
+    font-size: 12px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+    text-align: center;
+    margin-top: 14px;
+    transition: background .15s ease, border-color .15s ease;
+}
+.caja-subida:hover {
+    background: var(--bg-card);
+    border-color: var(--accent-leaf);
+    color: var(--ink-dark);
+}
+.msg-archivo {
+    text-align: center;
+    color: var(--ink-mid);
+    font-size: 13px;
+    font-style: italic;
+    margin-top: 10px;
+}
+.btn-enviar {
+    display: block;
+    width: 100%;
+    margin-top: 16px;
+    padding: 16px 22px;
+    background: var(--ink-dark);
+    color: #FBF7EE;
+    border: none;
+    border-radius: var(--radius-pill);
+    font-family: var(--sans);
+    font-weight: 700;
+    font-size: 13px;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    cursor: pointer;
+}
+.btn-enviar:hover { background: var(--ink-mid); }
+
+/* ------------------------------------------------------------
+   Loop interno: botón Volver atras circular (ya existe .back-btn)
+   y "atras-btn" usado por templates antiguas
+   ------------------------------------------------------------ */
+.atras-btn,
+.btn_volver {
+    width: 42px;
+    height: 42px;
+    border-radius: 50%;
+    border: 1px solid var(--line);
+    background: transparent;
+    color: var(--ink-dark);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.atras-btn svg,
+.btn_volver svg {
+    width: 18px;
+    height: 18px;
+}
+.atras-btn svg path,
+.btn_volver svg path {
+    stroke: var(--ink-dark);
+}
+

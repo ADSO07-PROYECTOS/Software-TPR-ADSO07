@@ -1,29 +1,55 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 <head>
     <meta charset="UTF-8">
     <link rel="icon" href="/static/img/sabores-unidos.png" type="image/png">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Creado con exito</title>
-    <link rel="stylesheet" href="{{ url_for('static', filename='css/estilos_reservas.css') }}">
+    <title>La Higuera · ¡Listo!</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/la-higuera.css') }}">
     <script type="module" src="{{ url_for('static', filename='javascript/main.js') }}"></script>
 </head>
 <body>
-    <main id="contenedor">
-        <div id="tpl-exito">
-            <header><h1>¡LISTO!</h1></header>
-            <div style="text-align:center; color:white; padding:10px;">
-                <h4>Se ha registrado con exito tu solicitud</h4>
-                <img id="qr-img" src="" style="width:200px; border:5px solid white; border-radius:10px;">
-                <p id="mensaje-exito" style="margin-top:10px;"></p>
-                <div style="display:flex; gap:10px; justify-content:center; margin-top:20px; flex-wrap:wrap;">
-                    <button class="btn-grande2" id="btn_descargar_qr">📥 DESCARGAR QR</button>
-                    <button class="btn-grande2" id="btn_irmenu">FINALIZAR</button>
-                </div>
+
+    <svg class="deco-leaf" viewBox="0 0 100 100" fill="none" stroke="currentColor"
+         stroke-width="1.4" aria-hidden="true">
+        <path d="M10 50 C 30 15, 70 15, 90 50 C 70 85, 30 85, 10 50 Z"/>
+        <path d="M10 50 C 30 50, 70 50, 90 50"/>
+    </svg>
+
+    <main class="app-shell" id="contenedor">
+
+        <div id="tpl-exito" class="success-screen">
+            <svg class="brand-sprig" viewBox="0 0 24 32" fill="none" stroke="currentColor"
+                 stroke-width="1.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M12 30 V 4"/>
+                <path d="M12 22 C 6 22, 4 18, 4 14"/>
+                <path d="M12 18 C 18 18, 20 14, 20 10"/>
+                <path d="M12 14 C 6 14, 4 10, 4 6"/>
+                <path d="M12 10 C 18 10, 20 6, 20 2"/>
+            </svg>
+
+            <span class="eyebrow">Confirmado</span>
+            <h1 class="display-title">
+                Hasta pronto,
+                <span class="accent-italic">huésped.</span>
+            </h1>
+            <p id="mensaje-exito" class="lead">Tu reserva quedó guardada. Te esperamos.</p>
+
+            <div class="qr-frame">
+                <img id="qr-img" src="" alt="Código QR de la reserva">
+            </div>
+            <p class="reserva-num">Reserva</p>
+
+            <div class="success-actions">
+                <button class="btn btn--outline btn--lg" id="btn_descargar_qr">Descargar QR</button>
+                <button class="btn btn--primary btn--lg" id="btn_irmenu">Finalizar</button>
             </div>
         </div>
+
     </main>
+
+    {% set nav_active = 'carrito' %}
+    {% include 'client/_partials/_navbar.html' %}
 
 </body>
 </html>
-

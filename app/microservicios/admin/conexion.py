@@ -6,8 +6,8 @@ def conectar():
     try:
         conexion = mysql.connector.connect(
             host='localhost',
-            user='taster',
-            password='uYW8CXhOAC7',
+            user='root',
+            password='',
             database='db_tpr'
         )
         if conexion.is_connected():
